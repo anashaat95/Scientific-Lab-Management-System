@@ -4,8 +4,8 @@ public class BookingMappingProfile : ProfileBase<Booking, BookingDto, BookingCom
     public BookingMappingProfile()
     {
         ApplyEntityToDtoMapping();
-        ApplyCommandToEntityMapping<AddBookingCommand>();
-        ApplyCommandToEntityMapping<UpdateBookingCommand>();
+        ApplyAddBookingCommandToEntityMapping();
+        ApplyUpdateBookingCommandToEntityMapping();
     }
 
     public override IMappingExpression<Booking, BookingDto> ApplyEntityToDtoMapping()
@@ -25,9 +25,9 @@ public class BookingMappingProfile : ProfileBase<Booking, BookingDto, BookingCom
             .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt));
     }
 
-    public override IMappingExpression<TSource, Booking> ApplyCommandToEntityMapping<TSource>()
+    public IMappingExpression<AddBookingCommand, Booking> ApplyAddBookingCommandToEntityMapping()
     {
-        return CreateMap<TSource, Booking>()
+        return CreateMap<AddBookingCommand, Booking>()
             .ForMember(dest => dest.StartDateTime, opt => opt.MapFrom(src => src.Data.start_date_time))
             .ForMember(dest => dest.EndDateTime, opt => opt.MapFrom(src => src.Data.end_date_time))
             .ForMember(dest => dest.IsOnOverNight, opt => opt.MapFrom(src => src.Data.is_on_overnight))
@@ -36,6 +36,16 @@ public class BookingMappingProfile : ProfileBase<Booking, BookingDto, BookingCom
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Data.user_id))
             .ForMember(dest => dest.EquipmentId, opt => opt.MapFrom(src => src.Data.equipment_id))
             .ForMember(dest => dest.SubEquipmentId, opt => opt.MapFrom(src => src.Data.sub_equipment_id));
+    }
+
+    public IMappingExpression<UpdateBookingCommand, Booking> ApplyUpdateBookingCommandToEntityMapping()
+    {
+        return CreateMap<UpdateBookingCommand, Booking>()
+            .ForMember(dest => dest.StartDateTime, opt => opt.MapFrom(src => src.Data.start_date_time))
+            .ForMember(dest => dest.EndDateTime, opt => opt.MapFrom(src => src.Data.end_date_time))
+            .ForMember(dest => dest.IsOnOverNight, opt => opt.MapFrom(src => src.Data.is_on_overnight))
+            .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Data.Notes))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Data.Status));
     }
 }
 

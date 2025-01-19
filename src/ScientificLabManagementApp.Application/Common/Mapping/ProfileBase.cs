@@ -6,5 +6,8 @@ public abstract class ProfileBase<TEntity, TDto, TCommandData> : Profile
     where TCommandData : class
 {
     public abstract IMappingExpression<TEntity, TDto> ApplyEntityToDtoMapping();
-    public abstract IMappingExpression<TSource, TEntity> ApplyCommandToEntityMapping<TSource>() where TSource : AddUpdateCommandBase<TDto, TCommandData>;
+    public virtual IMappingExpression<TSource, TEntity> ApplyCommandToEntityMapping<TSource>() where TSource : AddUpdateCommandBase<TDto, TCommandData>
+    {
+        return CreateMap<TSource, TEntity>();
+    }
 }

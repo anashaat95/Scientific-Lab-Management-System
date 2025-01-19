@@ -8,9 +8,16 @@ public class BookingValidator<TCommand> : ValidatorBase<TCommand, Booking, Booki
         RuleFor(x => x.Data.end_date_time).ApplyNotEmptyRule().ApplyNotNullableRule();
         RuleFor(x => x.Data.Notes).ApplyMinMaxLengthRule(0, ValidationLimitsConfig.DESCRIPTION.MAX);
         RuleFor(x => x.Data.Status).ApplyNotEmptyRule().ApplyNotNullableRule();
+    }
+
+}
+
+public class AddBookingValidator : BookingValidator<AddBookingCommand>
+{
+    public override void ApplyValidationRules()
+    {
         RuleFor(x => x.Data.user_id).ApplyNotEmptyRule().ApplyNotNullableRule();
         RuleFor(x => x.Data.equipment_id).ApplyNotEmptyRule().ApplyNotNullableRule();
-
     }
     public override void ApplyCustomValidationRules()
     {
@@ -31,7 +38,7 @@ public class BookingValidator<TCommand> : ValidatorBase<TCommand, Booking, Booki
                 .WithMessage("No sub-equipment found with the provided sub_equipment_id.");
     }
 
-    private async Task<bool> ValidateEquipmentAsync(BookingCommandData data, CancellationToken cancellationToken)
+    private async Task<bool> ValidateEquipmentAsync(AddBookingCommandData data, CancellationToken cancellationToken)
     {
         var equipmentEntity = await _basicService.FindRelatedEntityByIdAsync<Equipment>(e => e.Id == data.equipment_id);
 
@@ -51,7 +58,7 @@ public class BookingValidator<TCommand> : ValidatorBase<TCommand, Booking, Booki
 
         return true;
     }
-    private async Task<bool> ValidateSubEquipmentAsync(BookingCommandData data, CancellationToken cancellationToken)
+    private async Task<bool> ValidateSubEquipmentAsync(AddBookingCommandData data, CancellationToken cancellationToken)
     {
         if (data.sub_equipment_id == null) return true;
 
@@ -72,7 +79,5 @@ public class BookingValidator<TCommand> : ValidatorBase<TCommand, Booking, Booki
         return true;
     }
 }
-
-public class AddBookingValidator : BookingValidator<AddBookingCommand> { }
 
 public class UpdateBookingValidator : BookingValidator<UpdateBookingCommand> { }

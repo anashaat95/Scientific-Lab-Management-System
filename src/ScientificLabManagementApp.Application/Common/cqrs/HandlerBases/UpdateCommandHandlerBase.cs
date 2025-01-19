@@ -26,11 +26,12 @@ public class UpdateCommandHandlerBase<TRequest, TEntity, TDto> : RequestHandlerB
                 return Unauthorized<TDto>("You are unauthorized to delete this resource.");
         }
 
-        return Deleted<TDto>();
+        return Updated(_mapper.Map<TDto>(entityToUpdate));
     }
 
     protected async Task DoUpdate(TRequest updateRequest, TEntity entityToUpdate)
     {
-        await _basicService.UpdateAsync(_mapper.Map(updateRequest, entityToUpdate));
+        var updatedEntity = _mapper.Map(updateRequest, entityToUpdate);
+        await _basicService.UpdateAsync(updatedEntity);
     }
 }
