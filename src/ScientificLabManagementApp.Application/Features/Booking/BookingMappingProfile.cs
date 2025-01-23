@@ -17,9 +17,9 @@ public class BookingMappingProfile : ProfileBase<Booking, BookingDto, BookingCom
             .ForMember(x => x.is_on_overnight, opt => opt.MapFrom(src => src.IsOnOverNight))
             .ForMember(x => x.Notes, opt => opt.MapFrom(src => src.Notes))
             .ForMember(x => x.Status, opt => opt.MapFrom(src => src.Status))
-            .ForMember(x => x.user_id, opt => opt.MapFrom(src => src.UserId))
+            .ForMember(x => x.user_url, opt => opt.MapFrom(src=> ApiUrlFactory<ApplicationUser>.Create(src.UserId)))
             .ForMember(x => x.user_name, opt => opt.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"))
-            .ForMember(x => x.equipment_id, opt => opt.MapFrom(src => src.EquipmentId))
+            .ForMember(x => x.equipment_url, opt => opt.MapFrom(src => ApiUrlFactory<Equipment>.Create(src.EquipmentId)))
             .ForMember(x => x.equipment_name, opt => opt.MapFrom(src => src.Equipment.Name))
             .ForMember(x => x.created_at, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt));

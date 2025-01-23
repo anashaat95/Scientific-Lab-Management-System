@@ -1,5 +1,5 @@
 namespace ScientificLabManagementApp.Application;
-public class EquipmentDto
+public class EquipmentDto : IEntityHaveId
 {
     public string Id { get; set; }
     public string Name { get; set; }

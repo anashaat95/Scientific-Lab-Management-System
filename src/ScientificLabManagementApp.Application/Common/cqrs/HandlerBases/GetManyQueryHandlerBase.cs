@@ -2,8 +2,8 @@
 
 public class GetManyQueryHandlerBase<TRequest, TEntity, TDto> : ResponseBuilder, IRequestHandler<TRequest, Response<IEnumerable<TDto>>>
     where TRequest : IRequest<Response<IEnumerable<TDto>>>
-    where TEntity : class
-    where TDto : class
+    where TEntity : class, IEntityBase
+    where TDto : class, IEntityHaveId
 {
     protected readonly IBaseService<TEntity, TDto> _basicService;
     protected readonly UserManager<ApplicationUser> _userManager;

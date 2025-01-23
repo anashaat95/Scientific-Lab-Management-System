@@ -1,5 +1,5 @@
 namespace ScientificLabManagementApp.Application;
-public class RoleDto 
+public class RoleDto : IEntityHaveId
 {
     public string Id { get; set; }
     public string Name { get; set; }

@@ -9,8 +9,17 @@ public class CompanyCommandData
     public required string city_id { get; set; }
     public required string country_id { get; set; }
 }
-public class AddCompanyCommand : AddCommandBase<CompanyDto, CompanyCommandData>{}
+public class AddCompanyCommand : AddCommandBase<CompanyDto, CompanyCommandData>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+}
 
-public class UpdateCompanyCommand : UpdateCommandBase<CompanyDto, CompanyCommandData>{}
+public class UpdateCompanyCommand : UpdateCommandBase<CompanyDto, CompanyCommandData>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+}
 
-public class DeleteCompanyCommand : DeleteCommandBase<CompanyDto>{}
+public class DeleteCompanyCommand : DeleteCommandBase<CompanyDto>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+}

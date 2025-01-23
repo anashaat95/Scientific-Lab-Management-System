@@ -2,8 +2,8 @@
 
 public abstract class ValidatorBase<TRequest, TEntity, TDto> : AbstractValidator<TRequest>
     where TRequest : IRequest<Response<TDto>>
-    where TEntity : class
-    where TDto : class
+    where TEntity : class, IEntityBase
+    where TDto : class, IEntityHaveId
 {
     #region Fields
     protected readonly IBaseService<TEntity, TDto> _basicService;

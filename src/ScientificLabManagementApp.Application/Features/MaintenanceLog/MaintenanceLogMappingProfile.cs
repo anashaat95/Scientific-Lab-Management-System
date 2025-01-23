@@ -16,9 +16,9 @@ public class MaintenanceLogMappingProfile : ProfileBase<MaintenanceLog, Maintena
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
                 .ForMember(dest => dest.equipment_name, opt => opt.MapFrom(src => src.Equipment.Name))
-                .ForMember(dest => dest.equipment_url, opt => opt.MapFrom(src => $"api/{src.EquipmentId}"))
+                .ForMember(dest => dest.equipment_url, opt => opt.MapFrom(src => ApiUrlFactory<Equipment>.Create(src.EquipmentId)))
                 .ForMember(dest => dest.technician_name, opt => opt.MapFrom(src => $"{src.Technician.FirstName} {src.Technician.LastName}"))
-                .ForMember(dest => dest.technician_url, opt => opt.MapFrom(src => $"api/{src.TechnicianId}"))
+                .ForMember(dest => dest.technician_url, opt => opt.MapFrom(src => ApiUrlFactory<ApplicationUser>.Create(src.TechnicianId)))
                 .ForMember(x => x.created_at, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
                 ;

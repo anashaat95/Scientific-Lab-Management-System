@@ -19,9 +19,7 @@ public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto
 
     public virtual async Task<TDto> GetDtoByIdAsync(string id)
     {
-        var test = await _context.Set<TEntity>()
-                                   .Where(x => x.Id == id).FirstOrDefaultAsync();
-
+        Console.WriteLine(id);
         var result = await _context.Set<TEntity>()
                                    .Where(x => x.Id == id)
                                    .ProjectTo<TDto>(_mapper.ConfigurationProvider)
@@ -70,14 +68,15 @@ public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto
 
     public virtual async Task<TDto> AddAsync(TEntity entity)
     {
-        var result = await _context.AddAsync(entity);
-        return _mapper.Map<TDto>(result.Entity);
+        var addedEntity = await _context.AddAsync(entity);
+
+        return _mapper.Map<TDto>(addedEntity.Entity);
     }
 
     public virtual Task<TDto> UpdateAsync(TEntity entity)
     {
-        var updatedEntity = _context.Update(entity).Entity;
-        return Task.FromResult(_mapper.Map<TDto>(updatedEntity));
+        var updatedEntity = _context.Update(entity);
+        return Task.FromResult(_mapper.Map<TDto>(updatedEntity.Entity));
     }
 
     public virtual Task DeleteAsync(TEntity entity)
@@ -86,8 +85,8 @@ public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto
         return Task.CompletedTask;
     }
 
-    public virtual Task SaveChangesAsync()
-    {
+    public virtual  Task SaveChangesAsync()
+    { 
         return _context.SaveChangesAsync();
     }
 

@@ -38,7 +38,22 @@ public class TokenService : ITokenService
         var tokenHandler = new JwtSecurityTokenHandler();
 
         SecurityToken securityToken;
-        var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+        ClaimsPrincipal claimsPrincipal;
+        Console.WriteLine(token);
+        try
+        {
+            claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+        }
+        catch (SecurityTokenExpiredException ex)
+        {
+            throw new SecurityTokenExpiredException($"Token has expired. Expiry time (UTC): {ex.Expires}");
+        }
+        catch (SecurityTokenValidationException ex)
+        {
+            throw new SecurityTokenValidationException($"Token validation failed: {ex.Message}");
+            // Handle general validation errors
+        }
+
         var jwtSecurityToken = securityToken as JwtSecurityToken;
 
         if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))

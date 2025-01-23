@@ -1,5 +1,5 @@
 namespace ScientificLabManagementApp.Application;
-public class CountryDto
+public class CountryDto : IEntityHaveId
 {
     public string Id { get; set; }
     public string Name { get; set; }

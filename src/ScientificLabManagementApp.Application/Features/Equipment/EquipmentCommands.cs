@@ -1,6 +1,6 @@
 namespace ScientificLabManagementApp.Application;
 
-public class EquipmentCommandData 
+public class EquipmentCommandData
 {
     public string Name { get; set; }
     public int total_quantity { get; set; }
@@ -16,8 +16,17 @@ public class EquipmentCommandData
     public string company_id { get; set; }
 }
 
-public class AddEquipmentCommand : AddCommandBase<EquipmentDto, EquipmentCommandData>{}
+public class AddEquipmentCommand : AddCommandBase<EquipmentDto, EquipmentCommandData>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+}
 
-public class UpdateEquipmentCommand : UpdateCommandBase<EquipmentDto, EquipmentCommandData>{}
+public class UpdateEquipmentCommand : UpdateCommandBase<EquipmentDto, EquipmentCommandData>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+}
 
-public class DeleteEquipmentCommand : DeleteCommandBase<EquipmentDto>{}
+public class DeleteEquipmentCommand : DeleteCommandBase<EquipmentDto>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+}

@@ -18,11 +18,18 @@ public class AddBookingCommandData : BookingCommandData
 
 public class AddBookingCommand : AddCommandBase<BookingDto, BookingCommandData>
 {
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.ResearcherLevel;
     public new AddBookingCommandData Data { get; set; }
 }
 
-public class UpdateBookingCommand : UpdateCommandBase<BookingDto, BookingCommandData> { }
+public class UpdateBookingCommand : UpdateCommandBase<BookingDto, BookingCommandData>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.ResearcherLevel;
+}
 
-public class DeleteBookingCommand : DeleteCommandBase<BookingDto> { }
+public class DeleteBookingCommand : DeleteCommandBase<BookingDto>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.ResearcherLevel;
+}
 
 

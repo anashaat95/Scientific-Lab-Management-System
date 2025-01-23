@@ -1,5 +1,5 @@
 namespace ScientificLabManagementApp.Application;
-public class CustomUserValidator<TCommand> : ValidatorBase<TCommand, ApplicationUser, UserDto>
+public class UserValidator<TCommand> : ValidatorBase<TCommand, ApplicationUser, UserDto>
     where TCommand : AddUpdateCommandBase<UserDto, UserCommandData>
 {
     public override void ApplyValidationRules()
@@ -39,7 +39,7 @@ public class CustomUserValidator<TCommand> : ValidatorBase<TCommand, Application
 
 }
 
-public class AddUserValidator : CustomUserValidator<AddUserCommand>
+public class AddUserValidator : UserValidator<AddUserCommand>
 {
     public override void ApplyValidationRules()
     {
@@ -53,4 +53,4 @@ public class AddUserValidator : CustomUserValidator<AddUserCommand>
     }
 }
 
-public class UpdateUserValidator : CustomUserValidator<UpdateUserCommand> { }
+public class UpdateUserValidator : UserValidator<UpdateUserCommand> { }

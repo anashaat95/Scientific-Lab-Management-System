@@ -1,5 +1,5 @@
 namespace ScientificLabManagementApp.Application;
-public class UserDto 
+public class UserDto : IEntityHaveId
 {
     public string Id { get; set; }
     public string UserName { get; set; }

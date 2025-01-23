@@ -16,5 +16,6 @@ public enum enEquipmentType
     WaterBath,
     Homogenizer,
     pHMeter,
-    Oven
+    Oven,
+    Accessory
 }

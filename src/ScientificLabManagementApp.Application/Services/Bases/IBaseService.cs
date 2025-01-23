@@ -3,8 +3,8 @@
 namespace ScientificLabManagementApp.Application;
 
 public interface IBaseService<TEntity, TDto>
-    where TEntity : class
-    where TDto : class
+    where TEntity : class, IEntityBase
+    where TDto : class, IEntityHaveId
 {
     Task<TDto> GetDtoByIdAsync(string id);
     Task<TEntity> GetEntityByIdAsync(string id);

@@ -11,7 +11,8 @@ public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRe
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-         if (request is IRoleAuthorizRequest authorizeRequest)
+
+        if (request is IRoleAuthorizRequest authorizeRequest)
         {
             var user = _currentUserService.User;
             var userRoles = _currentUserService.UserRoles;

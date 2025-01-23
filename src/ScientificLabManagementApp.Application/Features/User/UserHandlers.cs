@@ -7,7 +7,7 @@ public class GetManyUserHandler : GetManyQueryHandlerBase<GetManyUserQuery, Appl
                                 .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                                 .ToListAsync(); 
         
-        return FetchedMultiple<UserDto>(users);
+        return FetchedMultiple(users);
     }
 }
 
@@ -17,8 +17,7 @@ public class GetOneUserByIdHandler : GetOneQueryHandlerBase<GetOneUserByIdQuery,
     {
         var user = await _userManager.FindByIdAsync(request.Id);
         if (user is null) return NotFound<UserDto>($"No resource found with the id = {request.Id}");
-        var dto = _mapper.Map<UserDto>(user);
-        return Ok200<UserDto>(dto);
+        return Ok200(_mapper.Map<UserDto>(user));
     }
 }
 
@@ -34,15 +33,12 @@ public class AddUserHandler : AddCommandHandlerBase<AddUserCommand, ApplicationU
             return BadRequest<UserDto>($"Failed to add the user. Errors: {creationResult.ConvertErrorsToString()}");
         }
 
-        var roleAssignmentResult = await _userManager.AddToRoleAsync(entityToAdd, enUserRoles.Researcher.ToString());
+        var roleAssignmentResult = await _userManager.AddToRoleAsync(entityToAdd, enUserRoles.User.ToString());
         if (!roleAssignmentResult.Succeeded)
         {
             return BadRequest<UserDto>($"User created but failed to assign role. Errors: {roleAssignmentResult.ConvertErrorsToString()}");
         }
-
-        var user = await _userManager.FindByEmailAsync(entityToAdd.Email!);
-        var dto = _mapper.Map<UserDto>(user);
-        return Created<UserDto>(dto);
+        return Created<UserDto>(_mapper.Map<UserDto>(entityToAdd));
     }
 }
 
@@ -54,17 +50,14 @@ public class UpdateUserHandler : UpdateCommandHandlerBase<UpdateUserCommand, App
         var entityToUpdate = await _userManager.FindByIdAsync(request.Id);
         if (entityToUpdate is null) return NotFound<UserDto>($"No resource found with the id = {request.Id}");
 
-        var mappedUser = _mapper.Map(request, entityToUpdate);
-        var updateResult = await _userManager.UpdateAsync(mappedUser);
+        var mappedUserEntity = _mapper.Map(request, entityToUpdate);
+        var updateResult = await _userManager.UpdateAsync(mappedUserEntity);
 
         if (!updateResult.Succeeded)
         {
             return BadRequest<UserDto>($"Failed to update the user. Errors: {updateResult.ConvertErrorsToString()}");
         }
-
-        var dto = _mapper.Map<UserDto>(await _userManager.FindByEmailAsync(mappedUser.Email!));
-
-        return Updated<UserDto>(dto);
+        return Updated<UserDto>(_mapper.Map<UserDto>(mappedUserEntity));
     }
 }
 
@@ -75,10 +68,17 @@ public class DeleteUserHandler : DeleteCommandHandlerBase<DeleteUserCommand, App
         var entityToDelete = await _userManager.FindByIdAsync(request.Id);
         if (entityToDelete is null) return NotFound<UserDto>($"No resource found with the id = {request.Id}");
 
+        var userRoles = await _userManager.GetRolesAsync(entityToDelete);
+
+        if (userRoles.Contains(enUserRoles.Admin.ToString()))
+        {
+            return BadRequest<UserDto>($"Failed to delete the user. It is the admin. Cannot be deleted !");
+        }
+
         var deleteResult = await _userManager.DeleteAsync(entityToDelete);
         if (!deleteResult.Succeeded)
         {
-            return BadRequest<UserDto>($"Failed to update the user. Errors: {deleteResult.ConvertErrorsToString()}");
+            return BadRequest<UserDto>($"Failed to delete the user. Errors: {deleteResult.ConvertErrorsToString()}");
         }
 
         return Deleted<UserDto>();

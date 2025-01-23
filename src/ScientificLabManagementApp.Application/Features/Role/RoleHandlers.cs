@@ -27,6 +27,7 @@ public class AddRoleHandler : AddCommandHandlerBase<AddRoleCommand, ApplicationR
     public override async Task<Response<RoleDto>> Handle(AddRoleCommand request, CancellationToken cancellationToken)
     {
         var entityToAdd = _mapper.Map<ApplicationRole>(request);
+
         var creationResult = await _roleManager.CreateAsync(entityToAdd);
         if (!creationResult.Succeeded)
         {

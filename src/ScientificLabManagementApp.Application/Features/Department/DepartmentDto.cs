@@ -1,5 +1,5 @@
 namespace ScientificLabManagementApp.Application;
-public class DepartmentDto 
+public class DepartmentDto : IEntityHaveId
 {
     public string Id { get; set; }
     public string Name { get; set; }

@@ -9,8 +9,17 @@ public class LabCommandData
     public string supervisor_id { get; set; }
     public required string department_id { get; set; }
 }
-public class AddLabCommand : AddCommandBase<LabDto, LabCommandData>{}
+public class AddLabCommand : AddCommandBase<LabDto, LabCommandData>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+}
 
-public class UpdateLabCommand : UpdateCommandBase<LabDto, LabCommandData>{}
+public class UpdateLabCommand : UpdateCommandBase<LabDto, LabCommandData>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+}
 
-public class DeleteLabCommand : DeleteCommandBase<LabDto>{}
+public class DeleteLabCommand : DeleteCommandBase<LabDto>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+}

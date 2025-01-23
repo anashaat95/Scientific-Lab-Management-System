@@ -27,10 +27,16 @@ public class AddUserCommandData : UserCommandData
 public class AddUserCommand : AddCommandBase<UserDto, UserCommandData>
 {
     public new AddUserCommandData Data { get; set; }
+
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
 }
 
 public class UpdateUserCommand : UpdateCommandBase<UserDto, UserCommandData>
 {
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
 }
 
-public class DeleteUserCommand : DeleteCommandBase<UserDto> { }
+public class DeleteUserCommand : DeleteCommandBase<UserDto>
+{
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
+}

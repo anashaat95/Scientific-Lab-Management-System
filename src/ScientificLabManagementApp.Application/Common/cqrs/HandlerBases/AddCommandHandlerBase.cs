@@ -2,8 +2,8 @@
 
 public class AddCommandHandlerBase<TRequest, TEntity, TDto> : RequestHandlerBase<TRequest, TEntity, TDto>
     where TRequest : IRequest<Response<TDto>>
-    where TEntity : class
-    where TDto : class
+    where TEntity : class, IEntityBase
+    where TDto : class, IEntityHaveId
 {
     public override async Task<Response<TDto>> Handle(TRequest request, CancellationToken cancellationToken)
     {

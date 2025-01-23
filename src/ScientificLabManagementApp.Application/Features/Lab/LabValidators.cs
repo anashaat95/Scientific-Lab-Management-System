@@ -5,9 +5,10 @@ public class LabValidator<TCommand> : ValidatorBase<TCommand, Lab, LabDto>
     public override void ApplyValidationRules()
     {
         RuleFor(x => x.Data.Name).ApplyMinMaxLengthRule(ValidationLimitsConfig.NAME.MIN, ValidationLimitsConfig.NAME.MAX);
-        RuleFor(x => x.Data.Capacity).Must(capacity => capacity <= 0).WithMessage("{PropertyName} should be more than zero");
+        RuleFor(x => x.Data.Capacity).Must(capacity => capacity > 0).WithMessage("{PropertyName} should be more than zero");
         RuleFor(x => x.Data.opening_time).ApplyNotEmptyRule().ApplyNotNullableRule();
         RuleFor(x => x.Data.closing_time).ApplyNotEmptyRule().ApplyNotNullableRule();
+        RuleFor(x => x.Data.supervisor_id).ApplyNotEmptyRule().ApplyNotNullableRule();
 
         RuleFor(x => x)
             .Must(x => x.Data.closing_time > x.Data.opening_time)

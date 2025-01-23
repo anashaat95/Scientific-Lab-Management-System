@@ -1,5 +1,5 @@
 namespace ScientificLabManagementApp.Application;
-public class MaintenanceLogDto
+public class MaintenanceLogDto : IEntityHaveId
 {
     public string Id { get; set; }
     public string Description { get; set; }

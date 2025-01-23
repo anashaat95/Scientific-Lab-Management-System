@@ -2,9 +2,7 @@
 
 public class RoleAuthorizeRequest : IRoleAuthorizRequest
 {
-    public virtual IEnumerable<string> AllowedRoles
-     => new[] { enUserRoles.Admin.ToString(), enUserRoles.LabSupervisor.ToString(),
-                enUserRoles.Researcher.ToString() };
+    public virtual IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
 }
 
 public class GetOneQueryBase<TDto> : RoleAuthorizeRequest, IRequest<Response<TDto>>, IEntityHaveId
@@ -15,17 +13,13 @@ public class GetOneQueryBase<TDto> : RoleAuthorizeRequest, IRequest<Response<TDt
     public required string Id { get; set; }
 
 
-    public override IEnumerable<string> AllowedRoles
-     => new[] { enUserRoles.Admin.ToString(), enUserRoles.LabSupervisor.ToString(),
-                enUserRoles.Researcher.ToString(), enUserRoles.Technician.ToString(), enUserRoles.User.ToString() };
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
 }
 
 public class GetManyQueryBases<TDto> : RoleAuthorizeRequest, IRequest<Response<IEnumerable<TDto>>>
     where TDto : class
 {
-    public override IEnumerable<string> AllowedRoles
-     => new[] { enUserRoles.Admin.ToString(), enUserRoles.LabSupervisor.ToString(),
-                enUserRoles.Researcher.ToString(), enUserRoles.Technician.ToString(), enUserRoles.User.ToString() };
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
 }
 
 public abstract class AddUpdateCommandBase<TDto, TCommandData> : RoleAuthorizeRequest, IRequest<Response<TDto>>

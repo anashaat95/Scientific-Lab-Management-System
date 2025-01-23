@@ -8,7 +8,7 @@ public class EntityBaseConfiguration<TEntity> : IEntityTypeConfiguration<TEntity
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
 
-        builder.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()").ValueGeneratedOnAdd();
+        builder.Property(e => e.CreatedAt).IsRequired(true);
         builder.Property(e => e.UpdatedAt).IsRequired(false);
     }
 }

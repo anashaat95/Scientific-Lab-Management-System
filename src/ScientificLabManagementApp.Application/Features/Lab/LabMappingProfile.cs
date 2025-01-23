@@ -17,10 +17,10 @@ public class LabMappingProfile : ProfileBase<Lab, LabDto, LabCommandData>
                 .ForMember(dest => dest.Capacity, opt => opt.MapFrom(src => src.Capacity))
                 .ForMember(dest => dest.opening_time, opt => opt.MapFrom(src => src.OpeningTime))
                 .ForMember(dest => dest.closing_time, opt => opt.MapFrom(src => src.ClosingTime))
-                .ForMember(dest => dest.supervisor_url, opt => opt.MapFrom(src => $"api/{src.SupervisiorId}"))
+                .ForMember(dest => dest.supervisor_url, opt => opt.MapFrom(src => ApiUrlFactory<ApplicationUser>.Create(src.SupervisiorId)))
                 .ForMember(dest => dest.supervisor_name, opt => opt.MapFrom(src => $"{src.Supervisior.FirstName} {src.Supervisior.LastName}"))
                 .ForMember(dest => dest.department_name, opt => opt.MapFrom(src => src.Department.Name))
-                .ForMember(dest => dest.department_url, opt => opt.MapFrom(src => $"api/{src.DepartmentId}"))
+                .ForMember(dest => dest.department_url, opt => opt.MapFrom(src => ApiUrlFactory<Department>.Create(src.DepartmentId)))
                 .ForMember(x => x.created_at, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
                 ;

@@ -2,7 +2,7 @@
 
 public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
     where TEntity : class, IEntityBase
-    where TDto : class
+    where TDto : class, IEntityHaveId
 {
     protected readonly IGenericRepository<TEntity, TDto> _repository;
 
@@ -34,7 +34,7 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
         var resultDto = await _repository.AddAsync(entityToAdd);
         await _repository.SaveChangesAsync();
 
-        return resultDto;
+        return await _repository.GetDtoByIdAsync(resultDto.Id);
     }
 
 
@@ -42,7 +42,7 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
     {
         var resultDto = await _repository.UpdateAsync(entityToUpdate);
         await _repository.SaveChangesAsync();
-        return resultDto;
+        return await _repository.GetDtoByIdAsync(resultDto.Id);
     }
 
     public async Task DeleteAsync(TEntity entity)

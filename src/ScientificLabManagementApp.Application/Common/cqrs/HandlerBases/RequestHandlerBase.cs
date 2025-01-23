@@ -2,8 +2,8 @@
 public abstract class RequestHandlerBase<TRequest, TEntity, TDto>
     : ResponseBuilder, IRequestHandler<TRequest, Response<TDto>>
     where TRequest : IRequest<Response<TDto>>
-    where TEntity : class
-    where TDto : class
+    where TEntity : class, IEntityBase
+    where TDto : class, IEntityHaveId
 {
     #region Field(s)
     protected readonly IBaseService<TEntity, TDto> _basicService;
