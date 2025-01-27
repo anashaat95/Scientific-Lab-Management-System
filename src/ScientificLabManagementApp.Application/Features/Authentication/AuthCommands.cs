@@ -98,3 +98,6 @@ public class RefreshTokenCommand : IRequest<Response<LoginDto>>
     [FromQuery]
     public required string RefreshToken { get; set; }
 }
+
+
+public class GetMeQuery : IRequest<Response<UserDto>> { }

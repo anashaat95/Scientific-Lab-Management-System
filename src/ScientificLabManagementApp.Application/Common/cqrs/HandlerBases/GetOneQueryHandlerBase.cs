@@ -1,4 +1,6 @@
-﻿namespace ScientificLabManagementApp.Application;
+﻿using Azure.Core;
+
+namespace ScientificLabManagementApp.Application;
 
 public class GetOneQueryHandlerBase<TRequest, TEntity, TDto> : RequestHandlerBase<TRequest, TEntity, TDto>
     where TRequest : IRequest<Response<TDto>>, IEntityHaveId
@@ -7,8 +9,13 @@ public class GetOneQueryHandlerBase<TRequest, TEntity, TDto> : RequestHandlerBas
 {
     public override async Task<Response<TDto>> Handle(TRequest request, CancellationToken cancellationToken)
     {
-        var entityDto = await _basicService.GetDtoByIdAsync(request.Id);
+        var entityDto = await GetEntityDto(request);
         return entityDto is not null ? Ok200(entityDto) : NotFound<TDto>($"No resource found with Id = {request.Id}");
+    }
+
+    protected virtual Task<TDto?> GetEntityDto(TRequest request)
+    {
+        return _basicService.GetDtoByIdAsync(request.Id);
     }
 }
 

@@ -1,4 +1,5 @@
-﻿namespace ScientificLabManagementApp.Application;
+﻿
+namespace ScientificLabManagementApp.Application;
 
 public static class ApplicationDependencyInjectionExtensions
 {
@@ -26,6 +27,11 @@ public static class ApplicationDependencyInjectionExtensions
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
 
         services.AddAuthenticationDependencies(configManager);
+
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(6); 
+        });
 
         return services;
     }

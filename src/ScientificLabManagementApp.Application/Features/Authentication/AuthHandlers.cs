@@ -5,6 +5,7 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
 {
     #region Field(s)
     protected readonly IBaseService<RefreshToken, RefreshToken> _refreshTokenService;
+    protected readonly IBaseService<ApplicationUser, UserDto> _userService;
     protected readonly UserManager<ApplicationUser> _userManager;
     protected readonly ITokenService _tokenService;
     protected readonly IEmailService _emailService;
@@ -19,6 +20,7 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
     {
         var serviceProvider = new HttpContextAccessor().HttpContext?.RequestServices;
         _refreshTokenService = serviceProvider!.GetRequiredService<IBaseService<RefreshToken, RefreshToken>>();
+        _userService = serviceProvider!.GetRequiredService<IBaseService<ApplicationUser, UserDto>>();
         _userManager = serviceProvider!.GetRequiredService<UserManager<ApplicationUser>>();
         _tokenService = serviceProvider!.GetRequiredService<ITokenService>();
         _emailService = serviceProvider!.GetRequiredService<IEmailService>();
@@ -201,9 +203,10 @@ public class UpdateEmailHandler : AuthHandler<UpdateEmailCommand, string>
         if (user == null)
             return NotFound<string>("User is not found!");
 
-        _mapper.Map(request, user);
 
-        var result = await _userManager.ConfirmEmailAsync(user, request.token);
+        var decodedToken = WebUtility.UrlDecode(request.token);
+        var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+        _mapper.Map(request, user);
 
         if (!result.Succeeded)
             return BadRequest<string>("Invalid or expired token.");
@@ -224,10 +227,11 @@ public class VerifyEmailHandler : AuthHandler<VerifyEmailQuery, LoginDto>
         if (user.EmailConfirmed)
             return Ok200<LoginDto>($"This email is already verified!");
 
-        var result = await _userManager.ConfirmEmailAsync(user, request.token);
+        var decodedToken = WebUtility.UrlDecode(request.token);
+        var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
 
         if (!result.Succeeded)
-            return BadRequest<LoginDto>("Invalid or expired token.");
+            return BadRequest<LoginDto>(result.ConvertErrorsToString());
 
         return Ok200(await CreateLoginDto(user), "Email verified successfully!");
     }
@@ -315,5 +319,22 @@ public class RefreshTokenHandler : AuthHandler<RefreshTokenCommand, LoginDto>
 
 
         return Ok200(await CreateLoginDto(userFromDb));
+    }
+}
+
+
+public class GetMeHandler : AuthHandler<GetMeQuery, UserDto>
+{
+    public override async Task<Response<UserDto>> Handle(GetMeQuery request, CancellationToken cancellationToken)
+    {
+        var currentUser = _currentUserService.User;
+        if (currentUser == null)
+            return Unauthorized<UserDto>("Unable to identify the user from the access token.");
+
+        var userFromDb = await _userService.GetDtoByIdAsync(_currentUserService.UserId, e => e.Company, e => e.Department, e => e.Lab);
+        if (userFromDb == null)
+            return NotFound<UserDto>("User is not found!");
+
+        return Ok200(_mapper.Map<UserDto>(userFromDb));
     }
 }

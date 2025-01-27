@@ -1,3 +1,5 @@
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
 namespace ScientificLabManagementApp.API;
 
 [Route("api/[controller]")]
@@ -89,6 +91,14 @@ public class AuthController : ApiControllerBase
     public async Task<ActionResult<LoginDto>> RefreshToken(RefreshTokenCommand command)
     {
         var response = await Mediator.Send(command);
+        return Result.Create(response);
+    }
+
+    // GET
+    [HttpGet("/api/me")]
+    public virtual async Task<ActionResult<UserDto>> GetMe()
+    {
+        var response = await Mediator.Send(new GetMeQuery());
         return Result.Create(response);
     }
 }

@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ScientificLabManagementApp.API.Middlewares;
 using ScientificLabManagementApp.Infrastructure;
 
@@ -25,10 +24,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    await new DbSeeder(scope.ServiceProvider, builder.Configuration).Run();
-//}
+using (var scope = app.Services.CreateScope())
+{
+    await new DbSeeder(scope.ServiceProvider, builder.Configuration).Run();
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -40,7 +39,7 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseRouting();
-//app.UseCors("AllowAll");
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();

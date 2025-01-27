@@ -13,7 +13,6 @@ public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQu
     [HttpGet]
     public virtual async Task<ActionResult<IEnumerable<TDto>>> GetAll()
     {
-        Console.WriteLine(HttpContext);
         var response = await Mediator.Send(Activator.CreateInstance<TGetManyQuery>());
         return Result.Create(response);
     }

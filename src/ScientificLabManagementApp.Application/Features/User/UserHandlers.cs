@@ -1,29 +1,24 @@
+
 namespace ScientificLabManagementApp.Application;
 public class GetManyUserHandler : GetManyQueryHandlerBase<GetManyUserQuery, ApplicationUser, UserDto>
 {
-    public override async Task<Response<IEnumerable<UserDto>>> Handle(GetManyUserQuery request, CancellationToken cancellationToken)
+    protected override Task<IEnumerable<UserDto>> GetEntityDtos()
     {
-        var users = await _userManager.Users
-                                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                                .ToListAsync(); 
-        
-        return FetchedMultiple(users);
+        return _basicService.GetAllAsync(e => e.Department, e => e.Company, e => e.Lab);
     }
 }
 
 public class GetOneUserByIdHandler : GetOneQueryHandlerBase<GetOneUserByIdQuery, ApplicationUser, UserDto>
 {
-    public override async Task<Response<UserDto>> Handle(GetOneUserByIdQuery request, CancellationToken cancellationToken)
+    protected override Task<UserDto?> GetEntityDto(GetOneUserByIdQuery request)
     {
-        var user = await _userManager.FindByIdAsync(request.Id);
-        if (user is null) return NotFound<UserDto>($"No resource found with the id = {request.Id}");
-        return Ok200(_mapper.Map<UserDto>(user));
+        return _basicService.GetDtoByIdAsync(request.Id, e => e.Department, e => e.Company, e => e.Lab);
     }
 }
 
 public class AddUserHandler : AddCommandHandlerBase<AddUserCommand, ApplicationUser, UserDto>
 {
-    
+
     public override async Task<Response<UserDto>> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         var entityToAdd = _mapper.Map<ApplicationUser>(request);
@@ -61,7 +56,7 @@ public class UpdateUserHandler : UpdateCommandHandlerBase<UpdateUserCommand, App
     }
 }
 
-public class DeleteUserHandler : DeleteCommandHandlerBase<DeleteUserCommand, ApplicationUser, UserDto> 
+public class DeleteUserHandler : DeleteCommandHandlerBase<DeleteUserCommand, ApplicationUser, UserDto>
 {
     public override async Task<Response<UserDto>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {

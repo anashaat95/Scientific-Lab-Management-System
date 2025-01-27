@@ -13,9 +13,10 @@ public class EmailCreator
         _urlService = urlService;
     }
 
+
     private string GetUrl(ApplicationUser user, string token)
     {
-        return $"{_urlService.GetBaseUrl()}/verify-email?user_id={user.Id}&token={token}"; 
+        return $"{_urlService.GetBaseUrl()}/api/auth/verify-email?user_id={user.Id}&token={WebUtility.UrlEncode(token)}"; 
     }
 
     public void CreateEmailVerificationConfirmationEmail(ApplicationUser user, string token)
@@ -33,7 +34,7 @@ public class EmailCreator
         this.Title = "Verify Your Updated Email";
         this.Body = $"<p>Dear {user.FirstName},</p>" +
                     $"<p>Please verify your update email by clicking the link below:</p>" +
-                    $"<a href='{_urlService.GetBaseUrl()}/verify-update-email?user_id={user.Id}&token={token}&new_email={user.Email}'>Verify Email</a>";
+                    $"<a href='{_urlService.GetBaseUrl()}/api/auth/verify-update-email?user_id={user.Id}&token={WebUtility.UrlEncode(token)}&new_email={user.Email}'>Verify Email</a>";
     }
     
 

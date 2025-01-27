@@ -39,7 +39,6 @@ public class TokenService : ITokenService
 
         SecurityToken securityToken;
         ClaimsPrincipal claimsPrincipal;
-        Console.WriteLine(token);
         try
         {
             claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);

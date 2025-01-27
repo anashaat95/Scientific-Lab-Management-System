@@ -18,6 +18,11 @@ public class DbSeeder
     }
     public async Task Run()
     {
+        var adminUser = await _userManager.FindByEmailAsync("anashaat95@mans.edu.eg");
+
+        if (adminUser != null)
+            return;
+
         _context.Database.EnsureCreated();
 
 

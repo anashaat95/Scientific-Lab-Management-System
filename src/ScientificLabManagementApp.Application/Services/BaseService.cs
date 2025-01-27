@@ -6,27 +6,26 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
 {
     protected readonly IGenericRepository<TEntity, TDto> _repository;
 
-    public BaseService()
+    public BaseService(IGenericRepository<TEntity, TDto> repository)
     {
-        var serviceProvider = new HttpContextAccessor().HttpContext!.RequestServices;
-        _repository = serviceProvider!.GetRequiredService<IGenericRepository<TEntity, TDto>>();
+        _repository = repository;
     }
 
-    public async Task<TDto> GetDtoByIdAsync(string id)
+    public async Task<TDto> GetDtoByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes)
     {
-        var result = await _repository.GetDtoByIdAsync(id);
+        var result = await _repository.GetDtoByIdAsync(id, includes);
         return result;
     }
 
-    public async Task<TEntity> GetEntityByIdAsync(string id)
+    public async Task<TEntity> GetEntityByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes)
     {
-        return await _repository.GetEntityByIdAsync(id);
+        return await _repository.GetEntityByIdAsync(id, includes);
     }
 
 
-    public async Task<IEnumerable<TDto>> GetAllAsync()
+    public async Task<IEnumerable<TDto>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
     {
-        return await _repository.GetAllAsync();
+        return await _repository.GetAllAsync(includes);
     }
 
     public async Task<TDto> AddAsync(TEntity entityToAdd)
@@ -61,14 +60,14 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
         return await _repository.RelatedExistsAsync<RelatedEntity>(id);
     }
 
-    public async Task<RelatedEntity> FindRelatedEntityByIdAsync<RelatedEntity>(Expression<Func<RelatedEntity, bool>> predicate) where RelatedEntity : class, IEntityBase
+    public async Task<RelatedEntity> FindRelatedEntityByIdAsync<RelatedEntity>(Expression<Func<RelatedEntity, bool>> predicate, params Expression<Func<RelatedEntity, object>>[] includes) where RelatedEntity : class, IEntityBase
     {
-        return await _repository.FindRelatedEntityByIdAsync<RelatedEntity>(predicate);
+        return await _repository.FindRelatedEntityByIdAsync(predicate, includes);
     }
 
-    public async Task<TDto> FindOneAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<TDto> FindOneAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
     {
-        var result = await _repository.FindOneAsync(predicate);
+        var result = await _repository.FindOneAsync(predicate, includes);
         return result;
     }
 }
