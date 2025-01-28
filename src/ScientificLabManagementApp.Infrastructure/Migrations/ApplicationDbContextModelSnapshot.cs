@@ -292,7 +292,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.Property<string>("EquipmentId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsOnOverNight")
                         .HasColumnType("bit");
@@ -308,9 +308,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SubEquipmentId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -320,7 +317,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SubEquipmentId");
+                    b.HasIndex("EquipmentId");
 
                     b.HasIndex("UserId");
 
@@ -475,9 +472,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("ParentEquipmentId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime");
 
@@ -509,10 +503,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
-
-                    b.HasIndex("ParentEquipmentId")
-                        .IsUnique()
-                        .HasFilter("[ParentEquipmentId] IS NOT NULL");
 
                     b.ToTable("Equipments", (string)null);
                 });
@@ -707,8 +697,9 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                 {
                     b.HasOne("ScientificLabManagementApp.Domain.Equipment", "Equipment")
                         .WithMany("Bookings")
-                        .HasForeignKey("SubEquipmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("ScientificLabManagementApp.Domain.ApplicationUser", "User")
                         .WithMany("Bookings")
@@ -759,14 +750,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ScientificLabManagementApp.Domain.Equipment", "SubEquipment")
-                        .WithOne("ParentEquipment")
-                        .HasForeignKey("ScientificLabManagementApp.Domain.Equipment", "ParentEquipmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Company");
-
-                    b.Navigation("SubEquipment");
                 });
 
             modelBuilder.Entity("ScientificLabManagementApp.Domain.Lab", b =>
@@ -847,8 +831,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("MaintenanceLogs");
-
-                    b.Navigation("ParentEquipment");
                 });
 #pragma warning restore 612, 618
         }

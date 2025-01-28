@@ -21,8 +21,6 @@ public class BookingMappingProfile : ProfileBase<Booking, BookingDto, BookingCom
             .ForMember(x => x.user_name, opt => opt.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"))
             .ForMember(x => x.equipment_url, opt => opt.MapFrom(src => ApiUrlFactory<Equipment>.Create(src.EquipmentId)))
             .ForMember(x => x.equipment_name, opt => opt.MapFrom(src => src.Equipment.Name))
-            .ForMember(x => x.sub_equipment_url, opt => opt.MapFrom(src => ApiUrlFactory<Equipment>.Create(src.SubEquipmentId)))
-            .ForMember(x => x.equipment_name, opt => opt.MapFrom(src => src.Equipment.Name))
             .ForMember(x => x.created_at, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt));
     }
@@ -36,8 +34,7 @@ public class BookingMappingProfile : ProfileBase<Booking, BookingDto, BookingCom
             .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Data.Notes))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Data.Status))
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Data.user_id))
-            .ForMember(dest => dest.EquipmentId, opt => opt.MapFrom(src => src.Data.equipment_id))
-            .ForMember(dest => dest.SubEquipmentId, opt => opt.MapFrom(src => src.Data.sub_equipment_id));
+            .ForMember(dest => dest.EquipmentId, opt => opt.MapFrom(src => src.Data.equipment_id));
     }
 
     public IMappingExpression<UpdateBookingCommand, Booking> ApplyUpdateBookingCommandToEntityMapping()

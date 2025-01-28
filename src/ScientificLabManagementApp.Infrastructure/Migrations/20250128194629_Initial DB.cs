@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ScientificLabManagementApp.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEWID()"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -33,7 +33,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEWID()"),
                     Name = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -47,7 +47,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEWID()"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -65,7 +65,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RevokedAt = table.Column<DateTime>(type: "datetime", nullable: true),
                     IsRevoked = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -105,7 +105,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     Website = table.Column<string>(type: "nvarchar(4000)", nullable: true),
                     CityId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CountryId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -133,7 +133,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(500)", nullable: false),
                     CompanyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -163,9 +163,8 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     Description = table.Column<string>(type: "nvarchar(4000)", nullable: true),
                     CanBeLeftOverNight = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(4000)", nullable: true),
-                    ParentEquipmentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CompanyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -175,12 +174,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         name: "FK_Equipments_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Equipments_Equipments_ParentEquipmentId",
-                        column: x => x.ParentEquipmentId,
-                        principalTable: "Equipments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -193,7 +186,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(4000)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CompanyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DepartmentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -331,9 +324,8 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EquipmentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SubEquipmentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    EquipmentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -346,8 +338,8 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Bookings_Equipments_SubEquipmentId",
-                        column: x => x.SubEquipmentId,
+                        name: "FK_Bookings_Equipments_EquipmentId",
+                        column: x => x.EquipmentId,
                         principalTable: "Equipments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -364,7 +356,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     ClosingTime = table.Column<TimeOnly>(type: "time", nullable: false),
                     SupervisiorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DepartmentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -393,7 +385,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     EquipmentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     TechnicianId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -463,9 +455,9 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_SubEquipmentId",
+                name: "IX_Bookings_EquipmentId",
                 table: "Bookings",
-                column: "SubEquipmentId");
+                column: "EquipmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_UserId",
@@ -491,13 +483,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                 name: "IX_Equipments_CompanyId",
                 table: "Equipments",
                 column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Equipments_ParentEquipmentId",
-                table: "Equipments",
-                column: "ParentEquipmentId",
-                unique: true,
-                filter: "[ParentEquipmentId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Labs_DepartmentId",

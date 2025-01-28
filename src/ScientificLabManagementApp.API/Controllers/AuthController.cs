@@ -87,7 +87,7 @@ public class AuthController : ApiControllerBase
         return Result.Create(response);
     }
 
-    [HttpPost("refresh-token")]
+    [HttpPost("refresh-token/{RefreshToken}")]
     public async Task<ActionResult<LoginDto>> RefreshToken(RefreshTokenCommand command)
     {
         var response = await Mediator.Send(command);

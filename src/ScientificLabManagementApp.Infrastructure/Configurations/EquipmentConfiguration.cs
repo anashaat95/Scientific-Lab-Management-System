@@ -24,7 +24,6 @@ public class EquipmentConfiguration : EntityBaseConfiguration<Equipment>
 
 
         // Navigation property and relationship
-        builder.HasOne(e => e.SubEquipment).WithOne(s => s.ParentEquipment).HasForeignKey<Equipment>(e => e.ParentEquipmentId).OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(e => e.MaintenanceLogs).WithOne(m=>m.Equipment).HasForeignKey(m=>m.EquipmentId).OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -13,6 +13,4 @@ public class Booking : EntityBase, IEntityAddedByUser
 
     public string EquipmentId { get; set; }
     public virtual Equipment Equipment { get; set; } = null!;
-
-    public string? SubEquipmentId { get; set; } = null!;
 }

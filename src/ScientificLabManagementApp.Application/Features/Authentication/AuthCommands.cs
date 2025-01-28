@@ -95,7 +95,7 @@ public class ChangePasswordCommand : IRequest<Response<string>>
 
 public class RefreshTokenCommand : IRequest<Response<LoginDto>>
 {
-    [FromQuery]
+    [FromRoute]
     public required string RefreshToken { get; set; }
 }
 

@@ -23,8 +23,6 @@ public class EquipmentMappingProfile : ProfileBase<Equipment, EquipmentDto, Equi
                 .ForMember(dest => dest.Specifications, opt => opt.MapFrom(src => src.Specifications))
                 .ForMember(dest => dest.can_be_left_overnight, opt => opt.MapFrom(src => src.CanBeLeftOverNight))
                 .ForMember(dest => dest.image_url, opt => opt.MapFrom(src => src.ImageUrl))
-                .ForMember(dest => dest.parent_equipment_url, opt => opt.MapFrom(src => String.IsNullOrEmpty(src.ParentEquipmentId) ? "" : ApiUrlFactory<Equipment>.Create(src.ParentEquipmentId)))
-                .ForMember(dest => dest.parent_equipment_name, opt => opt.MapFrom(src => src.ParentEquipment != null ? src.ParentEquipment.Name : ""))
                 .ForMember(dest => dest.company_url, opt => opt.MapFrom(src => ApiUrlFactory<Company>.Create(src.CompanyId)))
                 .ForMember(dest => dest.company_name, opt => opt.MapFrom(src => src.Company.Name))
                 .ForMember(dest => dest.created_at, opt => opt.MapFrom(src => src.CreatedAt))
@@ -45,7 +43,6 @@ public class EquipmentMappingProfile : ProfileBase<Equipment, EquipmentDto, Equi
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Data.Description))
                 .ForMember(dest => dest.CanBeLeftOverNight, opt => opt.MapFrom(src => src.Data.can_be_Left_overnight))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Data.image_url))
-                .ForMember(dest => dest.ParentEquipmentId, opt => opt.MapFrom(src => src.Data.parent_equipment_id))
                 .ForMember(dest => dest.CompanyId, opt => opt.MapFrom(src => src.Data.company_id))
                 ;
     }

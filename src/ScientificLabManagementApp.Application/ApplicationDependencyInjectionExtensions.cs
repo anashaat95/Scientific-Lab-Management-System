@@ -30,7 +30,7 @@ public static class ApplicationDependencyInjectionExtensions
 
         services.Configure<DataProtectionTokenProviderOptions>(options =>
         {
-            options.TokenLifespan = TimeSpan.FromHours(6); 
+            options.TokenLifespan = TimeSpan.FromHours(6);
         });
 
         return services;

@@ -11,9 +11,6 @@ public class BookingDto : IEntityHaveId
     public string user_name { get; set; }
     public string equipment_url { get; set; }
     public string equipment_name { get; set; }
-    public string sub_equipment_url { get; set; }
-    public string sub_equipment_name { get; set; }
-
     public DateTime created_at { get; set; }
     public DateTime? updated_at { get; set; }
 }

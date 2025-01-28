@@ -12,8 +12,8 @@ using ScientificLabManagementApp.Infrastructure;
 namespace ScientificLabManagementApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250111180555_Initial Migration")]
-    partial class InitialMigration
+    [Migration("20250128194629_Initial DB")]
+    partial class InitialDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -143,9 +143,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -190,9 +188,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DepartmentId")
                         .IsRequired()
@@ -292,16 +288,14 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("EndDateTime")
                         .HasColumnType("datetime");
 
                     b.Property<string>("EquipmentId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsOnOverNight")
                         .HasColumnType("bit");
@@ -317,9 +311,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SubEquipmentId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -329,7 +320,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SubEquipmentId");
+                    b.HasIndex("EquipmentId");
 
                     b.HasIndex("UserId");
 
@@ -344,9 +335,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -376,9 +365,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -413,9 +400,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -441,9 +426,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -480,9 +463,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(4000)");
@@ -493,9 +474,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ParentEquipmentId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime");
@@ -529,10 +507,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("ParentEquipmentId")
-                        .IsUnique()
-                        .HasFilter("[ParentEquipmentId] IS NOT NULL");
-
                     b.ToTable("Equipments", (string)null);
                 });
 
@@ -550,9 +524,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasColumnType("time");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DepartmentId")
                         .IsRequired()
@@ -590,9 +562,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -629,9 +599,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ExpiresIn")
                         .HasColumnType("datetime");
@@ -732,8 +700,9 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                 {
                     b.HasOne("ScientificLabManagementApp.Domain.Equipment", "Equipment")
                         .WithMany("Bookings")
-                        .HasForeignKey("SubEquipmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("ScientificLabManagementApp.Domain.ApplicationUser", "User")
                         .WithMany("Bookings")
@@ -784,14 +753,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ScientificLabManagementApp.Domain.Equipment", "SubEquipment")
-                        .WithOne("ParentEquipment")
-                        .HasForeignKey("ScientificLabManagementApp.Domain.Equipment", "ParentEquipmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Company");
-
-                    b.Navigation("SubEquipment");
                 });
 
             modelBuilder.Entity("ScientificLabManagementApp.Domain.Lab", b =>
@@ -872,8 +834,6 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("MaintenanceLogs");
-
-                    b.Navigation("ParentEquipment");
                 });
 #pragma warning restore 612, 618
         }

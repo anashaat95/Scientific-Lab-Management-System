@@ -15,15 +15,9 @@ public class Equipment : EntityBase
     public bool CanBeLeftOverNight { get; set; } = false;
     public string? ImageUrl { get; set; }
 
-    // Self-referencing Relationship
-    public string? ParentEquipmentId { get; set; }
-    public virtual Equipment? ParentEquipment { get; set; }
-    public virtual Equipment? SubEquipment { get; set; }
-
     // Relationships
     public virtual ICollection<Booking>? Bookings { get; set; }
     public virtual ICollection<MaintenanceLog>? MaintenanceLogs { get; set; }
-
 
     // Organizational Context
     public string CompanyId { get; set; }

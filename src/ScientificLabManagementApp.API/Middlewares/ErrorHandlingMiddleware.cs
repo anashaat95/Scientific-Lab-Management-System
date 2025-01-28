@@ -16,11 +16,29 @@ public class ErrorHandlingMiddleware
         {
             await _next(httpContext);
         }
+        catch(UnauthorizedAccessException ex)
+        {
+            await HandleAuthorizationExceptionAsync(httpContext, ex);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred.");
             await HandleExceptionAsync(httpContext, ex);
         }
+    }
+
+    private Task HandleAuthorizationExceptionAsync(HttpContext context, Exception exception)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+        var errorResponse = new ErrorResponse
+        {
+            Message = "You are not authenticated.",
+            Details = exception.Message 
+        };
+
+        return context.Response.WriteAsJsonAsync(errorResponse);
     }
 
     private Task HandleExceptionAsync(HttpContext context, Exception exception)

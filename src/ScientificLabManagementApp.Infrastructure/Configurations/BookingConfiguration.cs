@@ -17,6 +17,5 @@ public class BookingConfiguration : EntityBaseConfiguration<Booking>
 
         // Navigation properties and relationships
         builder.HasOne(x => x.Equipment).WithMany(e => e.Bookings).HasForeignKey(x => x.EquipmentId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(x => x.Equipment).WithMany(s => s.Bookings).HasForeignKey(x => x.SubEquipmentId).OnDelete(DeleteBehavior.Restrict);
     }
 }

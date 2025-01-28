@@ -31,11 +31,6 @@ public class AddBookingValidator : BookingValidator<AddBookingCommand>
         RuleFor(x => x.Data)
                 .MustAsync(ValidateEquipmentAsync)
                 .WithMessage("No equipment found with the provided equipment_id.");
-
-        // For sub equipment
-        RuleFor(x => x.Data)
-                .MustAsync(ValidateSubEquipmentAsync)
-                .WithMessage("No sub-equipment found with the provided sub_equipment_id.");
     }
 
     private async Task<bool> ValidateEquipmentAsync(AddBookingCommandData data, CancellationToken cancellationToken)
@@ -58,26 +53,7 @@ public class AddBookingValidator : BookingValidator<AddBookingCommand>
 
         return true;
     }
-    private async Task<bool> ValidateSubEquipmentAsync(AddBookingCommandData data, CancellationToken cancellationToken)
-    {
-        if (data.sub_equipment_id == null) return true;
 
-        var subEquipmentEntity = await _basicService.FindRelatedEntityByIdAsync<Equipment>(
-            e => e.Id == data.sub_equipment_id && e.ParentEquipmentId == data.equipment_id);
-
-        if (subEquipmentEntity is null) return false;
-
-        if (subEquipmentEntity.Status == enEquipmentStatus.InMaintainance)
-            throw new FluentValidation.ValidationException("Sub-equipment cannot be booked because it is currently in maintenance.");
-
-        if (subEquipmentEntity.Status == enEquipmentStatus.FullyBooked)
-            throw new FluentValidation.ValidationException("Sub-equipment cannot be booked because it is currently fully booked.");
-
-        if (subEquipmentEntity.Status == enEquipmentStatus.Decommissioned)
-            throw new FluentValidation.ValidationException("Sub-equipment cannot be booked because it is decommissioned.");
-
-        return true;
-    }
 }
 
 public class UpdateBookingValidator : BookingValidator<UpdateBookingCommand> { }
