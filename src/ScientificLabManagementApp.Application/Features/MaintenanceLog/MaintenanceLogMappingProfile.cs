@@ -5,8 +5,8 @@ public class MaintenanceLogMappingProfile : ProfileBase<MaintenanceLog, Maintena
     public MaintenanceLogMappingProfile()
     {
         ApplyEntityToDtoMapping();
-        ApplyCommandToEntityMapping<AddMaintenanceLogCommand>();
-        ApplyCommandToEntityMapping<UpdateMaintenanceLogCommand>();
+        ApplyCommandToEntityMapping<AddMaintenanceLogCommand, AddMaintenanceLogCommandData>();
+        ApplyCommandToEntityMapping<UpdateMaintenanceLogCommand, UpdateMaintenanceLogCommandData>();
     }
 
     public override IMappingExpression<MaintenanceLog, MaintenanceLogDto> ApplyEntityToDtoMapping()
@@ -23,7 +23,7 @@ public class MaintenanceLogMappingProfile : ProfileBase<MaintenanceLog, Maintena
                 .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
                 ;
     }
-    public override IMappingExpression<TSource, MaintenanceLog> ApplyCommandToEntityMapping<TSource>()
+    public override IMappingExpression<TSource, MaintenanceLog> ApplyCommandToEntityMapping<TSource, TData>()
     {
         return CreateMap<TSource, MaintenanceLog>()
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Data.Description))

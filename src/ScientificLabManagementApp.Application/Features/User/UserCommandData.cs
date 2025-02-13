@@ -1,6 +1,6 @@
 namespace ScientificLabManagementApp.Application;
 
-public class UserCommandData
+public abstract class UserCommandData
 {
     public string UserName { get; set; }
     public string first_name { get; set; }
@@ -24,14 +24,17 @@ public class AddUserCommandData : UserCommandData
     public string confirm_password { get; set; }
 }
 
-public class AddUserCommand : AddCommandBase<UserDto, UserCommandData>
+public class UpdateUserCommandData : UserCommandData
 {
-    public new AddUserCommandData Data { get; set; }
+}
+
+public class AddUserCommand : AddCommandBase<UserDto, AddUserCommandData>
+{
 
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
 }
 
-public class UpdateUserCommand : UpdateCommandBase<UserDto, UserCommandData>
+public class UpdateUserCommand : UpdateCommandBase<UserDto, UpdateUserCommandData>
 {
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
 }

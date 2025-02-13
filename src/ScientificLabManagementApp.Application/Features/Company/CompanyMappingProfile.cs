@@ -5,9 +5,11 @@ public class CompanyMappingProfile : ProfileBase<Company, CompanyDto, CompanyCom
     public CompanyMappingProfile()
     {
         ApplyEntityToDtoMapping();
-        ApplyCommandToEntityMapping<AddCompanyCommand>();
-        ApplyCommandToEntityMapping<UpdateCompanyCommand>();
+        ApplyCommandToEntityMapping<AddCompanyCommand, AddCompanyCommandData>();
+        ApplyCommandToEntityMapping<UpdateCompanyCommand, UpdateCompanyCommandData>();
     }
+
+
     public override IMappingExpression<Company, CompanyDto> ApplyEntityToDtoMapping()
     {
         return CreateMap<Company, CompanyDto>()
@@ -25,7 +27,7 @@ public class CompanyMappingProfile : ProfileBase<Company, CompanyDto, CompanyCom
             ;
     }
 
-    public override IMappingExpression<TSource, Company> ApplyCommandToEntityMapping<TSource>()
+    public override IMappingExpression<TSource, Company> ApplyCommandToEntityMapping<TSource, TData>()
     {
         return CreateMap<TSource, Company>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Data.Name))

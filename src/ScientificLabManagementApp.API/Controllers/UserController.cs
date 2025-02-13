@@ -5,7 +5,8 @@ namespace ScientificLabManagementApp.API;
 public class UserController :
     ControllerBaseWithEndpoints<
         UserDto, GetOneUserByIdQuery, GetManyUserQuery,
-        UserCommandData, AddUserCommand, UpdateUserCommand, DeleteUserCommand>
+        UserCommandData, AddUserCommandData, UpdateUserCommandData,
+        AddUserCommand, UpdateUserCommand, DeleteUserCommand>
 
 {
 

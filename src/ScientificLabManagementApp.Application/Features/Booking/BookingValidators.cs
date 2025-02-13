@@ -1,6 +1,7 @@
 namespace ScientificLabManagementApp.Application;
-public class BookingValidator<TCommand> : ValidatorBase<TCommand, Booking, BookingDto>
-    where TCommand : AddUpdateCommandBase<BookingDto, BookingCommandData>
+public class BookingValidator<TCommand, TData> : ValidatorBase<TCommand, Booking, BookingDto>
+    where TCommand : AddUpdateCommandBase<BookingDto, TData>
+    where TData : BookingCommandData
 {
     public override void ApplyValidationRules()
     {
@@ -12,7 +13,7 @@ public class BookingValidator<TCommand> : ValidatorBase<TCommand, Booking, Booki
 
 }
 
-public class AddBookingValidator : BookingValidator<AddBookingCommand>
+public class AddBookingValidator : BookingValidator<AddBookingCommand, AddBookingCommandData>
 {
     public override void ApplyValidationRules()
     {
@@ -56,4 +57,4 @@ public class AddBookingValidator : BookingValidator<AddBookingCommand>
 
 }
 
-public class UpdateBookingValidator : BookingValidator<UpdateBookingCommand> { }
+public class UpdateBookingValidator : BookingValidator<UpdateBookingCommand, UpdateBookingCommandData> { }

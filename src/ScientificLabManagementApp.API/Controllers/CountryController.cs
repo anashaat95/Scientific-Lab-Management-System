@@ -5,7 +5,7 @@ namespace ScientificLabManagementApp.API;
 public class CountryController :
     ControllerBaseWithEndpoints<
         CountryDto, GetOneCountryByIdQuery, GetManyCountryQuery,
-        CountryCommandData, AddCountryCommand, UpdateCountryCommand, DeleteCountryCommand>
-
+        CountryCommandData, AddCountryCommandData, UpdateCountryCommandData,
+        AddCountryCommand, UpdateCountryCommand, DeleteCountryCommand>
 {
 }

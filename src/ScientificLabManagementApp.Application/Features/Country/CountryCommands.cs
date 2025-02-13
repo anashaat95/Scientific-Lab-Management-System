@@ -1,16 +1,19 @@
 namespace ScientificLabManagementApp.Application;
 
-public class CountryCommandData
+public abstract class CountryCommandData
 {
     public required string Name { get; set; }
 }
 
-public class AddCountryCommand : AddCommandBase<CountryDto, CountryCommandData>
+public class AddCountryCommandData : CountryCommandData { }
+public class UpdateCountryCommandData : CountryCommandData { }
+
+public class AddCountryCommand : AddCommandBase<CountryDto, AddCountryCommandData>
 {
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
 }
 
-public class UpdateCountryCommand : UpdateCommandBase<CountryDto, CountryCommandData>
+public class UpdateCountryCommand : UpdateCommandBase<CountryDto, UpdateCountryCommandData>
 {
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
 }

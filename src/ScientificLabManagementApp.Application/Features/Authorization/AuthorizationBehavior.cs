@@ -11,17 +11,23 @@ public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRe
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-
-        if (request is IRoleAuthorizRequest authorizeRequest)
+        if (typeof(TRequest).Name == nameof(GetManyCompanyQuery) ||
+            typeof(TRequest).Name == nameof(GetManyDepartmentQuery) ||
+            typeof(TRequest).Name == nameof(GetManyLabQuery))
         {
-            var user = _currentUserService.User;
-            var userRoles = _currentUserService.UserRoles;
-
-            if (!authorizeRequest.AllowedRoles.Any(role => userRoles.Contains(role)))
-            {
-                throw new UnauthorizedAccessException($"Access denied. Allowed roles: {string.Join(", ", authorizeRequest.AllowedRoles)}");
-            }
+            return await next();
         }
+
+        //if (request is IRoleAuthorizRequest authorizeRequest)
+        //{
+        //    var user = _currentUserService.User;
+        //    var userRoles = _currentUserService.UserRoles;
+
+        //    if (!authorizeRequest.AllowedRoles.Any(role => userRoles.Contains(role)))
+        //    {
+        //        throw new UnauthorizedAccessException($"Access denied. Allowed roles: {string.Join(", ", authorizeRequest.AllowedRoles)}");
+        //    }
+        //}
 
         return await next();
     }

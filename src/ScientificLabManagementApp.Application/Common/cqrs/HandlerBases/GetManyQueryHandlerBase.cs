@@ -6,6 +6,7 @@ public class GetManyQueryHandlerBase<TRequest, TEntity, TDto> : ResponseBuilder,
     where TDto : class, IEntityHaveId
 {
     protected readonly IBaseService<TEntity, TDto> _basicService;
+    protected readonly IApplicationUserService _applicationUserService;
     protected readonly UserManager<ApplicationUser> _userManager;
     protected readonly RoleManager<ApplicationRole> _roleManager;
     protected readonly IMapper _mapper;
@@ -17,6 +18,7 @@ public class GetManyQueryHandlerBase<TRequest, TEntity, TDto> : ResponseBuilder,
         _userManager = serviceProvider!.GetRequiredService<UserManager<ApplicationUser>>();
         _roleManager = serviceProvider!.GetRequiredService<RoleManager<ApplicationRole>>();
         _mapper = serviceProvider!.GetRequiredService<IMapper>();
+        _applicationUserService = serviceProvider!.GetRequiredService<IApplicationUserService>();
     }
 
     public virtual async Task<Response<IEnumerable<TDto>>> Handle(TRequest request, CancellationToken cancellationToken)

@@ -5,7 +5,8 @@ namespace ScientificLabManagementApp.API;
 public class LabController :
     ControllerBaseWithEndpoints<
         LabDto, GetOneLabByIdQuery, GetManyLabQuery,
-        LabCommandData, AddLabCommand, UpdateLabCommand, DeleteLabCommand>
+        LabCommandData, AddLabCommandData,  UpdateLabCommandData,
+        AddLabCommand, UpdateLabCommand, DeleteLabCommand>
 
 {
 }

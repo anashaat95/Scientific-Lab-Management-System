@@ -30,6 +30,8 @@ public class DbSeeder
         var labSupervisior = new ApplicationRole { Name = enUserRoles.LabSupervisor.ToString() };
         var researcher = new ApplicationRole { Name = enUserRoles.Researcher.ToString() };
         var technician = new ApplicationRole { Name = enUserRoles.Technician.ToString() };
+        var user = new ApplicationRole { Name = enUserRoles.User.ToString() };
+       
 
         if (!await _roleManager.Roles.AnyAsync())
         {
@@ -37,6 +39,7 @@ public class DbSeeder
             await _roleManager.CreateAsync(labSupervisior);
             await _roleManager.CreateAsync(researcher);
             await _roleManager.CreateAsync(technician);
+            await _roleManager.CreateAsync(user);
         }
 
         var egypt = new Country() { Name = "Egypt" };

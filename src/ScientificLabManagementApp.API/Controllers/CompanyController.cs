@@ -5,7 +5,8 @@ namespace ScientificLabManagementApp.API;
 public class CompanyController :
     ControllerBaseWithEndpoints<
         CompanyDto, GetOneCompanyByIdQuery, GetManyCompanyQuery,
-        CompanyCommandData, AddCompanyCommand, UpdateCompanyCommand, DeleteCompanyCommand>
+        CompanyCommandData, AddCompanyCommandData, UpdateCompanyCommandData,
+        AddCompanyCommand, UpdateCompanyCommand, DeleteCompanyCommand>
 
 {
 }

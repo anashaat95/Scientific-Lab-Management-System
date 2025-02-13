@@ -1,6 +1,7 @@
 namespace ScientificLabManagementApp.Application;
-public class CountryValidator<TCommand> : ValidatorBase<TCommand, Country, CountryDto>
-    where TCommand : AddUpdateCommandBase<CountryDto, CountryCommandData>
+public class CountryValidator<TCommand, TData> : ValidatorBase<TCommand, Country, CountryDto>
+    where TCommand : AddUpdateCommandBase<CountryDto, TData>
+    where TData : CountryCommandData
 {
     public override void ApplyValidationRules()
     {
@@ -8,6 +9,6 @@ public class CountryValidator<TCommand> : ValidatorBase<TCommand, Country, Count
     }
 }
 
-public class AddCountryValidator : CountryValidator<AddCountryCommand> {}
+public class AddCountryValidator : CountryValidator<AddCountryCommand, AddCountryCommandData> {}
 
-public class UpdateCountryValidator : CountryValidator<UpdateCountryCommand> {}
+public class UpdateCountryValidator : CountryValidator<UpdateCountryCommand, UpdateCountryCommandData> {}

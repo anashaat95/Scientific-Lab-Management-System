@@ -1,6 +1,6 @@
 ﻿namespace ScientificLabManagementApp.Infrastructure;
 
-public class RoleConfiguration : EntityBaseConfiguration<ApplicationRole>
+public class ApplicationRoleConfiguration : EntityBaseConfiguration<ApplicationRole>
 {
     public override void Configure(EntityTypeBuilder<ApplicationRole> builder)
     {

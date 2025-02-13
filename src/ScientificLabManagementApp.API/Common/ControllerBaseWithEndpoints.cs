@@ -1,13 +1,15 @@
 ﻿namespace ScientificLabManagementApp.API;
 
-public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQuery, TCommandData, TAddCommand, TUpdateCommand, TDeleteCommand> : ApiControllerBase
+public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQuery, TCommandData, TAddCommandData, TUpdateCommandData, TAddCommand, TUpdateCommand, TDeleteCommand> : ApiControllerBase
     
     where TGetOneQuery : GetOneQueryBase<TDto>
     where TGetManyQuery : GetManyQueryBases<TDto>
-    where TAddCommand : AddUpdateCommandBase<TDto, TCommandData>
-    where TUpdateCommand : AddUpdateCommandBase<TDto, TCommandData>
+    where TAddCommand : AddCommandBase<TDto, TAddCommandData>
+    where TUpdateCommand : UpdateCommandBase<TDto, TUpdateCommandData>
     where TDeleteCommand : DeleteCommandBase<TDto>
     where TCommandData : class
+    where TAddCommandData : class, TCommandData
+    where TUpdateCommandData : class, TCommandData
     where TDto : class 
 {
     [HttpGet]

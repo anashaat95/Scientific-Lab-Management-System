@@ -4,14 +4,19 @@ public class UserMappingProfile : ProfileBase<ApplicationUser, UserDto, UserComm
 {
     public UserMappingProfile()
     {
-        ApplyEntityToDtoMapping();
-        ApplyCommandToEntityMapping<AddUserCommand>();
-        ApplyCommandToEntityMapping<UpdateUserCommand>();
+        ApplyCustomEntityToDtoMapping();
+        ApplyCommandToEntityMapping<AddUserCommand, AddUserCommandData>();
+        ApplyCommandToEntityMapping<UpdateUserCommand, UpdateUserCommandData>();
     }
 
     public override IMappingExpression<ApplicationUser, UserDto> ApplyEntityToDtoMapping()
     {
-        return CreateMap<ApplicationUser, UserDto>()
+        return CreateMap<ApplicationUser, UserDto>();
+    }
+
+    public IMappingExpression<MappingApplicationUser, UserDto> ApplyCustomEntityToDtoMapping()
+    {
+        return CreateMap<MappingApplicationUser, UserDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.first_name, opt => opt.MapFrom(src => src.FirstName))
@@ -22,11 +27,11 @@ public class UserMappingProfile : ProfileBase<ApplicationUser, UserDto, UserComm
                 .ForMember(dest => dest.two_factor_enabled, opt => opt.MapFrom(src => src.TwoFactorEnabled))
                 .ForMember(dest => dest.image_url, opt => opt.MapFrom(src => src.ImageUrl))
                 .ForMember(dest => dest.company_url, opt => opt.MapFrom(src => ApiUrlFactory<Company>.Create(src.CompanyId)))
-                .ForMember(dest => dest.company_name, opt => opt.MapFrom(src => src.Company.Name))
+                .ForMember(dest => dest.company_name, opt => opt.MapFrom(src => src.CompanyName))
                 .ForMember(dest => dest.department_url, opt => opt.MapFrom(src => ApiUrlFactory<Department>.Create(src.DepartmentId)))
-                .ForMember(dest => dest.department_name, opt => opt.MapFrom(src => src.Department.Name))
+                .ForMember(dest => dest.department_name, opt => opt.MapFrom(src => src.DepartmentName))
                 .ForMember(dest => dest.lab_url, opt => opt.MapFrom(src => ApiUrlFactory<Lab>.Create(src.LabId)))
-                .ForMember(dest => dest.lab_name, opt => opt.MapFrom(src => src.Lab.Name))
+                .ForMember(dest => dest.lab_name, opt => opt.MapFrom(src => src.LabName))
                 .ForMember(dest => dest.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
                 .ForMember(dest => dest.google_scholar_url, opt => opt.MapFrom(src => src.GoogleScholarUrl))
                 .ForMember(dest => dest.academia_url, opt => opt.MapFrom(src => src.AcademiaUrl))
@@ -39,7 +44,7 @@ public class UserMappingProfile : ProfileBase<ApplicationUser, UserDto, UserComm
     }
 
 
-    public override IMappingExpression<TSource, ApplicationUser> ApplyCommandToEntityMapping<TSource>()
+    public override IMappingExpression<TSource, ApplicationUser> ApplyCommandToEntityMapping<TSource, TData>()
     {
         return CreateMap<TSource, ApplicationUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Data.UserName))

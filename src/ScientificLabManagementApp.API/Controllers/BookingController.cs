@@ -6,6 +6,8 @@ namespace ScientificLabManagementApp.API;
 public class BookingController :
     ControllerBaseWithEndpoints<
         BookingDto, GetOneBookingByIdQuery, GetManyBookingQuery,
-        BookingCommandData, AddBookingCommand, UpdateBookingCommand, DeleteBookingCommand>
+        BookingCommandData, AddBookingCommandData, UpdateBookingCommandData,
+        AddBookingCommand, UpdateBookingCommand, DeleteBookingCommand>
 {
 }
+

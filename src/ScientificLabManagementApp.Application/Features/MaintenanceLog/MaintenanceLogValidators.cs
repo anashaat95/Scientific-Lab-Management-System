@@ -1,6 +1,7 @@
 namespace ScientificLabManagementApp.Application;
-public class MaintenanceLogValidator<TCommand> : ValidatorBase<TCommand, MaintenanceLog, MaintenanceLogDto>
-    where TCommand : AddUpdateCommandBase<MaintenanceLogDto, MaintenanceLogCommandData>
+public class MaintenanceLogValidator<TCommand, TData> : ValidatorBase<TCommand, MaintenanceLog, MaintenanceLogDto>
+    where TCommand : AddUpdateCommandBase<MaintenanceLogDto, TData>
+    where TData : MaintenanceLogCommandData
 {
     public override void ApplyValidationRules()
     {
@@ -32,6 +33,6 @@ public class MaintenanceLogValidator<TCommand> : ValidatorBase<TCommand, Mainten
     }
 
 }
-public class AddMaintenanceLogValidator : MaintenanceLogValidator<AddMaintenanceLogCommand> { }
+public class AddMaintenanceLogValidator : MaintenanceLogValidator<AddMaintenanceLogCommand, AddMaintenanceLogCommandData> { }
 
-public class UpdateMaintenanceLogValidator : MaintenanceLogValidator<UpdateMaintenanceLogCommand> { }
+public class UpdateMaintenanceLogValidator : MaintenanceLogValidator<UpdateMaintenanceLogCommand, UpdateMaintenanceLogCommandData> { }

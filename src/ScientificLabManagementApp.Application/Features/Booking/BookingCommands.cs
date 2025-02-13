@@ -1,6 +1,6 @@
 namespace ScientificLabManagementApp.Application;
 
-public class BookingCommandData
+public abstract class BookingCommandData
 {
     public DateTime start_date_time { get; set; }
     public DateTime end_date_time { get; set; }
@@ -15,14 +15,18 @@ public class AddBookingCommandData : BookingCommandData
     public string? sub_equipment_id { get; set; }
 }
 
+public class UpdateBookingCommandData : BookingCommandData
+{
+}
 
-public class AddBookingCommand : AddCommandBase<BookingDto, BookingCommandData>
+
+public class AddBookingCommand : AddCommandBase<BookingDto, AddBookingCommandData>
 {
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.ResearcherLevel;
     public new AddBookingCommandData Data { get; set; }
 }
 
-public class UpdateBookingCommand : UpdateCommandBase<BookingDto, BookingCommandData>
+public class UpdateBookingCommand : UpdateCommandBase<BookingDto, UpdateBookingCommandData>
 {
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.ResearcherLevel;
 }

@@ -16,10 +16,12 @@ builder.Configuration.AddJsonFile("Properties/launchSettings.json", optional: tr
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader());
+    options.AddPolicy("AllowAll", config =>
+    {
+        config.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+
+        config.WithOrigins(builder.Configuration["FrontendUrl"]).AllowCredentials().AllowAnyMethod().AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();

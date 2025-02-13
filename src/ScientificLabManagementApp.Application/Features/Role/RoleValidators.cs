@@ -1,6 +1,7 @@
 namespace ScientificLabManagementApp.Application;
-public class RoleValidator<TCommand> : ValidatorBase<TCommand, ApplicationRole, RoleDto>
-    where TCommand : AddUpdateCommandBase<RoleDto, RoleCommandData>
+public class RoleValidator<TCommand, TData> : ValidatorBase<TCommand, ApplicationRole, RoleDto>
+    where TCommand : AddUpdateCommandBase<RoleDto, TData>
+    where TData : RoleCommandData
 {
     public override void ApplyValidationRules()
     {
@@ -8,6 +9,6 @@ public class RoleValidator<TCommand> : ValidatorBase<TCommand, ApplicationRole, 
     }
 }
 
-public class AddRoleValidator : RoleValidator<AddRoleCommand> {}
+public class AddRoleValidator : RoleValidator<AddRoleCommand, AddRoleCommandData> {}
 
-public class UpdateRoleValidator : RoleValidator<UpdateRoleCommand> {}
+public class UpdateRoleValidator : RoleValidator<UpdateRoleCommand, UpdateRoleCommandData> {}

@@ -5,19 +5,9 @@ public class DepartmentMappingProfile : ProfileBase<Department, DepartmentDto, D
     public DepartmentMappingProfile()
     {
         ApplyEntityToDtoMapping();
-
-        ApplyCommandToEntityMapping<AddDepartmentCommand>();
-        ApplyCommandToEntityMapping<UpdateDepartmentCommand>();
+        ApplyCommandToEntityMapping<AddDepartmentCommand, AddDepartmentCommandData>();
+        ApplyCommandToEntityMapping<UpdateDepartmentCommand, UpdateDepartmentCommandData>();
     }
-
-    public override IMappingExpression<TSource, Department> ApplyCommandToEntityMapping<TSource>()
-    {
-        return CreateMap<TSource, Department>()
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Data.Name))
-            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Data.Location))
-            .ForMember(dest => dest.CompanyId, opt => opt.MapFrom(src => src.Data.company_id));
-    }
-
     public override IMappingExpression<Department, DepartmentDto> ApplyEntityToDtoMapping()
     {
         return CreateMap<Department, DepartmentDto>()
@@ -27,4 +17,13 @@ public class DepartmentMappingProfile : ProfileBase<Department, DepartmentDto, D
                 .ForMember(x => x.company_url, opt => opt.MapFrom(src => ApiUrlFactory<Company>.Create(src.CompanyId)))
                 .ForMember(x => x.company_name, opt => opt.MapFrom(src => src.Company.Name));
     }
+    public override IMappingExpression<TSource, Department> ApplyCommandToEntityMapping<TSource, TData>()
+    {
+        return CreateMap<TSource, Department>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Data.Name))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Data.Location))
+            .ForMember(dest => dest.CompanyId, opt => opt.MapFrom(src => src.Data.company_id));
+    }
+
+
 }

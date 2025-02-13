@@ -18,6 +18,7 @@ public static class InfrastructureDependencyInjectionExtensions
             .AddDefaultTokenProviders();
 
         services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+        services.AddTransient(typeof(IApplicationUserRepository<>), typeof(ApplicationUserRepository<>));
 
         return services;
     }

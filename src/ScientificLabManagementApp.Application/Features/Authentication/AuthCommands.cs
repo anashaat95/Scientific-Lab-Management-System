@@ -33,9 +33,6 @@ public class UpdateProfileCommand : IRequest<Response<string>>
     public string last_name { get; set; }
     public string? phone_number { get; set; }
     public string? image_url { get; set; }
-    public string company_id { get; set; }
-    public string department_id { get; set; }
-    public string lab_id { get; set; }
     public string? google_scholar_url { get; set; }
     public string? academia_url { get; set; }
     public string? scopus_url { get; set; }
@@ -60,7 +57,7 @@ public class UpdateEmailCommand : IRequest<Response<string>>
     public string new_email { get; set; }
 }
 
-public class VerifyEmailQuery : IRequest<Response<LoginDto>>
+public class ConfirmEmailQuery : IRequest<Response<LoginDto>>
 {
     public required string user_id { get; set; }
 
@@ -68,9 +65,8 @@ public class VerifyEmailQuery : IRequest<Response<LoginDto>>
 }
 
 
-public class ResendVerifyEmailCommand : IRequest<Response<string>>
+public class ResendConfirmEmailCommand : IRequest<Response<string>>
 {
-    [FromQuery]
     public required string Email { get; set; }
 }
 
@@ -81,9 +77,9 @@ public class ForgetPasswordCommand : IRequest<Response<string>>
 
 public class ResetPasswordCommand : IRequest<Response<string>>
 {
-    public required string Email { get; set; }
+    public required string user_id { get; set; }
     public required string Token { get; set; }
-    public required string NewPassword { get; set; }
+    public required string new_password { get; set; }
 }
 
 public class ChangePasswordCommand : IRequest<Response<string>>

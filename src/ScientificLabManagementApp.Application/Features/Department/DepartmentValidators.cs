@@ -1,6 +1,7 @@
 namespace ScientificLabManagementApp.Application;
-public class DepartmentValidator<TCommand> : ValidatorBase<TCommand, Department, DepartmentDto>
-    where TCommand : AddUpdateCommandBase<DepartmentDto, DepartmentCommandData>
+public class DepartmentValidator<TCommand, TData> : ValidatorBase<TCommand, Department, DepartmentDto>
+    where TCommand : AddUpdateCommandBase<DepartmentDto, TData>
+    where TData : DepartmentCommandData
 {
     public override void ApplyValidationRules()
     {
@@ -16,6 +17,6 @@ public class DepartmentValidator<TCommand> : ValidatorBase<TCommand, Department,
             .WithMessage("No company found with the provided company_id.");
     }
 }
-public class AddDepartmentValidator : DepartmentValidator<AddDepartmentCommand> {}
+public class AddDepartmentValidator : DepartmentValidator<AddDepartmentCommand, AddDepartmentCommandData> {}
 
-public class UpdateDepartmentValidator : DepartmentValidator<UpdateDepartmentCommand> {}
+public class UpdateDepartmentValidator : DepartmentValidator<UpdateDepartmentCommand, UpdateDepartmentCommandData> {}

@@ -8,6 +8,7 @@ public static class ApplicationDependencyInjectionExtensions
         services.AddHttpContextAccessor();
 
         services.AddTransient(typeof(IBaseService<,>), typeof(BaseService<,>));
+        services.AddTransient(typeof(IApplicationUserService), typeof(ApplicationUserService));
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
@@ -28,10 +29,6 @@ public static class ApplicationDependencyInjectionExtensions
 
         services.AddAuthenticationDependencies(configManager);
 
-        services.Configure<DataProtectionTokenProviderOptions>(options =>
-        {
-            options.TokenLifespan = TimeSpan.FromHours(6);
-        });
 
         return services;
     }
@@ -106,6 +103,27 @@ public static class AuthenticationInjectionExtensions
             });
         });
 
+
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.SignIn.RequireConfirmedEmail = true; // Require email confirmation
+
+            options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+            options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+
+            options.Tokens.ProviderMap.Add("DefaultEmailProvider", 
+                new TokenProviderDescriptor(typeof(DataProtectorTokenProvider<ApplicationUser>)));
+            options.Tokens.ProviderMap.Add("DefaultPasswordResetProvider", 
+                new TokenProviderDescriptor(typeof(DataProtectorTokenProvider<ApplicationUser>)));
+
+            options.Tokens.EmailConfirmationTokenProvider = "DefaultEmailProvider";
+            options.Tokens.PasswordResetTokenProvider = "DefaultPasswordResetProvider";
+        });
+
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromDays(1);
+        });
 
         return services;
     }

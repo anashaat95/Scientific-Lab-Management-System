@@ -1,17 +1,17 @@
 namespace ScientificLabManagementApp.Application;
-public class UserValidator<TCommand> : ValidatorBase<TCommand, ApplicationUser, UserDto>
-    where TCommand : AddUpdateCommandBase<UserDto, UserCommandData>
+public class UserValidator<TCommand, TData> : ValidatorBase<TCommand, ApplicationUser, UserDto>
+    where TData : UserCommandData
+    where TCommand : AddUpdateCommandBase<UserDto, TData>
 {
     public override void ApplyValidationRules()
     {
-        RuleFor(x => x.Data.UserName).ApplyMinMaxLengthRule(ValidationLimitsConfig.NAME.MIN, ValidationLimitsConfig.NAME.MAX);
-        RuleFor(x => x.Data.first_name).ApplyMinMaxLengthRule(ValidationLimitsConfig.NAME.MIN, ValidationLimitsConfig.NAME.MAX);
-        RuleFor(x => x.Data.last_name).ApplyMinMaxLengthRule(ValidationLimitsConfig.NAME.MIN, ValidationLimitsConfig.NAME.MAX);
-        RuleFor(x => x.Data.Email).ApplyNotEmptyRule().ApplyNotNullableRule();
+        RuleFor(x => x.Data.UserName).ApplyNotEmptyRule().ApplyNotNullableRule().ApplyMinMaxLengthRule(ValidationLimitsConfig.NAME.MIN, ValidationLimitsConfig.NAME.MAX);
+        RuleFor(x => x.Data.first_name).ApplyNotEmptyRule().ApplyNotNullableRule().ApplyMinMaxLengthRule(ValidationLimitsConfig.NAME.MIN, ValidationLimitsConfig.NAME.MAX);
+        RuleFor(x => x.Data.last_name).ApplyNotEmptyRule().ApplyNotNullableRule().ApplyMinMaxLengthRule(ValidationLimitsConfig.NAME.MIN, ValidationLimitsConfig.NAME.MAX);
+        RuleFor(x => x.Data.Email).ApplyNotEmptyRule().ApplyNotNullableRule().ApplyNotEmptyRule().ApplyNotNullableRule();
 
-        RuleFor(x => x.Data.company_id).ApplyNotEmptyRule().ApplyNotNullableRule();
-        RuleFor(x => x.Data.department_id).ApplyNotEmptyRule().ApplyNotNullableRule();
-        RuleFor(x => x.Data.lab_id).ApplyNotEmptyRule().ApplyNotNullableRule();
+        RuleFor(x => x.Data.company_id).ApplyNotEmptyRule().ApplyNotNullableRule().ApplyNotEmptyRule().ApplyNotNullableRule();
+        RuleFor(x => x.Data.department_id).ApplyNotEmptyRule().ApplyNotNullableRule().ApplyNotEmptyRule().ApplyNotNullableRule();
     }
 
     public override void ApplyCustomValidationRules()
@@ -31,15 +31,23 @@ public class UserValidator<TCommand> : ValidatorBase<TCommand, ApplicationUser, 
             .WithMessage("No lab found with the provided lab_id");
 
         RuleFor(x => x.Data.image_url).ValidateOptionalUrl();
-        RuleFor(x => x.Data.google_scholar_url).ValidateOptionalUrl();
-        RuleFor(x => x.Data.academia_url).ValidateOptionalUrl();
-        RuleFor(x => x.Data.scopus_url).ValidateOptionalUrl();
-        RuleFor(x => x.Data.researcher_gate_url).ValidateOptionalUrl();
-    }
 
+        RuleFor(x => x.Data.google_scholar_url).ValidateOptionalUrl();
+        RuleFor(x => x.Data.google_scholar_url).ValidateKeywordInUrl("scholar.google.com");
+        
+
+        RuleFor(x => x.Data.academia_url).ValidateOptionalUrl();
+        RuleFor(x => x.Data.academia_url).ValidateKeywordInUrl("academia.edu");
+
+        RuleFor(x => x.Data.scopus_url).ValidateOptionalUrl();
+        RuleFor(x => x.Data.scopus_url).ValidateKeywordInUrl("scopus.com");
+
+        RuleFor(x => x.Data.researcher_gate_url).ValidateOptionalUrl();
+        RuleFor(x => x.Data.researcher_gate_url).ValidateKeywordInUrl("researchgate.net");
+    }
 }
 
-public class AddUserValidator : UserValidator<AddUserCommand>
+public class AddUserValidator : UserValidator<AddUserCommand, AddUserCommandData>
 {
     public override void ApplyValidationRules()
     {
@@ -53,4 +61,4 @@ public class AddUserValidator : UserValidator<AddUserCommand>
     }
 }
 
-public class UpdateUserValidator : UserValidator<UpdateUserCommand> { }
+public class UpdateUserValidator : UserValidator<UpdateUserCommand,UpdateUserCommandData> { }

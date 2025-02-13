@@ -1,6 +1,7 @@
 namespace ScientificLabManagementApp.Application;
-public class LabValidator<TCommand> : ValidatorBase<TCommand, Lab, LabDto>
-    where TCommand : AddUpdateCommandBase<LabDto, LabCommandData>
+public class LabValidator<TCommand, TData> : ValidatorBase<TCommand, Lab, LabDto>
+    where TCommand : AddUpdateCommandBase<LabDto, TData>
+    where TData : LabCommandData
 {
     public override void ApplyValidationRules()
     {
@@ -29,6 +30,6 @@ public class LabValidator<TCommand> : ValidatorBase<TCommand, Lab, LabDto>
     }
 }
 
-public class AddLabValidator : LabValidator<AddLabCommand> {}
+public class AddLabValidator : LabValidator<AddLabCommand, AddLabCommandData> {}
 
-public class UpdateLabValidator : LabValidator<UpdateLabCommand> {}
+public class UpdateLabValidator : LabValidator<UpdateLabCommand, UpdateLabCommandData> {}

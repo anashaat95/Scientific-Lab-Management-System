@@ -5,7 +5,8 @@ namespace ScientificLabManagementApp.API;
 public class EquipmentController :
     ControllerBaseWithEndpoints<
         EquipmentDto, GetOneEquipmentByIdQuery, GetManyEquipmentQuery,
-        EquipmentCommandData, AddEquipmentCommand, UpdateEquipmentCommand, DeleteEquipmentCommand>
+        EquipmentCommandData, AddEquipmentCommandData, UpdateEquipmentCommandData,
+        AddEquipmentCommand, UpdateEquipmentCommand, DeleteEquipmentCommand>
 
 {
 }

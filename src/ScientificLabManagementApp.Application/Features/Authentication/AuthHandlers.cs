@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json.Linq;
+
 namespace ScientificLabManagementApp.Application;
 
 public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHandler<TRequest, Response<TDto>>
@@ -5,7 +8,7 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
 {
     #region Field(s)
     protected readonly IBaseService<RefreshToken, RefreshToken> _refreshTokenService;
-    protected readonly IBaseService<ApplicationUser, UserDto> _userService;
+    protected readonly IApplicationUserService _applicationUserService;
     protected readonly UserManager<ApplicationUser> _userManager;
     protected readonly ITokenService _tokenService;
     protected readonly IEmailService _emailService;
@@ -20,7 +23,7 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
     {
         var serviceProvider = new HttpContextAccessor().HttpContext?.RequestServices;
         _refreshTokenService = serviceProvider!.GetRequiredService<IBaseService<RefreshToken, RefreshToken>>();
-        _userService = serviceProvider!.GetRequiredService<IBaseService<ApplicationUser, UserDto>>();
+        _applicationUserService = serviceProvider!.GetRequiredService<IApplicationUserService>();
         _userManager = serviceProvider!.GetRequiredService<UserManager<ApplicationUser>>();
         _tokenService = serviceProvider!.GetRequiredService<ITokenService>();
         _emailService = serviceProvider!.GetRequiredService<IEmailService>();
@@ -91,7 +94,7 @@ public class LoginHandler : AuthHandler<LoginCommand, LoginDto>
         if (!user.EmailConfirmed)
         {
             await SendEmail(user);
-            return Ok200<LoginDto>("The entered email is not verified. Please check your email for verification.");
+            return Ok200<LoginDto>("The entered email is not confirmed. Please check your email for confirmation.");
         }
 
         return Ok200(await CreateLoginDto(user));
@@ -115,7 +118,6 @@ public class SignupHandler : AuthHandler<SignupCommand, string>
         var roleAssignmentResult = await _userManager.AddToRoleAsync(newUser, enUserRoles.User.ToString());
 
         if (!roleAssignmentResult.Succeeded)
-
             return BadRequest<string>($"User created but failed to assign role. Errors: {roleAssignmentResult.ConvertErrorsToString()}");
 
 
@@ -204,42 +206,42 @@ public class UpdateEmailHandler : AuthHandler<UpdateEmailCommand, string>
             return NotFound<string>("User is not found!");
 
 
-        var decodedToken = WebUtility.UrlDecode(request.token);
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.token)); 
         var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
         _mapper.Map(request, user);
 
         if (!result.Succeeded)
             return BadRequest<string>("Invalid or expired token.");
 
-        return Ok200("Email verified successfully!");
+        return Ok200("Email confirmed successfully!");
     }
 }
 
-public class VerifyEmailHandler : AuthHandler<VerifyEmailQuery, LoginDto>
+public class ConfirmEmailHandler : AuthHandler<ConfirmEmailQuery, LoginDto>
 {
-    public override async Task<Response<LoginDto>> Handle(VerifyEmailQuery request, CancellationToken cancellationToken)
+    public override async Task<Response<LoginDto>> Handle(ConfirmEmailQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.user_id);
 
         if (user == null)
             return NotFound<LoginDto>("User is not found");
 
-        if (user.EmailConfirmed)
-            return Ok200<LoginDto>($"This email is already verified!");
+        //if (user.EmailConfirmed)
+        //    return Ok200<LoginDto>($"This email is already confirmed!");
 
-        var decodedToken = WebUtility.UrlDecode(request.token);
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.token));
         var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
 
         if (!result.Succeeded)
             return BadRequest<LoginDto>(result.ConvertErrorsToString());
 
-        return Ok200(await CreateLoginDto(user), "Email verified successfully!");
+        return Ok200(await CreateLoginDto(user), "Email confirmed successfully!");
     }
 }
 
-public class ResendVerificationEmailHandler : AuthHandler<ResendVerifyEmailCommand, string>
+public class ResendConfirmationEmailHandler : AuthHandler<ResendConfirmEmailCommand, string>
 {
-    public override async Task<Response<string>> Handle(ResendVerifyEmailCommand request, CancellationToken cancellationToken)
+    public override async Task<Response<string>> Handle(ResendConfirmEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
 
@@ -247,7 +249,7 @@ public class ResendVerificationEmailHandler : AuthHandler<ResendVerifyEmailComma
             return NotFound<string>("User is not found");
 
         if (user.EmailConfirmed)
-            return Ok200<string>($"This email is already verified!");
+            return Ok200<string>($"This email is already confirmed!");
 
         await SendEmail(user);
 
@@ -281,15 +283,16 @@ public class ResetPasswordHandler : AuthHandler<ResetPasswordCommand, string>
 {
     public override async Task<Response<string>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await _userManager.FindByIdAsync(request.user_id);
 
         if (user == null)
             return NotFound<string>("User is not found");
 
-        var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token)); ;
+        var result = await _userManager.ResetPasswordAsync(user, decodedToken, request.new_password);
 
         if (!result.Succeeded)
-            return BadRequest<string>("Error!! reseting the password");
+            return BadRequest<string>($"Error!! {result.ConvertErrorsToString()}");
 
         return Ok200("Password reset successfully!");
     }
@@ -299,6 +302,7 @@ public class RefreshTokenHandler : AuthHandler<RefreshTokenCommand, LoginDto>
 {
     public override async Task<Response<LoginDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
+        Console.WriteLine(request.RefreshToken);
         var refreshToken = await _refreshTokenService.FindOneAsync(entity => entity.Token == request.RefreshToken && !entity.IsRevoked);
 
         if (refreshToken == null || refreshToken.IsExpired || refreshToken.IsRevoked)
@@ -331,7 +335,7 @@ public class GetMeHandler : AuthHandler<GetMeQuery, UserDto>
         if (currentUser == null)
             return Unauthorized<UserDto>("Unable to identify the user from the access token.");
 
-        var userFromDb = await _userService.GetDtoByIdAsync(_currentUserService.UserId, e => e.Company, e => e.Department, e => e.Lab);
+        var userFromDb = await _applicationUserService.GetDtoByIdAsync(_currentUserService.UserId);
         if (userFromDb == null)
             return NotFound<UserDto>("User is not found!");
 

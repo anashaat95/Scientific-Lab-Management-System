@@ -5,7 +5,8 @@ namespace ScientificLabManagementApp.API;
 public class MaintenanceLogController :
     ControllerBaseWithEndpoints<
         MaintenanceLogDto, GetOneMaintenanceLogByIdQuery, GetManyMaintenanceLogQuery,
-        MaintenanceLogCommandData, AddMaintenanceLogCommand, UpdateMaintenanceLogCommand, DeleteMaintenanceLogCommand>
+        MaintenanceLogCommandData, AddMaintenanceLogCommandData, UpdateMaintenanceLogCommandData,
+        AddMaintenanceLogCommand, UpdateMaintenanceLogCommand, DeleteMaintenanceLogCommand>
 
 {
 }

@@ -5,8 +5,8 @@ public class CountryMappingProfile : ProfileBase<Country, CountryDto, CountryCom
     public CountryMappingProfile()
     {
         ApplyEntityToDtoMapping();
-        ApplyCommandToEntityMapping<AddCountryCommand>();
-        ApplyCommandToEntityMapping<UpdateCountryCommand>();
+        ApplyCommandToEntityMapping<AddCountryCommand, AddCountryCommandData>();
+        ApplyCommandToEntityMapping<UpdateCountryCommand, UpdateCountryCommandData>();
 
     }
 
@@ -19,7 +19,7 @@ public class CountryMappingProfile : ProfileBase<Country, CountryDto, CountryCom
                 .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt));
     }
 
-    public override IMappingExpression<TSource, Country> ApplyCommandToEntityMapping<TSource>()
+    public override IMappingExpression<TSource, Country> ApplyCommandToEntityMapping<TSource, TData>()
     {
         return CreateMap<TSource, Country>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Data.Name));

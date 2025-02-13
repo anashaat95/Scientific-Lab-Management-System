@@ -1,16 +1,20 @@
 namespace ScientificLabManagementApp.Application;
 
-public class RoleCommandData
+public abstract class RoleCommandData
 {
     public required string Name { get; set; }
 }
 
-public class AddRoleCommand : AddCommandBase<RoleDto, RoleCommandData>
+public class AddRoleCommandData : RoleCommandData {}
+
+public class UpdateRoleCommandData : RoleCommandData { }
+
+public class AddRoleCommand : AddCommandBase<RoleDto, AddRoleCommandData>
 {
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
 }
 
-public class UpdateRoleCommand : UpdateCommandBase<RoleDto, RoleCommandData>
+public class UpdateRoleCommand : UpdateCommandBase<RoleDto, UpdateRoleCommandData>
 {
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
 }

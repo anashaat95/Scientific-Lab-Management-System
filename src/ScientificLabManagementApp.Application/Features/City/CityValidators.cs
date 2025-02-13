@@ -1,6 +1,7 @@
 ﻿namespace ScientificLabManagementApp.Application;
-public class CityValidator<TCommand> : ValidatorBase<TCommand, City, CityDto>
-    where TCommand : AddUpdateCommandBase<CityDto, CityCommandData>
+public class CityValidator<TCommand, TData> : ValidatorBase<TCommand, City, CityDto>
+    where TCommand : AddUpdateCommandBase<CityDto, TData>
+    where TData : CityCommandData
 {
     public override void ApplyValidationRules()
     {
@@ -9,6 +10,6 @@ public class CityValidator<TCommand> : ValidatorBase<TCommand, City, CityDto>
 }
 
 
-public class AddCityValidator : CityValidator<AddCityCommand> {}
+public class AddCityValidator : CityValidator<AddCityCommand, AddCityCommandData> {}
 
-public class UpdateCityValidator : CityValidator<UpdateCityCommand> {}
+public class UpdateCityValidator : CityValidator<UpdateCityCommand, UpdateCityCommandData> {}

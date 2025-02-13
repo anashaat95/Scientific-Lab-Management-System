@@ -59,7 +59,10 @@ public class SignupValidator : AuthValidatorBase<SignupCommand>
     public override void ApplyCustomValidationRules()
     {
         RuleFor(x => x.Email)
-            .MustAsync(async (x, ct) => await _userManager.FindByEmailAsync(x) == null)
+            .MustAsync(async (x, ct) => { 
+                Console.WriteLine(x);
+                return await _userManager.FindByEmailAsync(x) == null;
+            })
             .WithMessage($"There is a user with this email. Please, try to login.");
 
         RuleFor(x => x.company_id)
@@ -85,7 +88,7 @@ public class SignupValidator : AuthValidatorBase<SignupCommand>
 
 
 
-public class VerifyEmailValidator : AuthValidatorBase<VerifyEmailQuery>
+public class VerifyEmailValidator : AuthValidatorBase<ConfirmEmailQuery>
 {
     #region Actions
     public override void ApplyValidationRules()
@@ -96,7 +99,7 @@ public class VerifyEmailValidator : AuthValidatorBase<VerifyEmailQuery>
     #endregion
 }
 
-public class ResendVerifyEmailValidator : AuthValidatorBase<ResendVerifyEmailCommand>
+public class ResendVerifyEmailValidator : AuthValidatorBase<ResendConfirmEmailCommand>
 {
     #region Actions
     public override void ApplyValidationRules()
@@ -114,25 +117,10 @@ public class UpdateProfileValidator : AuthValidatorBase<UpdateProfileCommand>
     {
         RuleFor(x => x.first_name).ApplyMinMaxLengthRule(ValidationLimitsConfig.NAME.MIN, ValidationLimitsConfig.NAME.MAX);
         RuleFor(x => x.last_name).ApplyMinMaxLengthRule(ValidationLimitsConfig.NAME.MIN, ValidationLimitsConfig.NAME.MAX);
-        RuleFor(x => x.company_id).ApplyNotEmptyRule().ApplyNotNullableRule();
-        RuleFor(x => x.department_id).ApplyNotEmptyRule().ApplyNotNullableRule();
-        RuleFor(x => x.lab_id).ApplyNotEmptyRule().ApplyNotNullableRule();
     }
 
     public override void ApplyCustomValidationRules()
     {
-        RuleFor(x => x.company_id)
-            .MustAsync(async (x, ct) => await _userService.RelatedExistsAsync<Company>(x))
-            .WithMessage("No company found with the provided company_id");
-
-        RuleFor(x => x.department_id)
-            .MustAsync(async (x, ct) => await _userService.RelatedExistsAsync<Department>(x))
-            .WithMessage("No department found with the provided department_id");
-
-        RuleFor(x => x.lab_id)
-            .MustAsync(async (x, ct) => await _userService.RelatedExistsAsync<Lab>(x))
-            .WithMessage("No lab found with the provided lab_id");
-
         RuleFor(x => x.image_url).ValidateOptionalUrl();
         RuleFor(x => x.google_scholar_url).ValidateOptionalUrl();
         RuleFor(x => x.academia_url).ValidateOptionalUrl();
@@ -218,9 +206,9 @@ public class ResetPasswordValidator : AuthValidatorBase<ResetPasswordCommand>
     #region Actions
     public override void ApplyValidationRules()
     {
-        RuleFor(x => x.Email).ApplyNotEmptyRule().ApplyNotNullableRule();
+        RuleFor(x => x.user_id).ApplyNotEmptyRule().ApplyNotNullableRule();
         RuleFor(x => x.Token).ApplyNotEmptyRule().ApplyNotNullableRule();
-        RuleFor(x => x.NewPassword).ApplyNotEmptyRule().ApplyNotNullableRule();
+        RuleFor(x => x.new_password).ApplyNotEmptyRule().ApplyNotNullableRule();
     }
 
     public override void ApplyCustomValidationRules()
@@ -228,9 +216,9 @@ public class ResetPasswordValidator : AuthValidatorBase<ResetPasswordCommand>
         base.ApplyCustomValidationRules();
 
 
-        RuleFor(x => x.Email)
-            .MustAsync(async (x, ct) => await _userManager.FindByEmailAsync(x) != null)
-            .WithMessage($"There is no user with this email.");
+        RuleFor(x => x.user_id)
+            .MustAsync(async (x, ct) => await _userManager.FindByIdAsync(x) != null)
+            .WithMessage($"User is not found.");
     }
     #endregion
 }

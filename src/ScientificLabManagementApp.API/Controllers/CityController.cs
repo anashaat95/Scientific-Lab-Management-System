@@ -5,7 +5,7 @@
 public class CityController :
     ControllerBaseWithEndpoints<
         CityDto, GetOneCityByIdQuery, GetManyCityQuery,
-        CityCommandData, AddCityCommand, UpdateCityCommand, DeleteCityCommand>
-
+        CityCommandData, AddCityCommandData, UpdateCityCommandData,
+        AddCityCommand, UpdateCityCommand, DeleteCityCommand>
 {
 }

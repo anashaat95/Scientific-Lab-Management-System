@@ -43,14 +43,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
             }
         }
 
-        try
-        {
-            return base.SaveChanges();
-        }
-        catch 
-        {
-            return 0;
-        }
+        return base.SaveChanges();
+
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -4,8 +4,8 @@ public class RoleMappingProfile : ProfileBase<ApplicationRole, RoleDto, RoleComm
     public RoleMappingProfile()
     {
         ApplyEntityToDtoMapping();
-        ApplyCommandToEntityMapping<AddRoleCommand>();
-        ApplyCommandToEntityMapping<UpdateRoleCommand>();
+        ApplyCommandToEntityMapping<AddRoleCommand, AddRoleCommandData>();
+        ApplyCommandToEntityMapping<UpdateRoleCommand, UpdateRoleCommandData>();
     }
 
     public override IMappingExpression<ApplicationRole, RoleDto> ApplyEntityToDtoMapping()
@@ -16,7 +16,7 @@ public class RoleMappingProfile : ProfileBase<ApplicationRole, RoleDto, RoleComm
             .ForMember(x => x.created_at, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt));
     }
-    public override IMappingExpression<TSource, ApplicationRole> ApplyCommandToEntityMapping<TSource>()
+    public override IMappingExpression<TSource, ApplicationRole> ApplyCommandToEntityMapping<TSource, TData>()
     {
         return CreateMap<TSource, ApplicationRole>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Data.Name));

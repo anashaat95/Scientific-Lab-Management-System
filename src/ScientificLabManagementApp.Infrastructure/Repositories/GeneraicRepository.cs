@@ -15,11 +15,13 @@ public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto
 
     public virtual async Task<TDto> GetDtoByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes)
     {
+
         var result = await _context.Set<TEntity>()
-                                   .ApplyIncludes(includes)
-                                   .Where(x => x.Id == id)
-                                   .ProjectTo<TDto>(_mapper.ConfigurationProvider)
-                                   .FirstOrDefaultAsync();
+                               .ApplyIncludes(includes)
+                               .Where(x => x.Id == id).AsNoTracking()
+                               .ProjectTo<TDto>(_mapper.ConfigurationProvider)
+                               .FirstOrDefaultAsync();
+
         return result;
     }
 
@@ -27,7 +29,6 @@ public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto
     {
         var result = await _context.Set<TEntity>()
                                    .ApplyIncludes(includes)
-                                   .Where(x => x.Id == id)
                                    .Where(x => x.Id == id)
                                    .FirstOrDefaultAsync();
         return result;
@@ -37,7 +38,7 @@ public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto
     public virtual async Task<IEnumerable<TDto>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
     {
         return await _context.Set<TEntity>()
-                             .ApplyIncludes(includes)
+                             .ApplyIncludes(includes).AsNoTracking()
                              .ProjectTo<TDto>(_mapper.ConfigurationProvider)
                              .ToListAsync();
     }
@@ -99,7 +100,7 @@ public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto
     public virtual async Task<RelatedEntity> FindRelatedEntityByIdAsync<RelatedEntity>(Expression<Func<RelatedEntity, bool>> predicate, params Expression<Func<RelatedEntity, object>>[] includes) where RelatedEntity : class, IEntityBase
     {
         var filtered = await _context.Set<RelatedEntity>()
-                                     .ApplyIncludes(includes)  
+                                     .ApplyIncludes(includes)
                                      .Where(predicate)
                                      .FirstOrDefaultAsync();
         return filtered;

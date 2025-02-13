@@ -13,6 +13,7 @@ public abstract class RequestHandlerBase<TRequest, TEntity, TDto>
     protected readonly IEmailService _emailService;
     protected readonly IMapper _mapper;
     protected readonly ICurrentUserService _currentUserService;
+    protected readonly IApplicationUserService _applicationUserService;
     #endregion
 
 
@@ -27,6 +28,7 @@ public abstract class RequestHandlerBase<TRequest, TEntity, TDto>
         _emailService = serviceProvider!.GetRequiredService<IEmailService>();
         _mapper = serviceProvider!.GetRequiredService<IMapper>();
         _currentUserService = serviceProvider!.GetRequiredService<ICurrentUserService>();
+        _applicationUserService = serviceProvider!.GetRequiredService<IApplicationUserService>();
     }
     #endregion
 

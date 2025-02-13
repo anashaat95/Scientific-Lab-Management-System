@@ -4,9 +4,9 @@ public class LabMappingProfile : ProfileBase<Lab, LabDto, LabCommandData>
 {
     public LabMappingProfile()
     {
-        ApplyEntityToDtoMapping();
-        ApplyCommandToEntityMapping<AddLabCommand>();
-        ApplyCommandToEntityMapping<UpdateLabCommand>();
+        ApplyEntityToDtoMapping(); 
+        ApplyCommandToEntityMapping<AddLabCommand, AddLabCommandData>();
+        ApplyCommandToEntityMapping<UpdateLabCommand, UpdateLabCommandData>();
     }
 
     public override IMappingExpression<Lab, LabDto> ApplyEntityToDtoMapping()
@@ -25,7 +25,8 @@ public class LabMappingProfile : ProfileBase<Lab, LabDto, LabCommandData>
                 .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
                 ;
     }
-    public override IMappingExpression<TSource, Lab> ApplyCommandToEntityMapping<TSource>()
+
+    public override IMappingExpression<TSource, Lab> ApplyCommandToEntityMapping<TSource, TData>()
     {
         return CreateMap<TSource, Lab>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Data.Name))

@@ -1,6 +1,7 @@
 namespace ScientificLabManagementApp.Application;
-public class CompanyValidator<TCommand> : ValidatorBase<TCommand, Company, CompanyDto>
-    where TCommand : AddUpdateCommandBase<CompanyDto, CompanyCommandData>
+public class CompanyValidator<TCommand, TData> : ValidatorBase<TCommand, Company, CompanyDto>
+    where TCommand : AddUpdateCommandBase<CompanyDto, TData>
+    where TData : CompanyCommandData
 {
     public override void ApplyValidationRules()
     {
@@ -25,6 +26,6 @@ public class CompanyValidator<TCommand> : ValidatorBase<TCommand, Company, Compa
     }
 }
 
-public class AddCompanyValidator : CompanyValidator<AddCompanyCommand> {}
+public class AddCompanyValidator : CompanyValidator<AddCompanyCommand, AddCompanyCommandData> {}
 
-public class UpdateCompanyValidator : CompanyValidator<UpdateCompanyCommand> {}
+public class UpdateCompanyValidator : CompanyValidator<UpdateCompanyCommand, UpdateCompanyCommandData> {}

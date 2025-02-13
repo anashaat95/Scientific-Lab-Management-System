@@ -34,8 +34,8 @@ public class AuthController : ApiControllerBase
         return Result.Create(response);
     }
 
-    [HttpGet("verify-email")]
-    public async Task<ActionResult<LoginDto>> VerifyEmail([FromQuery] VerifyEmailQuery command)
+    [HttpGet("confirm-email")]
+    public async Task<ActionResult<LoginDto>> VerifyEmail([FromQuery] ConfirmEmailQuery command)
     {
         var response = await Mediator.Send(command);
         return Result.Create(response);
@@ -50,7 +50,7 @@ public class AuthController : ApiControllerBase
     }
 
 
-    [HttpPost("verify-update-email")]
+    [HttpPost("confirm-updated-email")]
     public async Task<ActionResult<string>> UpdateEmail([FromQuery]UpdateEmailCommand command)
     {
         var response = await Mediator.Send(command);
@@ -58,8 +58,8 @@ public class AuthController : ApiControllerBase
     }
 
 
-    [HttpPost("resend-verification-for-email")]
-    public async Task<ActionResult<string>> ResendVerificationForEmail(ResendVerifyEmailCommand command)
+    [HttpPost("resend-confirmation-for-email")]
+    public async Task<ActionResult<string>> ResendVerificationForEmail(ResendConfirmEmailCommand command)
     {
         var response = await Mediator.Send(command);
         return Result.Create(response);

@@ -14,6 +14,7 @@ public class CurrentUserService : ICurrentUserService
 
     public ClaimsPrincipal User 
     {
+
         get {
             var authHeader = _httpContextAccessor?.HttpContext?.Request?.Headers["Authorization"].ToString();
 

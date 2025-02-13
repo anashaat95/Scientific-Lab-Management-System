@@ -5,7 +5,8 @@ namespace ScientificLabManagementApp.API;
 public class DepartmentController :
     ControllerBaseWithEndpoints<
         DepartmentDto, GetOneDepartmentByIdQuery, GetManyDepartmentQuery,
-        DepartmentCommandData, AddDepartmentCommand, UpdateDepartmentCommand, DeleteDepartmentCommand>
+        DepartmentCommandData, AddDepartmentCommandData, UpdateDepartmentCommandData,
+        AddDepartmentCommand, UpdateDepartmentCommand, DeleteDepartmentCommand>
 
 {
 }

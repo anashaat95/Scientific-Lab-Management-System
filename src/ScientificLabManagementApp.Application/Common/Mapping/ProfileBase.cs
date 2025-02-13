@@ -1,12 +1,14 @@
 ﻿namespace ScientificLabManagementApp.Application;
 
-public abstract class ProfileBase<TEntity, TDto, TCommandData> : Profile
+public abstract class ProfileBase<TEntity, TDto, TDataBase> : Profile
     where TEntity : IEntityHaveId   
     where TDto : class
-    where TCommandData : class
+    where TDataBase : class
 {
     public abstract IMappingExpression<TEntity, TDto> ApplyEntityToDtoMapping();
-    public virtual IMappingExpression<TSource, TEntity> ApplyCommandToEntityMapping<TSource>() where TSource : AddUpdateCommandBase<TDto, TCommandData>
+    public virtual IMappingExpression<TSource, TEntity> ApplyCommandToEntityMapping<TSource, TData>()
+        where TSource : AddUpdateCommandBase<TDto, TData>
+        where TData : class, TDataBase
     {
         return CreateMap<TSource, TEntity>();
     }

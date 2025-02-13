@@ -1,6 +1,6 @@
 ﻿namespace ScientificLabManagementApp.Infrastructure;
 
-public class UserConfiguration : EntityBaseConfiguration<ApplicationUser>
+public class ApplicationUserConfiguration : EntityBaseConfiguration<ApplicationUser>
 {
     public override void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {

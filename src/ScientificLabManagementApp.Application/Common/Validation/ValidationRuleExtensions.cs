@@ -37,11 +37,30 @@ public static class ValidationRuleExtensions
     }
 
     public static IRuleBuilderOptions<T, string?> ValidateOptionalUrl<T>(
-        this IRuleBuilder<T, string?> ruleBuilder,
-        string urlPattern = ValidationLimitsConfig.URL_PATTERN)
+        this IRuleBuilder<T, string?> ruleBuilder, 
+        string urlPattern = ValidationLimitsConfig.URL_PATTERN
+        )
     {
         return ruleBuilder
-            .Must(url => string.IsNullOrWhiteSpace(url) || Regex.IsMatch(url, urlPattern))
-            .WithMessage("The provided {PropertyName} is not a valid URL.");
+                     .Must(url => string.IsNullOrWhiteSpace(url) || Regex.IsMatch(url, urlPattern))
+                     .WithMessage("The provided {PropertyName} is not a valid URL.");
+    }
+
+    public static IRuleBuilderOptions<T, string?> ValidateKeywordInUrl<T>(
+        this IRuleBuilder<T, string?> ruleBuilder, string? requiredKeyword = null
+    )
+    {
+        if (string.IsNullOrEmpty(requiredKeyword))
+        {
+            return ruleBuilder.NotNull(); 
+        }
+
+        return ruleBuilder
+            .Must(url =>
+            {
+                if (string.IsNullOrEmpty(url)) return true;
+                return url.Contains(requiredKeyword, StringComparison.OrdinalIgnoreCase);
+            })
+            .WithMessage($"The provided URL must contain '{requiredKeyword}'.");
     }
 }

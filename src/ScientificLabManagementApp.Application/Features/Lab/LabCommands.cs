@@ -1,6 +1,6 @@
 namespace ScientificLabManagementApp.Application;
 
-public class LabCommandData
+public abstract class LabCommandData
 {
     public required string Name { get; set; }
     public required int Capacity { get; set; }
@@ -9,12 +9,17 @@ public class LabCommandData
     public string supervisor_id { get; set; }
     public required string department_id { get; set; }
 }
-public class AddLabCommand : AddCommandBase<LabDto, LabCommandData>
+
+public class AddLabCommandData : LabCommandData { }
+public class UpdateLabCommandData : LabCommandData { }
+
+
+public class AddLabCommand : AddCommandBase<LabDto, AddLabCommandData>
 {
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
 }
 
-public class UpdateLabCommand : UpdateCommandBase<LabDto, LabCommandData>
+public class UpdateLabCommand : UpdateCommandBase<LabDto, UpdateLabCommandData>
 {
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
 }

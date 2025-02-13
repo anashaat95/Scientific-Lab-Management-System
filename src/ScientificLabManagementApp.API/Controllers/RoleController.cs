@@ -5,7 +5,8 @@ namespace ScientificLabManagementApp.API;
 public class RoleController :
     ControllerBaseWithEndpoints<
         RoleDto, GetOneRoleByIdQuery, GetManyRoleQuery,
-        RoleCommandData, AddRoleCommand, UpdateRoleCommand, DeleteRoleCommand>
+        RoleCommandData, AddRoleCommandData,  UpdateRoleCommandData, 
+        AddRoleCommand, UpdateRoleCommand, DeleteRoleCommand>
 
 {
 }

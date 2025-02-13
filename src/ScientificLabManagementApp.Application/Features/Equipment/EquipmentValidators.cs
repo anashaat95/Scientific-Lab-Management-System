@@ -1,6 +1,7 @@
 namespace ScientificLabManagementApp.Application;
-public class EquipmentValidator<TCommand> : ValidatorBase<TCommand, Equipment, EquipmentDto>
-    where TCommand : AddUpdateCommandBase<EquipmentDto, EquipmentCommandData>
+public class EquipmentValidator<TCommand, TData> : ValidatorBase<TCommand, Equipment, EquipmentDto>
+    where TCommand : AddUpdateCommandBase<EquipmentDto, TData>
+    where TData : EquipmentCommandData
 {
     public override void ApplyValidationRules()
     {
@@ -34,6 +35,6 @@ public class EquipmentValidator<TCommand> : ValidatorBase<TCommand, Equipment, E
             .WithMessage("No company found with the provided {{PropertName}}.");
     }
 }
-public class AddEquipmentValidator : EquipmentValidator<AddEquipmentCommand> { }
+public class AddEquipmentValidator : EquipmentValidator<AddEquipmentCommand, AddEquipmentCommandData> { }
 
-public class UpdateEquipmentValidator : EquipmentValidator<UpdateEquipmentCommand> { }
+public class UpdateEquipmentValidator : EquipmentValidator<UpdateEquipmentCommand, UpdateEquipmentCommandData> { }

@@ -3,7 +3,7 @@ public class GetManyBookingHandler : GetManyQueryHandlerBase<GetManyBookingQuery
 {
     protected override Task<IEnumerable<BookingDto>> GetEntityDtos()
     {
-        return _basicService.GetAllAsync(e => e.Equipment);
+        return _basicService.GetAllAsync(e => e.Equipment, e => e.User);
     }
 }
 
@@ -11,7 +11,7 @@ public class GetOneBookingByIdHandler : GetOneQueryHandlerBase<GetOneBookingById
 {
     protected override Task<BookingDto?> GetEntityDto(GetOneBookingByIdQuery request)
     {
-        return _basicService.GetDtoByIdAsync(request.Id, e => e.Equipment);
+        return _basicService.GetDtoByIdAsync(request.Id, e => e.Equipment, e => e.User);
     }
 }
 public class AddBookingHandler : AddCommandHandlerBase<AddBookingCommand, Booking, BookingDto> { }
