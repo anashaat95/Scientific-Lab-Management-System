@@ -8,6 +8,22 @@ public class GetManyUserHandler : GetManyQueryHandlerBase<GetManyUserQuery, Appl
     }
 }
 
+public class GetManyTechnicianHandler : GetManyQueryHandlerBase<GetManyTechnicianQuery, ApplicationUser, UserDto>
+{
+    protected override Task<IEnumerable<UserDto>> GetEntityDtos()
+    {
+        return _applicationUserService.GetTechniciansAsync();
+    }
+}
+
+public class GetManyLabSupervisorHandler : GetManyQueryHandlerBase<GetManySupervisiorQuery, ApplicationUser, UserDto>
+{
+    protected override Task<IEnumerable<UserDto>> GetEntityDtos()
+    {
+        return _applicationUserService.GetSupervisorsAsync();
+    }
+}
+
 public class GetOneUserByIdHandler : GetOneQueryHandlerBase<GetOneUserByIdQuery, ApplicationUser, UserDto>
 {
     protected override Task<UserDto?> GetEntityDto(GetOneUserByIdQuery request)
@@ -15,6 +31,7 @@ public class GetOneUserByIdHandler : GetOneQueryHandlerBase<GetOneUserByIdQuery,
         return _applicationUserService.GetDtoByIdAsync(request.Id);
     }
 }
+
 
 public class AddUserHandler : AddCommandHandlerBase<AddUserCommand, ApplicationUser, UserDto>
 {

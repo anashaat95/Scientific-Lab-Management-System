@@ -15,7 +15,10 @@ public class DepartmentMappingProfile : ProfileBase<Department, DepartmentDto, D
                 .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(x => x.Location, opt => opt.MapFrom(src => src.Location))
                 .ForMember(x => x.company_url, opt => opt.MapFrom(src => ApiUrlFactory<Company>.Create(src.CompanyId)))
-                .ForMember(x => x.company_name, opt => opt.MapFrom(src => src.Company.Name));
+                .ForMember(x => x.company_name, opt => opt.MapFrom(src => src.Company.Name))
+                .ForMember(x => x.created_at, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
+                ;
     }
     public override IMappingExpression<TSource, Department> ApplyCommandToEntityMapping<TSource, TData>()
     {

@@ -12,6 +12,8 @@ public class LabConfiguration : EntityBaseConfiguration<Lab>
         builder.Property(x => x.OpeningTime).IsRequired().HasColumnType("time");
         builder.Property(x => x.ClosingTime).IsRequired().HasColumnType("time");
 
+        builder.HasIndex(l => l.SupervisiorId).IsUnique(false);
+
         // Relationships
         builder.HasOne(l => l.Department).WithMany(m => m.Labs).HasForeignKey(l => l.DepartmentId).OnDelete(DeleteBehavior.Restrict);
     }

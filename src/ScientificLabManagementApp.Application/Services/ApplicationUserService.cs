@@ -35,6 +35,16 @@ public class ApplicationUserService : IApplicationUserService
         return _userRepository.GetAllAsync(includes);
     }
 
+    public Task<IEnumerable<UserDto>> GetSupervisorsAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
+    {
+        return _userRepository.GetAllSupervisorsDtoByIdAsync(includes);
+    }
+
+    public Task<IEnumerable<UserDto>> GetTechniciansAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
+    {
+        return _userRepository.GetAllTechniciansDtoByIdAsync(includes);
+    }
+
     public Task<UserDto> GetDtoByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         return _userRepository.GetDtoByIdAsync(id, includes);
