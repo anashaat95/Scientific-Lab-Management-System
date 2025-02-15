@@ -1,3 +1,5 @@
+using System.Net.NetworkInformation;
+
 namespace ScientificLabManagementApp.Application;
 public class BookingValidator<TCommand, TData> : ValidatorBase<TCommand, Booking, BookingDto>
     where TCommand : AddUpdateCommandBase<BookingDto, TData>
@@ -8,7 +10,9 @@ public class BookingValidator<TCommand, TData> : ValidatorBase<TCommand, Booking
         RuleFor(x => x.Data.start_date_time).ApplyNotEmptyRule().ApplyNotNullableRule();
         RuleFor(x => x.Data.end_date_time).ApplyNotEmptyRule().ApplyNotNullableRule();
         RuleFor(x => x.Data.Notes).ApplyMinMaxLengthRule(0, ValidationLimitsConfig.DESCRIPTION.MAX);
-        RuleFor(x => x.Data.Status).ApplyNotEmptyRule().ApplyNotNullableRule();
+        RuleFor(x => x.Data.Status)
+            .Must(status => status is enBookingStatus)
+            .WithMessage("Status must be a valid enBookingStatus type.");
     }
 
 }
@@ -40,7 +44,7 @@ public class AddBookingValidator : BookingValidator<AddBookingCommand, AddBookin
 
         if (equipmentEntity is null) return false;
 
-        if (equipmentEntity.Status == enEquipmentStatus.InMaintainance)
+        if (equipmentEntity.Status == enEquipmentStatus.InMaintenance)
             throw new FluentValidation.ValidationException("Equipment cannot be booked because it is currently in maintenance.");
 
         if (equipmentEntity.Status == enEquipmentStatus.FullyBooked)

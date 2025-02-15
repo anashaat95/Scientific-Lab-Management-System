@@ -37,7 +37,6 @@ public class ApplicationUserRepository<TDto> : IApplicationUserRepository<TDto>
 
         return result;
     }
-
     public async Task<IEnumerable<TDto>> GetAllSupervisorsDtoByIdAsync( params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         var result = await _context.Database
@@ -51,8 +50,6 @@ public class ApplicationUserRepository<TDto> : IApplicationUserRepository<TDto>
 
         return result;
     }
-
-
     public async Task<IEnumerable<TDto>> GetAllTechniciansDtoByIdAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         var result = await _context.Database
@@ -66,8 +63,6 @@ public class ApplicationUserRepository<TDto> : IApplicationUserRepository<TDto>
 
         return result;
     }
-
-
     public async Task<MappingApplicationUser> GetEntityByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         var result = await _context.Database
@@ -77,7 +72,6 @@ public class ApplicationUserRepository<TDto> : IApplicationUserRepository<TDto>
 
         return result;
     }
-
     public async Task<IEnumerable<TDto>> GetAllAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         var result = await _context.Database
@@ -89,7 +83,6 @@ public class ApplicationUserRepository<TDto> : IApplicationUserRepository<TDto>
 
         return result;
     }
-
     public async Task<TDto> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         var filtered = await _context.Database
@@ -100,7 +93,6 @@ public class ApplicationUserRepository<TDto> : IApplicationUserRepository<TDto>
                           .FirstOrDefaultAsync();
         return filtered;
     }
-
     public async Task<IEnumerable<TDto>> FindAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         var filtered = await _context.Database
@@ -111,40 +103,5 @@ public class ApplicationUserRepository<TDto> : IApplicationUserRepository<TDto>
                           .ToListAsync();
 
         return filtered;
-    }
-
-    public Task<RelatedEntity> FindRelatedEntityByIdAsync<RelatedEntity>(Expression<Func<RelatedEntity, bool>> predicate, params Expression<Func<RelatedEntity, object>>[] includes) where RelatedEntity : class, IEntityBase
-    {
-        return _repository.FindRelatedEntityByIdAsync<RelatedEntity>(predicate, includes);
-    }
-
-    public Task<bool> RelatedExistsAsync<RelatedEntity>(string id) where RelatedEntity : class, IEntityBase
-    {
-        return _repository.RelatedExistsAsync<RelatedEntity>(id);
-    }
-
-    public Task<TDto> AddAsync(MappingApplicationUser entity)
-    {
-        return _repository.AddAsync(entity);
-    }
-
-    public Task DeleteAsync(MappingApplicationUser entity)
-    {
-        return _repository.DeleteAsync(entity);
-    }
-
-    public Task<bool> ExistsAsync(string id)
-    {
-        return _repository.ExistsAsync(id);
-    }
-
-    public Task SaveChangesAsync()
-    {
-        return _repository.SaveChangesAsync();
-    }
-
-    public Task<TDto> UpdateAsync(MappingApplicationUser entity)
-    {
-        return _repository.UpdateAsync(entity);
     }
 }

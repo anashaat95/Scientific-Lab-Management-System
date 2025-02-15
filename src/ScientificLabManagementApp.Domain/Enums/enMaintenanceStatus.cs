@@ -2,8 +2,6 @@
 
 public enum enMaintenanceStatus
 {
-    Pending,
-    Completed,
-    InProgress,
-    Fixed
+    InMaintenance,
+    Fixed,
 }

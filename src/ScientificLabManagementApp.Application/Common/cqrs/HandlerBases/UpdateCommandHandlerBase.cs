@@ -29,7 +29,7 @@ public class UpdateCommandHandlerBase<TRequest, TEntity, TDto> : RequestHandlerB
         return Updated(_mapper.Map<TDto>(entityToUpdate));
     }
 
-    protected async Task DoUpdate(TRequest updateRequest, TEntity entityToUpdate)
+    protected virtual async Task DoUpdate(TRequest updateRequest, TEntity entityToUpdate)
     {
         var updatedEntity = _mapper.Map(updateRequest, entityToUpdate);
         await _basicService.UpdateAsync(updatedEntity);

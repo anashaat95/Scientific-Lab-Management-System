@@ -32,7 +32,7 @@ public class DeleteCommandHandlerBase<TRequest, TEntity, TDto> : RequestHandlerB
         return Deleted<TDto>();
     }
 
-    private async Task DoDelete(TEntity entityToDelete)
+    protected virtual async Task DoDelete(TEntity entityToDelete)
     {
         await _basicService.DeleteAsync(entityToDelete);
     }

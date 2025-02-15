@@ -3,7 +3,7 @@ namespace ScientificLabManagementApp.Application;
 public abstract class MaintenanceLogCommandData
 {
     public required string Description { get; set; }
-    public required enMaintenanceStatus Status { get; set; } = enMaintenanceStatus.InProgress;
+    public required enMaintenanceStatus Status { get; set; } = enMaintenanceStatus.InMaintenance;
     public required string equipment_id { get; set; }
     public required string technician_id { get; set; }
 }

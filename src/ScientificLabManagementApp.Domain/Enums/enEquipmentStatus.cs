@@ -3,9 +3,8 @@
 public enum enEquipmentStatus
 {
     Available,
-    PartiallyBooked,
     FullyBooked,
     NotWorking,
     Decommissioned,
-    InMaintainance
+    InMaintenance
 }

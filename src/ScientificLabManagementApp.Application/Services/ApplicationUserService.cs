@@ -10,21 +10,6 @@ public class ApplicationUserService : IApplicationUserService
         _userRepository = userRepository;
     }
 
-    public Task<UserDto> AddAsync(MappingApplicationUser entityToAdd)
-    {
-        return _userRepository.AddAsync(entityToAdd);
-    }
-
-    public Task DeleteAsync(MappingApplicationUser entity)
-    {
-        return _userRepository.DeleteAsync(entity);
-    }
-
-    public Task<bool> ExistsAsync(string id)
-    {
-        return _userRepository.ExistsAsync(id);
-    }
-
     public Task<UserDto> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         return _userRepository.FindOneAsync(predicate, includes);   
@@ -53,20 +38,5 @@ public class ApplicationUserService : IApplicationUserService
     public Task<MappingApplicationUser> GetEntityByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         return _userRepository.GetEntityByIdAsync(id, includes);
-    }
-
-    public Task<UserDto> UpdateAsync(MappingApplicationUser entityToUpdate)
-    {
-        return _userRepository.UpdateAsync(entityToUpdate);
-    }
-
-    public Task<RelatedEntity> FindRelatedEntityByIdAsync<RelatedEntity>(Expression<Func<RelatedEntity, bool>> predicate, params Expression<Func<RelatedEntity, object>>[] includes) where RelatedEntity : class, IEntityBase
-    {
-          return _userRepository.FindRelatedEntityByIdAsync(predicate, includes);
-    }
-
-    public Task<bool> RelatedExistsAsync<RelatedEntity>(string id) where RelatedEntity : class, IEntityBase
-    {
-          return _userRepository.RelatedExistsAsync<RelatedEntity>(id);
     }
 }

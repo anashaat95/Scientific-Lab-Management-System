@@ -13,7 +13,7 @@ public class BookingConfiguration : EntityBaseConfiguration<Booking>
 
         builder.Property(x => x.Notes).HasColumnType($"nvarchar({StringColumnLimits.MAX})");
 
-        builder.Property(x => x.Status).IsRequired().HasEnumConversion().HasColumnType($"nvarchar({StringColumnLimits.MAX})");
+        builder.Property(x => x.Status).HasEnumConversion().HasColumnType($"nvarchar({StringColumnLimits.MAX})").IsRequired();
 
         // Navigation properties and relationships
         builder.HasOne(x => x.Equipment).WithMany(e => e.Bookings).HasForeignKey(x => x.EquipmentId).OnDelete(DeleteBehavior.Restrict);

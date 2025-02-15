@@ -44,6 +44,13 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
         return await _repository.GetDtoByIdAsync(resultDto.Id);
     }
 
+    public async Task<string> UpdateRangeAsync(IEnumerable<TEntity> entitiesToUpdate)
+    {
+        var result = await _repository.UpdateAllAsync(entitiesToUpdate);
+        await _repository.SaveChangesAsync();
+        return await Task.FromResult(result);
+    }
+
     public async Task DeleteAsync(TEntity entity)
     {
         await _repository.DeleteAsync(entity);
@@ -68,6 +75,24 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
     public async Task<TDto> FindOneAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
     {
         var result = await _repository.FindOneAsync(predicate, includes);
+        return result;
+    }
+
+    public async Task<IEnumerable<TDto>> FindAllAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+    {
+        var result = await _repository.FindAllAsync(predicate, includes);
+        return result;
+    }
+
+    public async Task<TEntity> FindOneEntityAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+    {
+        var result = await _repository.FindOneEntityAsync(predicate, includes);
+        return result;
+    }
+
+    public async Task<IEnumerable<TEntity>> FindEntitiesAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+    {
+        var result = await _repository.FindEntitiesAsync(predicate, includes);
         return result;
     }
 }

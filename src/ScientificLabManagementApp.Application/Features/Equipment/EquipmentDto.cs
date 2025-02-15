@@ -7,7 +7,7 @@ public class EquipmentDto : IEntityHaveId
     public int reserved_quantity { get; set; }
     public string Type { get; set; }
     public string Status { get; set; }
-    public string purchase_date { get; set; }
+    public DateTime purchase_date { get; set; }
     public string? serial_number { get; set; }
     public string? Specifications { get; set; }
     public string? Description { get; set; }
