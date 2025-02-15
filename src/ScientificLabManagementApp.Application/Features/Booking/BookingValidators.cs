@@ -13,6 +13,10 @@ public class BookingValidator<TCommand, TData> : ValidatorBase<TCommand, Booking
         RuleFor(x => x.Data.Status)
             .Must(status => status is enBookingStatus)
             .WithMessage("Status must be a valid enBookingStatus type.");
+
+        RuleFor(x => x.Data.is_on_overnight)
+            .Must(value => value == true || value == false)
+            .WithMessage("On overnight must be either true or false.");
     }
 
 }

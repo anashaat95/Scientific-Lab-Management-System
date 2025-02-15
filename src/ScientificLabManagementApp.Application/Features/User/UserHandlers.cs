@@ -24,6 +24,14 @@ public class GetManyLabSupervisorHandler : GetManyQueryHandlerBase<GetManySuperv
     }
 }
 
+public class GetManyResearcherHandler : GetManyQueryHandlerBase<GetManySupervisiorQuery, ApplicationUser, UserDto>
+{
+    protected override Task<IEnumerable<UserDto>> GetEntityDtos()
+    {
+        return _applicationUserService.GetResearchersAsync();
+    }
+}
+
 public class GetOneUserByIdHandler : GetOneQueryHandlerBase<GetOneUserByIdQuery, ApplicationUser, UserDto>
 {
     protected override Task<UserDto?> GetEntityDto(GetOneUserByIdQuery request)

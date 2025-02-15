@@ -2,8 +2,8 @@ namespace ScientificLabManagementApp.Application;
 public class BookingDto : IEntityHaveId
 {
     public string Id { get; set; }
-    public string start_date_time { get; set; }
-    public string end_date_time { get; set; }
+    public DateTime start_date_time { get; set; }
+    public DateTime end_date_time { get; set; }
     public bool is_on_overnight { get; set; }
     public string Notes { get; set; }
     public string Status { get; set; }

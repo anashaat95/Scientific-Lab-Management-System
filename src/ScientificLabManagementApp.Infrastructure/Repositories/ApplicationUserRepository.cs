@@ -63,6 +63,19 @@ public class ApplicationUserRepository<TDto> : IApplicationUserRepository<TDto>
 
         return result;
     }
+    public async Task<IEnumerable<TDto>> GetAllResearchersDtoByIdAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
+    {
+        var result = await _context.Database
+                          .SqlQueryRaw<MappingApplicationUser>(RawSqlStatement
+                                    + " WHERE U.Id IN (SELECT UserId FROM AspNetUserRoles " +
+                                      " WHERE RoleId = (SELECT Id FROM AspNetRoles WHERE Name = @roleName))",
+                                      new SqlParameter("@roleName", enUserRoles.Researcher.ToString()))
+                          .ProjectTo<TDto>(_mapper.ConfigurationProvider)
+                          .AsNoTracking()
+                          .ToListAsync();
+
+        return result;
+    }
     public async Task<MappingApplicationUser> GetEntityByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
         var result = await _context.Database

@@ -21,4 +21,11 @@ public class UserController :
         var response = await Mediator.Send(new GetManySupervisiorQuery());
         return Result.Create(response);
     }
+
+    [HttpGet("/api/researchers")]
+    public virtual async Task<ActionResult<IEnumerable<UserDto>>> GetResearchers()
+    {
+        var response = await Mediator.Send(new GetManySupervisiorQuery());
+        return Result.Create(response);
+    }
 }
