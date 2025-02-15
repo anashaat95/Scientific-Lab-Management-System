@@ -13,8 +13,6 @@ public class EquipmentDto : IEntityHaveId
     public string? Description { get; set; }
     public string can_be_left_overnight { get; set; } 
     public string? image_url { get; set; }
-    public string parent_equipment_url { get; set; }
-    public string parent_equipment_name { get; set; }
     public string company_url { get; set; }
     public string company_name { get; set; }
     public DateTime created_at { get; set; }

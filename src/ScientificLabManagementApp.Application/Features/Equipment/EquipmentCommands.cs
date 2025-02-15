@@ -12,7 +12,6 @@ public abstract class EquipmentCommandData
     public string? Description { get; set; }
     public bool can_be_Left_overnight { get; set; } = false;
     public string? image_url { get; set; }
-    public string parent_equipment_id { get; set; }
     public string company_id { get; set; }
 }
 
