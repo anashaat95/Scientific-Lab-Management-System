@@ -17,8 +17,9 @@ public static class InfrastructureDependencyInjectionExtensions
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-        services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
-        services.AddTransient(typeof(IApplicationUserRepository<>), typeof(ApplicationUserRepository<>));
+        services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
+        services.AddTransient<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

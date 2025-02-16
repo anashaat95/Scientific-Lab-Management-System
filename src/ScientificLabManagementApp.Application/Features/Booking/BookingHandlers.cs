@@ -1,3 +1,5 @@
+using Azure.Core;
+
 namespace ScientificLabManagementApp.Application;
 public class GetManyBookingHandler : GetManyQueryHandlerBase<GetManyBookingQuery, Booking, BookingDto>
 {
@@ -25,90 +27,144 @@ public class AddBookingHandler : AddCommandHandlerBase<AddBookingCommand, Bookin
 
     public async override Task<Response<BookingDto>> Handle(AddBookingCommand request, CancellationToken cancellationToken)
     {
-        var entityToAdd = _mapper.Map<Booking>(request);
-        var resultDto = await _basicService.AddAsync(entityToAdd);
+        using var transaction = _unitOfWork;
+        await transaction.BeginTransactionAsync();
 
-        if (request.Data.Status == enBookingStatus.Confirmed)
+        try
         {
-            var equipment = await _equipmentService.GetEntityByIdAsync(request.Data.equipment_id);
-            equipment.ReservedQuantity += 1;
-            if (equipment.ReservedQuantity >= equipment.TotalQuantity)
-            {
-                equipment.Status = enEquipmentStatus.FullyBooked;
-                equipment.ReservedQuantity = equipment.TotalQuantity;
-            }
-            await _equipmentService.UpdateAsync(equipment);
-        }
+            // Map and add booking entity
+            var entityToAdd = _mapper.Map<Booking>(request);
+            var resultEntity = await _unitOfWork.BookingRepository.AddAsync(entityToAdd);
+            await _unitOfWork.SaveChangesAsync();
 
-        return Created(resultDto);
+            // Update Equipment if booking is confirmed
+            if (request.Data.Status == enBookingStatus.Confirmed)
+            {
+                var equipment = await _unitOfWork.EquipmentRepository.GetOneByIdAsync(request.Data.equipment_id);
+                if (equipment == null)
+                    return NotFound<BookingDto>("Equipment not found");
+
+                // Increase Reserved Quantity
+                equipment.ReservedQuantity += 1;
+
+                // Check if Fully Booked
+                if (equipment.ReservedQuantity == equipment.TotalQuantity)
+                {
+                    equipment.Status = enEquipmentStatus.FullyBooked;
+                }
+                else if (equipment.ReservedQuantity > equipment.TotalQuantity || equipment.Status == enEquipmentStatus.FullyBooked)
+                {
+                    return BadRequest<BookingDto>("Booking can not be added because this equipment is fully booked");
+                }
+
+                await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
+                await _unitOfWork.SaveChangesAsync();
+            }
+
+            await _unitOfWork.CommitTransactionAsync();
+
+            // Return Created Response
+            var resultDto = _mapper.Map<BookingDto>(entityToAdd);
+            return Created(resultDto);
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            return BadRequest<BookingDto>($"An error occurred: {ex.Message}");
+        }
     }
 }
 public class UpdateBookingHandler : UpdateCommandHandlerBase<UpdateBookingCommand, Booking, BookingDto>
 {
-    protected readonly IBaseService<Equipment, EquipmentDto> _equipmentService;
-
-    public UpdateBookingHandler(IBaseService<Equipment, EquipmentDto> equipmentService)
+    protected override async Task<Response<BookingDto>> DoUpdate(UpdateBookingCommand updateRequest, Booking entityToUpdate)
     {
-        _equipmentService = equipmentService;
-    }
 
-    protected override async Task DoUpdate(UpdateBookingCommand updateRequest, Booking entityToUpdate)
-    {
-        var oldBookingEntity = await _basicService.GetEntityByIdAsync(updateRequest.Id);
+        if (entityToUpdate.Status == updateRequest.Data.Status) return Updated(_mapper.Map<BookingDto>(entityToUpdate));
 
-        if (oldBookingEntity.Status == updateRequest.Data.Status) return;
+        using var transaction = _unitOfWork;
+        await transaction.BeginTransactionAsync();
 
-
-        var updatedEntity = _mapper.Map(updateRequest, entityToUpdate);
-        await _basicService.UpdateAsync(updatedEntity);
-
-        var equipment = await _equipmentService.GetEntityByIdAsync(updateRequest.Data.equipment_id);
-
-        if (updatedEntity.Status == enBookingStatus.Confirmed)
+        try
         {
-            equipment.ReservedQuantity += 1;
-            if (equipment.ReservedQuantity == equipment.TotalQuantity)
-            {
-                equipment.Status = enEquipmentStatus.FullyBooked;
-                equipment.ReservedQuantity = equipment.TotalQuantity;
-            }
-        }
-        else if (updateRequest.Data.Status == enBookingStatus.Cancelled || updateRequest.Data.Status == enBookingStatus.Completed)
-        {
-            equipment.ReservedQuantity -= 1;
-            equipment.Status = enEquipmentStatus.Available;
+            var updatedBooking = _mapper.Map(updateRequest, entityToUpdate);
+            var resultEntity = await _unitOfWork.BookingRepository.UpdateAsync(updatedBooking);
+            await _unitOfWork.SaveChangesAsync();
 
-            if (equipment.ReservedQuantity < 0)
+
+            // Update Equipment if booking is confirmed
+            if (updateRequest.Data.Status == enBookingStatus.Confirmed)
             {
-                equipment.ReservedQuantity = 0;
+                var equipment = await _unitOfWork.EquipmentRepository.GetOneByIdAsync(updateRequest.Data.equipment_id);
+                if (equipment == null)
+                    return NotFound<BookingDto>("Equipment not found");
+
+                // Increase Reserved Quantity
+                equipment.ReservedQuantity += 1;
+
+                // Check if Fully Booked
+                if (equipment.ReservedQuantity == equipment.TotalQuantity)
+                {
+                    equipment.Status = enEquipmentStatus.FullyBooked;
+                }
+                else if (equipment.ReservedQuantity > equipment.TotalQuantity || equipment.Status == enEquipmentStatus.FullyBooked)
+                {
+                    return BadRequest<BookingDto>("Booking can not be added because this equipment is fully booked");
+                }
+
+                await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
+                await _unitOfWork.SaveChangesAsync();
             }
+
+            await _unitOfWork.CommitTransactionAsync();
+
+            // Return Created Response
+            var resultDto = _mapper.Map<BookingDto>(resultEntity);
+            return Created(resultDto);
         }
-        await _equipmentService.UpdateAsync(equipment);
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            return BadRequest<BookingDto>($"An error occurred: {ex.Message}");
+        }
     }
 
 }
 public class DeleteBookingHandler : DeleteCommandHandlerBase<DeleteBookingCommand, Booking, BookingDto>
 {
-    protected readonly IBaseService<Equipment, EquipmentDto> _equipmentService;
-
-    public DeleteBookingHandler(IBaseService<Equipment, EquipmentDto> equipmentService)
+    protected async override Task<Response<BookingDto>> DoDelete(Booking bookingToDelete)
     {
-        _equipmentService = equipmentService;
-    }
+        using var transaction = _unitOfWork;
+        await transaction.BeginTransactionAsync();
 
-    protected async override Task DoDelete(Booking entityToDelete)
-    {
-        await _basicService.DeleteAsync(entityToDelete);
-
-        var equipment = await _equipmentService.GetEntityByIdAsync(entityToDelete.EquipmentId);
-
-        equipment.ReservedQuantity -= 1;
-        equipment.Status = enEquipmentStatus.Available;
-
-        if (equipment.ReservedQuantity < 0)
+        try
         {
-            equipment.ReservedQuantity = 0;
+            await _unitOfWork.BookingRepository.DeleteAsync(bookingToDelete);
+            await _unitOfWork.SaveChangesAsync();
+
+            // Get Equipment
+            var equipment = await _unitOfWork.EquipmentRepository.GetOneByIdAsync(bookingToDelete.EquipmentId);
+            if (equipment == null)
+                return NotFound<BookingDto>("Equipment not found");
+
+            equipment.Status = enEquipmentStatus.Available;
+            equipment.ReservedQuantity -= 1;
+
+
+            if (equipment.ReservedQuantity < 0)
+            {
+                equipment.ReservedQuantity = 0;
+            }
+
+            await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
+
+            return Deleted<BookingDto>();
         }
-        await _equipmentService.UpdateAsync(equipment);
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            return BadRequest<BookingDto>($"An error occurred: {ex.Message}");
+        }
     }
 }

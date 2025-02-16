@@ -14,24 +14,26 @@ public class UpdateCommandHandlerBase<TRequest, TEntity, TDto> : RequestHandlerB
 
         if (_currentUserService.UserRoles.Contains(enUserRoles.Admin.ToString()))
         {
-            await DoUpdate(request, entityToUpdate);
+            return await DoUpdate(request, entityToUpdate);
         }
-        else if (entityToUpdate is IEntityAddedByUser entityAddedByUser)
+
+
+        if (entityToUpdate is IEntityAddedByUser entityAddedByUser)
         {
             var UserId = _currentUserService.UserId;
 
             if (entityAddedByUser.UserId.Equals(_currentUserService.UserId, StringComparison.OrdinalIgnoreCase))
-                await DoUpdate(request, entityToUpdate);
-            else
-                return Unauthorized<TDto>("You are unauthorized to delete this resource.");
+                return await DoUpdate(request, entityToUpdate);
         }
 
-        return Updated(_mapper.Map<TDto>(entityToUpdate));
+        return Unauthorized<TDto>("You are unauthorized to delete this resource.");
     }
 
-    protected virtual async Task DoUpdate(TRequest updateRequest, TEntity entityToUpdate)
+    protected virtual async Task<Response<TDto>> DoUpdate(TRequest updateRequest, TEntity entityToUpdate)
     {
         var updatedEntity = _mapper.Map(updateRequest, entityToUpdate);
         await _basicService.UpdateAsync(updatedEntity);
+
+        return Created(_mapper.Map<TDto>(entityToUpdate));
     }
 }

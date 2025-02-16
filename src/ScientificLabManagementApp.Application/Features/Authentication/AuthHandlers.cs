@@ -335,7 +335,7 @@ public class GetMeHandler : AuthHandler<GetMeQuery, UserDto>
         if (currentUser == null)
             return Unauthorized<UserDto>("Unable to identify the user from the access token.");
 
-        var userFromDb = await _applicationUserService.GetDtoByIdAsync(_currentUserService.UserId);
+        var userFromDb = await _applicationUserService.GetOneByIdAsync(_currentUserService.UserId);
         if (userFromDb == null)
             return NotFound<UserDto>("User is not found!");
 

@@ -17,23 +17,23 @@ public class DeleteCommandHandlerBase<TRequest, TEntity, TDto> : RequestHandlerB
 
         if (_currentUserService.UserRoles.Contains(enUserRoles.Admin.ToString()))
         {
-            await DoDelete(entityToDelete);
+            return await DoDelete(entityToDelete);
         }
-        else if (entityToDelete is IEntityAddedByUser entityAddedByUser)
+
+        if (entityToDelete is IEntityAddedByUser entityAddedByUser)
         {
             var UserId = _currentUserService.UserId;
 
             if (entityAddedByUser.UserId.Equals(_currentUserService.UserId, StringComparison.OrdinalIgnoreCase))
-                await DoDelete(entityToDelete);
-            else
-                return Unauthorized<TDto>("You are unauthorized to delete this resource.");
+                return await DoDelete(entityToDelete);
         }
 
-        return Deleted<TDto>();
+        return Unauthorized<TDto>("You are unauthorized to delete this resource.");
     }
 
-    protected virtual async Task DoDelete(TEntity entityToDelete)
+    protected virtual async Task<Response<TDto>> DoDelete(TEntity entityToDelete)
     {
         await _basicService.DeleteAsync(entityToDelete);
+        return Deleted<TDto>();
     }
 }

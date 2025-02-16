@@ -1,71 +1,33 @@
-﻿namespace ScientificLabManagementApp.Infrastructure;
+﻿using System;
 
-public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto>
+namespace ScientificLabManagementApp.Infrastructure;
+
+public class GenericRepository<TEntity> : IGenericRepository<TEntity>
     where TEntity : class, IEntityBase
-    where TDto : class
 {
     protected readonly ApplicationDbContext _context;
-    protected readonly IMapper _mapper;
 
-    public GenericRepository(ApplicationDbContext context, IMapper mapper)
+    public GenericRepository(ApplicationDbContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
 
-    public virtual async Task<TDto> GetDtoByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<TEntity> GetOneByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes)
     {
-
-        var result = await _context.Set<TEntity>()
-                               .ApplyIncludes(includes)
-                               .Where(x => x.Id == id).AsNoTracking()
-                               .ProjectTo<TDto>(_mapper.ConfigurationProvider)
-                               .FirstOrDefaultAsync();
-
+        var result = await FindOneAsync(e=>e.Id == id, includes);
         return result;
     }
 
-    public virtual async Task<TEntity> GetEntityByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes)
+    public async Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
     {
         var result = await _context.Set<TEntity>()
-                                   .ApplyIncludes(includes)
-                                   .Where(x => x.Id == id)
-                                   .FirstOrDefaultAsync();
+                           .ApplyIncludes(includes)
+                           .ToListAsync();
         return result;
     }
 
 
-    public virtual async Task<IEnumerable<TDto>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
-    {
-        return await _context.Set<TEntity>()
-                             .ApplyIncludes(includes).AsNoTracking()
-                             .ProjectTo<TDto>(_mapper.ConfigurationProvider)
-                             .ToListAsync();
-    }
-
-    public virtual async Task<IEnumerable<TDto>> FindAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
-    {
-        var filtered = await _context.Set<TEntity>()
-                                     .ApplyIncludes(includes)
-                                     .Where(predicate)
-                                     .ProjectTo<TDto>(_mapper.ConfigurationProvider)
-                                     .ToListAsync();
-        return filtered;
-    }
-
-
-
-    public virtual async Task<TDto> FindOneAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
-    {
-        var result = await _context.Set<TEntity>()
-                                   .ApplyIncludes(includes)
-                                   .Where(predicate)
-                                   .ProjectTo<TDto>(_mapper.ConfigurationProvider)
-                                   .FirstOrDefaultAsync();
-        return result;
-    }
-
-    public virtual async Task<TEntity> FindOneEntityAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<TEntity> FindOneAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
     {
         var result = await _context.Set<TEntity>()
                                    .ApplyIncludes(includes)
@@ -74,17 +36,7 @@ public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto
         return result;
     }
 
-    public virtual async Task<IEnumerable<TDto>> FindAllAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
-    {
-        var result = await _context.Set<TEntity>()
-                                   .ApplyIncludes(includes)
-                                   .Where(predicate)
-                                   .ProjectTo<TDto>(_mapper.ConfigurationProvider)
-                                   .ToListAsync();
-        return result;
-    }
-
-    public virtual async Task<IEnumerable<TEntity>> FindEntitiesAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
     {
         var result = await _context.Set<TEntity>()
                                    .ApplyIncludes(includes)
@@ -98,20 +50,20 @@ public class GenericRepository<TEntity, TDto> : IGenericRepository<TEntity, TDto
         return await _context.Set<TEntity>().AnyAsync(e => e.Id == id);
     }
 
-    public virtual async Task<TDto> AddAsync(TEntity entity)
+    public virtual async Task<TEntity> AddAsync(TEntity entity)
     {
         var addedEntity = await _context.AddAsync(entity);
 
-        return _mapper.Map<TDto>(addedEntity.Entity);
+        return addedEntity.Entity;
     }
 
-    public virtual Task<TDto> UpdateAsync(TEntity entity)
+    public virtual Task<TEntity> UpdateAsync(TEntity entity)
     {
         var updatedEntity = _context.Update(entity);
-        return Task.FromResult(_mapper.Map<TDto>(updatedEntity.Entity));
+        return Task.FromResult(updatedEntity.Entity);
     }
 
-    public virtual async Task<string> UpdateAllAsync(IEnumerable<TEntity> entities)
+    public virtual async Task<string> UpdateRangeAsync(IEnumerable<TEntity> entities)
     {
         _context.UpdateRange(entities);
         return await Task.FromResult("All entities are updated");

@@ -1,3 +1,6 @@
+using Azure.Core;
+using MediatR;
+
 namespace ScientificLabManagementApp.Application;
 public class GetManyMaintenanceLogHandler : GetManyQueryHandlerBase<GetManyMaintenanceLogQuery, MaintenanceLog, MaintenanceLogDto> { }
 
@@ -5,100 +8,142 @@ public class GetOneMaintenanceLogByIdHandler : GetOneQueryHandlerBase<GetOneMain
 
 public class AddMaintenanceLogHandler : AddCommandHandlerBase<AddMaintenanceLogCommand, MaintenanceLog, MaintenanceLogDto>
 {
-    protected readonly IBaseService<Equipment, EquipmentDto> _equipmentService;
-    protected readonly IBaseService<Booking, BookingDto> _bookingService;
-
-    public AddMaintenanceLogHandler(IBaseService<Equipment, EquipmentDto> equipmentService, IBaseService<Booking, BookingDto> bookingService)
-    {
-        _equipmentService = equipmentService;
-        _bookingService = bookingService;
-    }
     public async override Task<Response<MaintenanceLogDto>> Handle(AddMaintenanceLogCommand request, CancellationToken cancellationToken)
     {
-        var maintenanceLog = _mapper.Map<MaintenanceLog>(request);
-        var resultDto = await _basicService.AddAsync(maintenanceLog);
+        using var transaction = _unitOfWork;
+        await transaction.BeginTransactionAsync();
 
-        var equipment = await _equipmentService.GetEntityByIdAsync(request.Data.equipment_id);
-        if (request.Data.Status == enMaintenanceStatus.InMaintenance)
+        try
         {
-            equipment.Status = enEquipmentStatus.InMaintenance;
-            equipment.ReservedQuantity = 0;
-            var bookingEntities = await _bookingService.FindEntitiesAsync(b => b.EquipmentId == equipment.Id);
+            // Map and Add Maintenance Log
+            var maintenanceLog = _mapper.Map<MaintenanceLog>(request);
+            var resultEntity = await _unitOfWork.MaintenanceLogRepository.AddAsync(maintenanceLog);
+            await _unitOfWork.SaveChangesAsync();
 
-            foreach (var entity in bookingEntities)
+            // Get Equipment
+            var equipment = await _unitOfWork.EquipmentRepository.GetOneByIdAsync(request.Data.equipment_id);
+            if (equipment == null)
+                return NotFound<MaintenanceLogDto>("Equipment not found");
+
+            if (request.Data.Status == enMaintenanceStatus.InMaintenance)
             {
-                entity.Status = enBookingStatus.Cancelled;
+                // Update Equipment Status
+                equipment.Status = enEquipmentStatus.InMaintenance;
+                equipment.ReservedQuantity = 0;
+
+                // Cancel Bookings
+                var bookingEntities = await _unitOfWork.BookingRepository.FindAllAsync(b => b.EquipmentId == equipment.Id);
+                foreach (var entity in bookingEntities)
+                {
+                    entity.Status = enBookingStatus.Cancelled;
+                }
+                await _unitOfWork.BookingRepository.UpdateRangeAsync(bookingEntities);
+            }
+            else if (request.Data.Status == enMaintenanceStatus.Fixed)
+            {
+                // Update Equipment Status if not in maintenance
+                equipment.Status = enEquipmentStatus.Available;
+                equipment.ReservedQuantity = 0;
             }
 
-            await _bookingService.UpdateRangeAsync(bookingEntities);
-        }
-        else
-        {
-            equipment.Status = enEquipmentStatus.Available;
-            if (equipment.ReservedQuantity == equipment.TotalQuantity)
-                equipment.Status = enEquipmentStatus.FullyBooked;
-        }
-        await _equipmentService.UpdateAsync(equipment);
+            await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
 
-        return Created(resultDto);
+            return Created(_mapper.Map<MaintenanceLogDto>(resultEntity));
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            return BadRequest<MaintenanceLogDto>($"An error occurred: {ex.Message}");
+        }
     }
 }
 public class UpdateMaintenanceLogHandler : UpdateCommandHandlerBase<UpdateMaintenanceLogCommand, MaintenanceLog, MaintenanceLogDto>
 {
-    protected readonly IBaseService<Equipment, EquipmentDto> _equipmentService;
-    protected readonly IBaseService<Booking, BookingDto> _bookingService;
-
-    public UpdateMaintenanceLogHandler(IBaseService<Equipment, EquipmentDto> equipmentService, IBaseService<Booking, BookingDto> bookingService)
+    protected async override Task<Response<MaintenanceLogDto>> DoUpdate(UpdateMaintenanceLogCommand updateRequest, MaintenanceLog entityToUpdate)
     {
-        _equipmentService = equipmentService;
-        _bookingService = bookingService;
-    }
+        if (entityToUpdate.Status == updateRequest.Data.Status)
+            return Updated<MaintenanceLogDto>(_mapper.Map<MaintenanceLogDto>(entityToUpdate));
 
-    protected async override Task DoUpdate(UpdateMaintenanceLogCommand updateRequest, MaintenanceLog entityToUpdate)
-    {
-        var oldMaintenanceLog = await _basicService.GetEntityByIdAsync(entityToUpdate.Id);
+        using var transaction = _unitOfWork;
+        await transaction.BeginTransactionAsync();
 
-        if (oldMaintenanceLog.Status == updateRequest.Data.Status)
-            return;
-
-        var maintenanceLog = _mapper.Map(updateRequest, entityToUpdate);
-        await _basicService.UpdateAsync(maintenanceLog);
-
-        var equipment = await _equipmentService.GetEntityByIdAsync(updateRequest.Data.equipment_id);
-        if (updateRequest.Data.Status == enMaintenanceStatus.InMaintenance)
+        try
         {
-            equipment.Status = enEquipmentStatus.InMaintenance;
+            var updatedMaintenanceLog = _mapper.Map(updateRequest, entityToUpdate);
+            var resultEntity = await _unitOfWork.MaintenanceLogRepository.UpdateAsync(updatedMaintenanceLog);
+            await _unitOfWork.SaveChangesAsync();
+
+
+            // Get Equipment
+            var equipment = await _unitOfWork.EquipmentRepository.GetOneByIdAsync(updateRequest.Data.equipment_id);
+            if (equipment == null)
+                return NotFound<MaintenanceLogDto>("Equipment not found");
+
+            if (updateRequest.Data.Status == enMaintenanceStatus.InMaintenance)
+            {
+                equipment.Status = enEquipmentStatus.InMaintenance;
+                equipment.ReservedQuantity = 0;
+
+                // Cancel Bookings
+                var bookingEntities = await _unitOfWork.BookingRepository.FindAllAsync(b => b.EquipmentId == equipment.Id);
+                foreach (var entity in bookingEntities)
+                {
+                    entity.Status = enBookingStatus.Cancelled;
+                }
+                await _unitOfWork.BookingRepository.UpdateRangeAsync(bookingEntities);
+            }
+            else if (updateRequest.Data.Status == enMaintenanceStatus.Fixed)
+            {
+                equipment.Status = enEquipmentStatus.Available;
+                equipment.ReservedQuantity = 0;
+            }
+
+            await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
+
+            return Created(_mapper.Map<MaintenanceLogDto>(resultEntity));
         }
-        else
+        catch (Exception ex)
         {
-            equipment.Status = enEquipmentStatus.Available;
-            if (equipment.ReservedQuantity == equipment.TotalQuantity)
-                equipment.Status = enEquipmentStatus.FullyBooked;
+            await _unitOfWork.RollbackTransactionAsync();
+            return BadRequest<MaintenanceLogDto>($"An error occurred: {ex.Message}");
         }
-        await _equipmentService.UpdateAsync(equipment);
     }
 }
 
 public class DeleteMaintenanceLogHandler : DeleteCommandHandlerBase<DeleteMaintenanceLogCommand, MaintenanceLog, MaintenanceLogDto>
 {
-    protected readonly IBaseService<Equipment, EquipmentDto> _equipmentService;
-
-    public DeleteMaintenanceLogHandler(IBaseService<Equipment, EquipmentDto> equipmentService)
+    protected async override Task<Response<MaintenanceLogDto>> DoDelete(MaintenanceLog maintenanceLogToDelete)
     {
-        _equipmentService = equipmentService;
-    }
+        using var transaction = _unitOfWork;
+        await transaction.BeginTransactionAsync();
 
-    protected async override Task DoDelete(MaintenanceLog maintenanceLogToDelete)
-    {
-        await _basicService.DeleteAsync(maintenanceLogToDelete);
+        try
+        {
+            await _unitOfWork.MaintenanceLogRepository.DeleteAsync(maintenanceLogToDelete); 
+            await _unitOfWork.SaveChangesAsync();
 
-        var equipment = await _equipmentService.GetEntityByIdAsync(maintenanceLogToDelete.EquipmentId);
+            // Get Equipment
+            var equipment = await _unitOfWork.EquipmentRepository.GetOneByIdAsync(maintenanceLogToDelete.EquipmentId);
+            if (equipment == null)
+                return NotFound<MaintenanceLogDto>("Equipment not found");
 
-        equipment.Status = enEquipmentStatus.Available;
-        if (equipment.ReservedQuantity == equipment.TotalQuantity)
-            equipment.Status = enEquipmentStatus.FullyBooked;
+            equipment.Status = enEquipmentStatus.Available;
+            equipment.ReservedQuantity = 0;
+            await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
 
-        await _equipmentService.UpdateAsync(equipment);
+            return Deleted<MaintenanceLogDto>();
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            return BadRequest<MaintenanceLogDto>($"An error occurred: {ex.Message}");
+        }
     }
 }
 

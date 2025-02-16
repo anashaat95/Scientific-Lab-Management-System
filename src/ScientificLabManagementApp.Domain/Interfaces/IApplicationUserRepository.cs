@@ -1,16 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace ScientificLabManagementApp.Domain;
-public interface IApplicationUserRepository<TDto> 
-    where TDto : class
+public interface IApplicationUserRepository
 {
-    Task<TDto> GetDtoByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<IEnumerable<TDto>> GetAllSupervisorsDtoByIdAsync(params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<IEnumerable<TDto>> GetAllTechniciansDtoByIdAsync(params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<IEnumerable<TDto>> GetAllResearchersDtoByIdAsync(params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<MappingApplicationUser> GetEntityByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<IEnumerable<TDto>> GetAllAsync(params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<TDto> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<IEnumerable<TDto>> FindAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes);
+    Task<MappingApplicationUser> GetOneByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes);
+    Task<IEnumerable<MappingApplicationUser>> GetAllUsersAsync(params Expression<Func<MappingApplicationUser, object>>[] includes);
+    Task<IEnumerable<MappingApplicationUser>> GetAllSupervisorsAsync(params Expression<Func<MappingApplicationUser, object>>[] includes);
+    Task<IEnumerable<MappingApplicationUser>> GetAllTechniciansAsync(params Expression<Func<MappingApplicationUser, object>>[] includes);
+    Task<IEnumerable<MappingApplicationUser>> GetAllResearchersAsync(params Expression<Func<MappingApplicationUser, object>>[] includes);
+    Task<MappingApplicationUser> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes);
+    Task<IEnumerable<MappingApplicationUser>> FindAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes);
 
 }

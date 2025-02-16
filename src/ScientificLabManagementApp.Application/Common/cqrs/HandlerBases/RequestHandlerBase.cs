@@ -14,6 +14,7 @@ public abstract class RequestHandlerBase<TRequest, TEntity, TDto>
     protected readonly IMapper _mapper;
     protected readonly ICurrentUserService _currentUserService;
     protected readonly IApplicationUserService _applicationUserService;
+    protected readonly IUnitOfWork _unitOfWork;
     #endregion
 
 
@@ -29,6 +30,7 @@ public abstract class RequestHandlerBase<TRequest, TEntity, TDto>
         _mapper = serviceProvider!.GetRequiredService<IMapper>();
         _currentUserService = serviceProvider!.GetRequiredService<ICurrentUserService>();
         _applicationUserService = serviceProvider!.GetRequiredService<IApplicationUserService>();
+        _unitOfWork = serviceProvider!.GetRequiredService<IUnitOfWork>();
     }
     #endregion
 

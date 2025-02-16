@@ -3,45 +3,52 @@ namespace ScientificLabManagementApp.Application;
 
 public class ApplicationUserService : IApplicationUserService
 {
-    protected readonly IApplicationUserRepository<UserDto> _userRepository;
+    protected readonly IApplicationUserRepository _userRepository;
+    protected readonly IMapper _mapper;
 
-    public ApplicationUserService(IApplicationUserRepository<UserDto> userRepository)
+    public ApplicationUserService(IApplicationUserRepository userRepository, IMapper mapper)
     {
         _userRepository = userRepository;
+        _mapper = mapper;
     }
 
-    public Task<UserDto> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<UserDto> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
-        return _userRepository.FindOneAsync(predicate, includes);   
+        var result = await _userRepository.FindOneAsync(predicate, includes);
+        return _mapper.Map<UserDto>(result);
     }
 
-    public Task<IEnumerable<UserDto>> GetAllAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<IEnumerable<UserDto>> GetAllUsersAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
-        return _userRepository.GetAllAsync(includes);
+        var result = await _userRepository.GetAllUsersAsync(includes);
+        return _mapper.Map<IEnumerable<UserDto>>(result);
     }
 
-    public Task<IEnumerable<UserDto>> GetSupervisorsAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<IEnumerable<UserDto>> GetSupervisorsAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
-        return _userRepository.GetAllSupervisorsDtoByIdAsync(includes);
+        var result = await _userRepository.GetAllSupervisorsAsync(includes);
+        return _mapper.Map<IEnumerable<UserDto>>(result);
     }
 
-    public Task<IEnumerable<UserDto>> GetTechniciansAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<IEnumerable<UserDto>> GetTechniciansAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
-        return _userRepository.GetAllTechniciansDtoByIdAsync(includes);
+        var result = await _userRepository.GetAllTechniciansAsync(includes);
+        return _mapper.Map<IEnumerable<UserDto>>(result);
     }
 
-    public Task<IEnumerable<UserDto>> GetResearchersAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<IEnumerable<UserDto>> GetResearchersAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
-        return _userRepository.GetAllResearchersDtoByIdAsync(includes);
+        var result = await _userRepository.GetAllResearchersAsync(includes);
+        return _mapper.Map<IEnumerable<UserDto>>(result);
     }
 
-    public Task<UserDto> GetDtoByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public Task<UserDto> GetOneByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
-        return _userRepository.GetDtoByIdAsync(id, includes);
+        return FindOneAsync(e => e.Id == id);
     }
 
     public Task<MappingApplicationUser> GetEntityByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
-        return _userRepository.GetEntityByIdAsync(id, includes);
+        return _userRepository.GetOneByIdAsync(id, includes);
     }
 }

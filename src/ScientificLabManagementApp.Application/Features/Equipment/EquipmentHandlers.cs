@@ -17,37 +17,44 @@ public class GetOneEquipmentByIdHandler : GetOneQueryHandlerBase<GetOneEquipment
 public class AddEquipmentHandler : AddCommandHandlerBase<AddEquipmentCommand, Equipment, EquipmentDto> { }
 
 public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCommand, Equipment, EquipmentDto> {
-    protected readonly IBaseService<Booking, BookingDto> _bookingService;
-
-    public UpdateEquipmentHandler(IBaseService<Booking, BookingDto> bookingService)
+    protected async override Task<Response<EquipmentDto>> DoUpdate(UpdateEquipmentCommand updateRequest, Equipment equipmentToUpdate)
     {
-        _bookingService = bookingService;
-    }
+        if (updateRequest.Data.Status == enEquipmentStatus.FullyBooked || updateRequest.Data.Status == enEquipmentStatus.InMaintenance
+            || equipmentToUpdate.Status == updateRequest.Data.Status)
+            return Updated(_mapper.Map<EquipmentDto>(equipmentToUpdate));
 
-    protected async override Task DoUpdate(UpdateEquipmentCommand updateRequest, Equipment entityToUpdate)
-    {
-        if (entityToUpdate.Status == enEquipmentStatus.FullyBooked || entityToUpdate.Status == enEquipmentStatus.InMaintenance)
-            return;
-
-        var oldEquipmentEntity = await _basicService.GetEntityByIdAsync(updateRequest.Id);
-
-        if (oldEquipmentEntity.Status == updateRequest.Data.Status)
-            return;
-
-        if (updateRequest.Data.Status == enEquipmentStatus.Decommissioned || updateRequest.Data.Status == enEquipmentStatus.NotWorking)
+        using var transaction = _unitOfWork;
+        await transaction.BeginTransactionAsync();
+        try
         {
-            var updatedEntity = _mapper.Map(updateRequest, entityToUpdate);
-            updatedEntity.ReservedQuantity = 0;
-            await _basicService.UpdateAsync(updatedEntity);
-
-            var bookingEntities = await _bookingService.FindEntitiesAsync(b => b.EquipmentId == updatedEntity.Id);
-
-            foreach (var entity in bookingEntities)
+            if (updateRequest.Data.Status == enEquipmentStatus.Decommissioned || updateRequest.Data.Status == enEquipmentStatus.NotWorking)
             {
-                entity.Status = enBookingStatus.Cancelled;
+                var updatedEntity = _mapper.Map(updateRequest, equipmentToUpdate);
+                updatedEntity.ReservedQuantity = 0;
+                await _unitOfWork.EquipmentRepository.UpdateAsync(updatedEntity);
+
+                // Find and cancel related booking entities
+                var bookingEntities = await _unitOfWork.BookingRepository.FindAllAsync(b => b.EquipmentId == updatedEntity.Id);
+                foreach (var booking in bookingEntities)
+                {
+                    booking.Status = enBookingStatus.Cancelled;
+                }
+                await _unitOfWork.BookingRepository.UpdateRangeAsync(bookingEntities);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
+
+                var resultDto = _mapper.Map<EquipmentDto>(updatedEntity);
+                return Created(resultDto);
             }
 
-            await _bookingService.UpdateRangeAsync(bookingEntities);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
+            return Updated(_mapper.Map<EquipmentDto>(equipmentToUpdate));
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            return BadRequest<EquipmentDto>($"An error occurred: {ex.Message}");
         }
     }
 }

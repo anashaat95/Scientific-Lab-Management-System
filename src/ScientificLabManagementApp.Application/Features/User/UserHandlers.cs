@@ -4,7 +4,7 @@ public class GetManyUserHandler : GetManyQueryHandlerBase<GetManyUserQuery, Appl
 {
     protected override Task<IEnumerable<UserDto>> GetEntityDtos()
     {
-        return _applicationUserService.GetAllAsync();
+        return _applicationUserService.GetAllUsersAsync();
     }
 }
 
@@ -36,7 +36,7 @@ public class GetOneUserByIdHandler : GetOneQueryHandlerBase<GetOneUserByIdQuery,
 {
     protected override Task<UserDto?> GetEntityDto(GetOneUserByIdQuery request)
     {
-        return _applicationUserService.GetDtoByIdAsync(request.Id);
+        return _applicationUserService.GetOneByIdAsync(request.Id);
     }
 }
 
@@ -58,7 +58,7 @@ public class AddUserHandler : AddCommandHandlerBase<AddUserCommand, ApplicationU
         {
             return BadRequest<UserDto>($"User created but failed to assign role. Errors: {roleAssignmentResult.ConvertErrorsToString()}");
         }
-        var updatedUserDto = await _applicationUserService.GetDtoByIdAsync(entityToAdd.Id);
+        var updatedUserDto = await _applicationUserService.GetOneByIdAsync(entityToAdd.Id);
         return Created<UserDto>(updatedUserDto);
     }
 }
@@ -79,7 +79,7 @@ public class UpdateUserHandler : UpdateCommandHandlerBase<UpdateUserCommand, App
             return BadRequest<UserDto>($"Failed to update the user. Errors: {updateResult.ConvertErrorsToString()}");
         }
 
-        var updatedUserDto = await _applicationUserService.GetDtoByIdAsync(mappedUserEntity.Id);
+        var updatedUserDto = await _applicationUserService.GetOneByIdAsync(mappedUserEntity.Id);
         return Updated<UserDto>(updatedUserDto);
     }
 }
