@@ -1,5 +1,4 @@
 using Azure.Core;
-using MediatR;
 
 namespace ScientificLabManagementApp.Application;
 public class GetManyMaintenanceLogHandler : GetManyQueryHandlerBase<GetManyMaintenanceLogQuery, MaintenanceLog, MaintenanceLogDto> { }
@@ -8,6 +7,12 @@ public class GetOneMaintenanceLogByIdHandler : GetOneQueryHandlerBase<GetOneMain
 
 public class AddMaintenanceLogHandler : AddCommandHandlerBase<AddMaintenanceLogCommand, MaintenanceLog, MaintenanceLogDto>
 {
+    protected readonly IEquipmentService _equipmentService;
+
+    public AddMaintenanceLogHandler(IEquipmentService equipmentService)
+    {
+        _equipmentService = equipmentService;
+    }
     public async override Task<Response<MaintenanceLogDto>> Handle(AddMaintenanceLogCommand request, CancellationToken cancellationToken)
     {
         using var transaction = _unitOfWork;
@@ -25,29 +30,7 @@ public class AddMaintenanceLogHandler : AddCommandHandlerBase<AddMaintenanceLogC
             if (equipment == null)
                 return NotFound<MaintenanceLogDto>("Equipment not found");
 
-            if (request.Data.Status == enMaintenanceStatus.InMaintenance)
-            {
-                // Update Equipment Status
-                equipment.Status = enEquipmentStatus.InMaintenance;
-                equipment.ReservedQuantity = 0;
-
-                // Cancel Bookings
-                var bookingEntities = await _unitOfWork.BookingRepository.FindAllAsync(b => b.EquipmentId == equipment.Id);
-                foreach (var entity in bookingEntities)
-                {
-                    entity.Status = enBookingStatus.Cancelled;
-                }
-                await _unitOfWork.BookingRepository.UpdateRangeAsync(bookingEntities);
-            }
-            else if (request.Data.Status == enMaintenanceStatus.Fixed)
-            {
-                // Update Equipment Status if not in maintenance
-                equipment.Status = enEquipmentStatus.Available;
-                equipment.ReservedQuantity = 0;
-            }
-
-            await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
-            await _unitOfWork.SaveChangesAsync();
+            await _equipmentService.UpdateEquipmentBasedOnMaintenaceStatus(equipment, request.Data.Status);
             await _unitOfWork.CommitTransactionAsync();
 
             return Created(_mapper.Map<MaintenanceLogDto>(resultEntity));
@@ -61,6 +44,12 @@ public class AddMaintenanceLogHandler : AddCommandHandlerBase<AddMaintenanceLogC
 }
 public class UpdateMaintenanceLogHandler : UpdateCommandHandlerBase<UpdateMaintenanceLogCommand, MaintenanceLog, MaintenanceLogDto>
 {
+    protected readonly IEquipmentService _equipmentService;
+
+    public UpdateMaintenanceLogHandler(IEquipmentService equipmentService)
+    {
+        _equipmentService = equipmentService;
+    }
     protected async override Task<Response<MaintenanceLogDto>> DoUpdate(UpdateMaintenanceLogCommand updateRequest, MaintenanceLog entityToUpdate)
     {
         if (entityToUpdate.Status == updateRequest.Data.Status)
@@ -75,33 +64,12 @@ public class UpdateMaintenanceLogHandler : UpdateCommandHandlerBase<UpdateMainte
             var resultEntity = await _unitOfWork.MaintenanceLogRepository.UpdateAsync(updatedMaintenanceLog);
             await _unitOfWork.SaveChangesAsync();
 
-
             // Get Equipment
             var equipment = await _unitOfWork.EquipmentRepository.GetOneByIdAsync(updateRequest.Data.equipment_id);
             if (equipment == null)
                 return NotFound<MaintenanceLogDto>("Equipment not found");
 
-            if (updateRequest.Data.Status == enMaintenanceStatus.InMaintenance)
-            {
-                equipment.Status = enEquipmentStatus.InMaintenance;
-                equipment.ReservedQuantity = 0;
-
-                // Cancel Bookings
-                var bookingEntities = await _unitOfWork.BookingRepository.FindAllAsync(b => b.EquipmentId == equipment.Id);
-                foreach (var entity in bookingEntities)
-                {
-                    entity.Status = enBookingStatus.Cancelled;
-                }
-                await _unitOfWork.BookingRepository.UpdateRangeAsync(bookingEntities);
-            }
-            else if (updateRequest.Data.Status == enMaintenanceStatus.Fixed)
-            {
-                equipment.Status = enEquipmentStatus.Available;
-                equipment.ReservedQuantity = 0;
-            }
-
-            await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
-            await _unitOfWork.SaveChangesAsync();
+            await _equipmentService.UpdateEquipmentBasedOnMaintenaceStatus(equipment, updateRequest.Data.Status);
             await _unitOfWork.CommitTransactionAsync();
 
             return Created(_mapper.Map<MaintenanceLogDto>(resultEntity));
@@ -116,6 +84,12 @@ public class UpdateMaintenanceLogHandler : UpdateCommandHandlerBase<UpdateMainte
 
 public class DeleteMaintenanceLogHandler : DeleteCommandHandlerBase<DeleteMaintenanceLogCommand, MaintenanceLog, MaintenanceLogDto>
 {
+    protected readonly IEquipmentService _equipmentService;
+
+    public DeleteMaintenanceLogHandler(IEquipmentService equipmentService)
+    {
+        _equipmentService = equipmentService;
+    }
     protected async override Task<Response<MaintenanceLogDto>> DoDelete(MaintenanceLog maintenanceLogToDelete)
     {
         using var transaction = _unitOfWork;
@@ -123,7 +97,7 @@ public class DeleteMaintenanceLogHandler : DeleteCommandHandlerBase<DeleteMainte
 
         try
         {
-            await _unitOfWork.MaintenanceLogRepository.DeleteAsync(maintenanceLogToDelete); 
+            await _unitOfWork.MaintenanceLogRepository.DeleteAsync(maintenanceLogToDelete);
             await _unitOfWork.SaveChangesAsync();
 
             // Get Equipment
@@ -131,10 +105,7 @@ public class DeleteMaintenanceLogHandler : DeleteCommandHandlerBase<DeleteMainte
             if (equipment == null)
                 return NotFound<MaintenanceLogDto>("Equipment not found");
 
-            equipment.Status = enEquipmentStatus.Available;
-            equipment.ReservedQuantity = 0;
-            await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
-            await _unitOfWork.SaveChangesAsync();
+            await _equipmentService.UpdateEquipmentIfMaintenaceLogDeleted(equipment);
             await _unitOfWork.CommitTransactionAsync();
 
             return Deleted<MaintenanceLogDto>();

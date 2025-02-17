@@ -18,6 +18,7 @@ public static class ApplicationDependencyInjectionExtensions
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 
+        services.AddScoped<IEquipmentService, EquipmentService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IEmailService, EmailService>();
         services.Configure<SmtpSettings>(configManager.GetSection(nameof(SmtpSettings)));

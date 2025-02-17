@@ -17,6 +17,14 @@ public class GetOneEquipmentByIdHandler : GetOneQueryHandlerBase<GetOneEquipment
 public class AddEquipmentHandler : AddCommandHandlerBase<AddEquipmentCommand, Equipment, EquipmentDto> { }
 
 public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCommand, Equipment, EquipmentDto> {
+
+    protected readonly IEquipmentService _equipmentService;
+
+    public UpdateEquipmentHandler(IEquipmentService equipmentService)
+    {
+        _equipmentService = equipmentService;
+    }
+
     protected async override Task<Response<EquipmentDto>> DoUpdate(UpdateEquipmentCommand updateRequest, Equipment equipmentToUpdate)
     {
         if (updateRequest.Data.Status == enEquipmentStatus.FullyBooked || updateRequest.Data.Status == enEquipmentStatus.InMaintenance
@@ -34,17 +42,11 @@ public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCo
                 await _unitOfWork.EquipmentRepository.UpdateAsync(updatedEntity);
 
                 // Find and cancel related booking entities
-                var bookingEntities = await _unitOfWork.BookingRepository.FindAllAsync(b => b.EquipmentId == updatedEntity.Id);
-                foreach (var booking in bookingEntities)
-                {
-                    booking.Status = enBookingStatus.Cancelled;
-                }
-                await _unitOfWork.BookingRepository.UpdateRangeAsync(bookingEntities);
-                await _unitOfWork.SaveChangesAsync();
+                await _equipmentService.CancelAllBookingsRelatedToEquipment(updatedEntity.Id);
                 await _unitOfWork.CommitTransactionAsync();
 
                 var resultDto = _mapper.Map<EquipmentDto>(updatedEntity);
-                return Created(resultDto);
+                return Updated(resultDto);
             }
 
             await _unitOfWork.SaveChangesAsync();

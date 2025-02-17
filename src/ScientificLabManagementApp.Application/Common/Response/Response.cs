@@ -22,11 +22,12 @@ public class Response<T>
         Errors = new List<string>();
     }
 
-    public Response(string message, bool succeeded)
+    public Response(string message, bool succeeded, HttpStatusCode statusCode)
     {
         Succeeded = succeeded;
         Message = message;
         Errors = new List<string>();
+        StatusCode = statusCode;
     }
 
     public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.OK;
@@ -35,4 +36,8 @@ public class Response<T>
     public List<string> Errors { get; set; }
     public T Data { get; set; }
     public object Meta { get; set; }
+
+
+    public static Response<T> Fail(string message, HttpStatusCode statusCode) => new Response<T>(message, false, statusCode);
+    public static Response<T> Success() => new Response<T>(string.Empty, true, HttpStatusCode.OK);
 }

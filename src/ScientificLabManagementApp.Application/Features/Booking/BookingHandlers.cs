@@ -18,9 +18,9 @@ public class GetOneBookingByIdHandler : GetOneQueryHandlerBase<GetOneBookingById
 }
 public class AddBookingHandler : AddCommandHandlerBase<AddBookingCommand, Booking, BookingDto>
 {
-    protected readonly IBaseService<Equipment, EquipmentDto> _equipmentService;
+    protected readonly IEquipmentService _equipmentService;
 
-    public AddBookingHandler(IBaseService<Equipment, EquipmentDto> equipmentService)
+    public AddBookingHandler(IEquipmentService equipmentService)
     {
         _equipmentService = equipmentService;
     }
@@ -44,21 +44,8 @@ public class AddBookingHandler : AddCommandHandlerBase<AddBookingCommand, Bookin
                 if (equipment == null)
                     return NotFound<BookingDto>("Equipment not found");
 
-                // Increase Reserved Quantity
-                equipment.ReservedQuantity += 1;
-
-                // Check if Fully Booked
-                if (equipment.ReservedQuantity == equipment.TotalQuantity)
-                {
-                    equipment.Status = enEquipmentStatus.FullyBooked;
-                }
-                else if (equipment.ReservedQuantity > equipment.TotalQuantity || equipment.Status == enEquipmentStatus.FullyBooked)
-                {
-                    return BadRequest<BookingDto>("Booking can not be added because this equipment is fully booked");
-                }
-
-                await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
-                await _unitOfWork.SaveChangesAsync();
+                var response = await _equipmentService.UpdateEquipmentIfBookingConfirmed(equipment);
+                if (response.StatusCode == HttpStatusCode.BadRequest) return BadRequest<BookingDto>(response.Message);
             }
 
             await _unitOfWork.CommitTransactionAsync();
@@ -76,6 +63,12 @@ public class AddBookingHandler : AddCommandHandlerBase<AddBookingCommand, Bookin
 }
 public class UpdateBookingHandler : UpdateCommandHandlerBase<UpdateBookingCommand, Booking, BookingDto>
 {
+    protected readonly IEquipmentService _equipmentService;
+
+    public UpdateBookingHandler(IEquipmentService equipmentService)
+    {
+        _equipmentService = equipmentService;
+    }
     protected override async Task<Response<BookingDto>> DoUpdate(UpdateBookingCommand updateRequest, Booking entityToUpdate)
     {
 
@@ -98,21 +91,8 @@ public class UpdateBookingHandler : UpdateCommandHandlerBase<UpdateBookingComman
                 if (equipment == null)
                     return NotFound<BookingDto>("Equipment not found");
 
-                // Increase Reserved Quantity
-                equipment.ReservedQuantity += 1;
-
-                // Check if Fully Booked
-                if (equipment.ReservedQuantity == equipment.TotalQuantity)
-                {
-                    equipment.Status = enEquipmentStatus.FullyBooked;
-                }
-                else if (equipment.ReservedQuantity > equipment.TotalQuantity || equipment.Status == enEquipmentStatus.FullyBooked)
-                {
-                    return BadRequest<BookingDto>("Booking can not be added because this equipment is fully booked");
-                }
-
-                await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
-                await _unitOfWork.SaveChangesAsync();
+                var response = await _equipmentService.UpdateEquipmentIfBookingConfirmed(equipment);
+                if (response.StatusCode == HttpStatusCode.BadRequest) return BadRequest<BookingDto>(response.Message);
             }
 
             await _unitOfWork.CommitTransactionAsync();
@@ -131,6 +111,12 @@ public class UpdateBookingHandler : UpdateCommandHandlerBase<UpdateBookingComman
 }
 public class DeleteBookingHandler : DeleteCommandHandlerBase<DeleteBookingCommand, Booking, BookingDto>
 {
+    protected readonly IEquipmentService _equipmentService;
+
+    public DeleteBookingHandler(IEquipmentService equipmentService)
+    {
+        _equipmentService = equipmentService;
+    }
     protected async override Task<Response<BookingDto>> DoDelete(Booking bookingToDelete)
     {
         using var transaction = _unitOfWork;
@@ -146,19 +132,8 @@ public class DeleteBookingHandler : DeleteCommandHandlerBase<DeleteBookingComman
             if (equipment == null)
                 return NotFound<BookingDto>("Equipment not found");
 
-            equipment.Status = enEquipmentStatus.Available;
-            equipment.ReservedQuantity -= 1;
-
-
-            if (equipment.ReservedQuantity < 0)
-            {
-                equipment.ReservedQuantity = 0;
-            }
-
-            await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
-            await _unitOfWork.SaveChangesAsync();
+            await _equipmentService.UpdateEquipmentIfBookingDeleted(equipment);
             await _unitOfWork.CommitTransactionAsync();
-
             return Deleted<BookingDto>();
         }
         catch (Exception ex)
