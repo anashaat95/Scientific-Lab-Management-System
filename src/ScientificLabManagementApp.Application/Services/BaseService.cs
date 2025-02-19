@@ -108,8 +108,10 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
 
     public virtual bool IsAuthorizedToUpdateOrDeleteResource(TEntity entity)
     {
+        if (_currentUserService.User != null && _currentUserService.UserRoles.Contains(enUserRoles.Admin.ToString()))
+            return true;
 
-        if (_currentUserService.User == null || entity is not IEntityAddedByUser entityAddedByUser)
+        if (entity is not IEntityAddedByUser entityAddedByUser)
             return false;
 
         var userId = entityAddedByUser.UserId;

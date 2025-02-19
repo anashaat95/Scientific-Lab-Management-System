@@ -19,7 +19,7 @@ public class EquipmentValidator<TCommand, TData> : ValidatorBase<TCommand, Equip
         RuleFor(x => x.Data.serial_number).ApplyNotEmptyRule().ApplyNotNullableRule();
         RuleFor(x => x.Data.Specifications).ApplyNotEmptyRule().ApplyNotNullableRule();
         RuleFor(x => x.Data.Description).ApplyNotEmptyRule().ApplyNotNullableRule();
-        RuleFor(x => x.Data.can_be_Left_overnight)
+        RuleFor(x => x.Data.CanBeLeftOverNight)
             .Must(value => value == true || value == false)
             .WithMessage("Can be left overnight must be either true or false.");
         RuleFor(x => x.Data.company_id).ApplyNotEmptyRule().ApplyNotNullableRule();

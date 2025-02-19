@@ -15,7 +15,9 @@ public class UpdateCommandHandlerBase<TRequest, TEntity, TDto> : RequestHandlerB
         if (!_basicService.IsAuthorizedToUpdateOrDeleteResource(entityToUpdate))
             return Unauthorized<TDto>("You are not authorized to update this resource.");
 
-        return await DoUpdate(request, entityToUpdate);
+        var result = await DoUpdate(request, entityToUpdate);
+
+        return result;
     }
 
     protected virtual async Task<Response<TDto>> DoUpdate(TRequest updateRequest, TEntity entityToUpdate)

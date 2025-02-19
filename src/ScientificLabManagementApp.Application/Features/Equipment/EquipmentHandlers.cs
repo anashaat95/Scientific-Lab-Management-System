@@ -17,7 +17,8 @@ public class GetOneEquipmentByIdHandler : GetOneQueryHandlerBase<GetOneEquipment
 }
 public class AddEquipmentHandler : AddCommandHandlerBase<AddEquipmentCommand, Equipment, EquipmentDto> { }
 
-public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCommand, Equipment, EquipmentDto> {
+public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCommand, Equipment, EquipmentDto>
+{
 
     protected readonly IEquipmentService _equipmentService;
 
@@ -28,27 +29,23 @@ public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCo
 
     protected async override Task<Response<EquipmentDto>> DoUpdate(UpdateEquipmentCommand updateRequest, Equipment equipmentToUpdate)
     {
-        if (updateRequest.Data.Status == enEquipmentStatus.FullyBooked || updateRequest.Data.Status == enEquipmentStatus.InMaintenance
-            || equipmentToUpdate.Status == updateRequest.Data.Status)
-            return Updated(_mapper.Map<EquipmentDto>(equipmentToUpdate));
+        //if (updateRequest.Data.Status == enEquipmentStatus.FullyBooked || updateRequest.Data.Status == enEquipmentStatus.InMaintenance
+        //    || equipmentToUpdate.Status == updateRequest.Data.Status)
+        //    return Updated(_mapper.Map<EquipmentDto>(equipmentToUpdate));
 
         using var transaction = _unitOfWork;
         await transaction.BeginTransactionAsync();
         try
         {
-            if (updateRequest.Data.Status == enEquipmentStatus.Decommissioned || updateRequest.Data.Status == enEquipmentStatus.NotWorking)
-            {
-                var updatedEntity = _mapper.Map(updateRequest, equipmentToUpdate);
-                updatedEntity.ReservedQuantity = 0;
-                await _unitOfWork.EquipmentRepository.UpdateAsync(updatedEntity);
 
-                // Find and cancel related booking entities
-                await _equipmentService.CancelAllBookingsRelatedToEquipment(updatedEntity.Id);
-                await _unitOfWork.CommitTransactionAsync();
+            var updatedEntity = _mapper.Map(updateRequest, equipmentToUpdate);
+            updatedEntity.ReservedQuantity = 0;
+            await _unitOfWork.EquipmentRepository.UpdateAsync(updatedEntity);
 
-                var resultDto = _mapper.Map<EquipmentDto>(updatedEntity);
-                return Updated(resultDto);
-            }
+            // Find and cancel related booking entities
+            await _equipmentService.CancelAllBookingsRelatedToEquipment(updatedEntity.Id);
+            
+            var resultDto = _mapper.Map<EquipmentDto>(updatedEntity);
 
             await _unitOfWork.SaveChangesAsync();
             await _unitOfWork.CommitTransactionAsync();
