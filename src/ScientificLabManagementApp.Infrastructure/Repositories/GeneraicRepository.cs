@@ -26,6 +26,11 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
         return result;
     }
 
+    public IQueryable<TEntity> GetQueryableEntityAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return _context.Set<TEntity>().Where(predicate);
+    }
+
 
     public virtual async Task<TEntity> FindOneAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
     {

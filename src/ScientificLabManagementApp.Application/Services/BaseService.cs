@@ -33,6 +33,11 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
         return _mapper.Map<IEnumerable<TDto>>(result);
     }
 
+    public virtual async Task<IEnumerable<TDto>> GetSelectOptionsAsync(Expression<Func<TEntity, bool>> predicate = null)
+    {
+        return await _repository.GetQueryableEntityAsync(predicate).ProjectTo<TDto>(_mapper.ConfigurationProvider).ToListAsync();
+    }
+
     public virtual async Task<TDto> AddAsync(TEntity entityToAdd)
     {
         var resultDto = await _repository.AddAsync(entityToAdd);

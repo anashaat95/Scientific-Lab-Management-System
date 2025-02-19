@@ -22,6 +22,11 @@ public class GetManyQueryBases<TDto> : RoleAuthorizeRequest, IRequest<Response<I
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
 }
 
+public class GetManySelectOptionsQueryBases<TDto> : IRequest<Response<IEnumerable<TDto>>>
+    where TDto : class
+{
+}
+
 public abstract class AddUpdateCommandBase<TDto, TCommandData> : RoleAuthorizeRequest, IRequest<Response<TDto>>
     where TDto : class
     where TCommandData : class

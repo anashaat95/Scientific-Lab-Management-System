@@ -15,4 +15,6 @@ public interface IGenericRepository<TEntity>
 
     Task<bool> RelatedExistsAsync<RelatedEntity>(string id) where RelatedEntity : class, IEntityBase;
     Task<RelatedEntity> FindRelatedEntityByIdAsync<RelatedEntity>(Expression<Func<RelatedEntity, bool>> predicate, params Expression<Func<RelatedEntity, object>>[] includes) where RelatedEntity : class, IEntityBase;
+
+    IQueryable<TEntity> GetQueryableEntityAsync(Expression<Func<TEntity, bool>> predicate);
 }

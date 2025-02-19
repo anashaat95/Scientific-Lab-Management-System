@@ -20,4 +20,5 @@ public interface IBaseService<TEntity, TDto>
     Task<IEnumerable<TEntity>> FindEntitiesAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes);
 
     bool IsAuthorizedToUpdateOrDeleteResource(TEntity entity);
+    Task<IEnumerable<TDto>> GetSelectOptionsAsync(Expression<Func<TEntity, bool>> predicate);
 }

@@ -1,5 +1,6 @@
 namespace ScientificLabManagementApp.Application;
 public class GetManyCompanyHandler : GetManyQueryHandlerBase<GetManyCompanyQuery, Company, CompanyDto> { }
+public class GetManyCompanySelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyCompanySelectOptionsQuery, Company> { }
 
 public class GetOneCompanyByIdHandler : GetOneQueryHandlerBase<GetOneCompanyByIdQuery, Company, CompanyDto> { }
 

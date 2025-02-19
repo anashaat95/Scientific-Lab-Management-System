@@ -5,6 +5,7 @@ public class CompanyMappingProfile : ProfileBase<Company, CompanyDto, CompanyCom
     public CompanyMappingProfile()
     {
         ApplyEntityToDtoMapping();
+        ApplyEntityToSelectOptionDtoMapping();
         ApplyCommandToEntityMapping<AddCompanyCommand, AddCompanyCommandData>();
         ApplyCommandToEntityMapping<UpdateCompanyCommand, UpdateCompanyCommandData>();
     }
@@ -24,6 +25,14 @@ public class CompanyMappingProfile : ProfileBase<Company, CompanyDto, CompanyCom
             .ForMember(dest => dest.country_name, opt => opt.MapFrom(src => src.Country.Name))
             .ForMember(x => x.created_at, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
+            ;
+    }
+
+    public IMappingExpression<Company, SelectOptionDto> ApplyEntityToSelectOptionDtoMapping()
+    {
+        return CreateMap<Company, SelectOptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             ;
     }
 
