@@ -49,7 +49,7 @@ public class ErrorHandlingMiddleware
         var errorResponse = new ErrorResponse
         {
             Message = "An unexpected error occurred.",
-            Details = exception.Message // You could add more details for debugging purposes
+            Details = exception.Message 
         };
 
         return context.Response.WriteAsJsonAsync(errorResponse);

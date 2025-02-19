@@ -12,20 +12,22 @@ public class CurrentUserService : ICurrentUserService
         _tokenService = serviceToken;
     }
 
+    private string? ExtractJwtToken()
+    {
+        var authHeader = _httpContextAccessor?.HttpContext?.Request?.Headers["Authorization"].ToString();
+
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            return null;
+
+
+        var tokenParts = authHeader.Split(" ");
+        return tokenParts.Length > 1 ? tokenParts[1] : null;
+    }
+
     public ClaimsPrincipal User 
     {
 
-        get {
-            var authHeader = _httpContextAccessor?.HttpContext?.Request?.Headers["Authorization"].ToString();
-
-            var token = String.Empty;
-            if (authHeader.Split(" ").Length > 1)
-                token = authHeader.Split(" ")[1];
-            else
-                throw new UnauthorizedAccessException("Invalid token");
-
-            return _tokenService.GetClaimsPrincipalFromAccessToken(token);
-        }
+        get => _tokenService.GetClaimsPrincipalFromAccessToken(ExtractJwtToken());
     }
 
     public string UserId => User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;

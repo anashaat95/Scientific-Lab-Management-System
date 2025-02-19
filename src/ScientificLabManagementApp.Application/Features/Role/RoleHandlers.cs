@@ -1,3 +1,6 @@
+using Azure.Core;
+using MediatR;
+
 namespace ScientificLabManagementApp.Application;
 public class GetManyRoleHandler : GetManyQueryHandlerBase<GetManyRoleQuery, ApplicationRole, RoleDto>
 {
@@ -42,12 +45,9 @@ public class AddRoleHandler : AddCommandHandlerBase<AddRoleCommand, ApplicationR
 public class UpdateRoleHandler : UpdateCommandHandlerBase<UpdateRoleCommand, ApplicationRole, RoleDto>
 {
 
-    public override async Task<Response<RoleDto>> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
+    protected override async Task<Response<RoleDto>> DoUpdate(UpdateRoleCommand updateRequest, ApplicationRole entityToUpdate)
     {
-        var entityToUpdate = await _roleManager.FindByIdAsync(request.Id);
-        if (entityToUpdate is null) return NotFound<RoleDto>($"No resource found with the id = {request.Id}");
-
-        var mappedRole = _mapper.Map(request, entityToUpdate);
+        var mappedRole = _mapper.Map(updateRequest, entityToUpdate);
         var updateResult = await _roleManager.UpdateAsync(mappedRole);
 
         if (!updateResult.Succeeded)
@@ -63,11 +63,8 @@ public class UpdateRoleHandler : UpdateCommandHandlerBase<UpdateRoleCommand, App
 
 public class DeleteRoleHandler : DeleteCommandHandlerBase<DeleteRoleCommand, ApplicationRole, RoleDto>
 {
-    public override async Task<Response<RoleDto>> Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
+    protected override async Task<Response<RoleDto>> DoDelete(ApplicationRole entityToDelete)
     {
-        var entityToDelete = await _roleManager.FindByIdAsync(request.Id);
-        if (entityToDelete is null) return NotFound<RoleDto>($"No resource found with the id = {request.Id}");
-
         var deleteResult = await _roleManager.DeleteAsync(entityToDelete);
         if (!deleteResult.Succeeded)
         {

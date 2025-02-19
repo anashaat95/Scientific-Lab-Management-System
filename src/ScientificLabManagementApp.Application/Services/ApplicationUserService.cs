@@ -18,27 +18,9 @@ public class ApplicationUserService : IApplicationUserService
         return _mapper.Map<UserDto>(result);
     }
 
-    public async Task<IEnumerable<UserDto>> GetAllUsersAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<IEnumerable<UserDto>> GetAllUsersByRoleAsync(string? role = null, params Expression<Func<MappingApplicationUser, object>>[] includes)
     {
-        var result = await _userRepository.GetAllUsersAsync(includes);
-        return _mapper.Map<IEnumerable<UserDto>>(result);
-    }
-
-    public async Task<IEnumerable<UserDto>> GetSupervisorsAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
-    {
-        var result = await _userRepository.GetAllSupervisorsAsync(includes);
-        return _mapper.Map<IEnumerable<UserDto>>(result);
-    }
-
-    public async Task<IEnumerable<UserDto>> GetTechniciansAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
-    {
-        var result = await _userRepository.GetAllTechniciansAsync(includes);
-        return _mapper.Map<IEnumerable<UserDto>>(result);
-    }
-
-    public async Task<IEnumerable<UserDto>> GetResearchersAsync(params Expression<Func<MappingApplicationUser, object>>[] includes)
-    {
-        var result = await _userRepository.GetAllResearchersAsync(includes);
+        var result = await _userRepository.GetAllUsersByRoleAsync(role, includes);
         return _mapper.Map<IEnumerable<UserDto>>(result);
     }
 

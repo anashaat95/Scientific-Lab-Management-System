@@ -4,7 +4,7 @@ public class GetManyUserHandler : GetManyQueryHandlerBase<GetManyUserQuery, Appl
 {
     protected override Task<IEnumerable<UserDto>> GetEntityDtos()
     {
-        return _applicationUserService.GetAllUsersAsync();
+        return _applicationUserService.GetAllUsersByRoleAsync();
     }
 }
 
@@ -12,7 +12,7 @@ public class GetManyTechnicianHandler : GetManyQueryHandlerBase<GetManyTechnicia
 {
     protected override Task<IEnumerable<UserDto>> GetEntityDtos()
     {
-        return _applicationUserService.GetTechniciansAsync();
+        return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.Technician.ToString());
     }
 }
 
@@ -20,7 +20,7 @@ public class GetManyLabSupervisorHandler : GetManyQueryHandlerBase<GetManySuperv
 {
     protected override Task<IEnumerable<UserDto>> GetEntityDtos()
     {
-        return _applicationUserService.GetSupervisorsAsync();
+        return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.LabSupervisor.ToString());
     }
 }
 
@@ -28,7 +28,7 @@ public class GetManyResearcherHandler : GetManyQueryHandlerBase<GetManySupervisi
 {
     protected override Task<IEnumerable<UserDto>> GetEntityDtos()
     {
-        return _applicationUserService.GetResearchersAsync();
+        return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.Researcher.ToString());
     }
 }
 

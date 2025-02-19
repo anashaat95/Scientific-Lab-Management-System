@@ -8,21 +8,21 @@ public class UserController :
         UserCommandData, AddUserCommandData, UpdateUserCommandData,
         AddUserCommand, UpdateUserCommand, DeleteUserCommand>
 {
-    [HttpGet("/api/technicians")]
+    [HttpGet("/api/technician")]
     public virtual async Task<ActionResult<IEnumerable<UserDto>>> GetTechnicians()
     {
         var response = await Mediator.Send(new GetManyTechnicianQuery());
         return Result.Create(response);
     }
 
-    [HttpGet("/api/lab-supervisors")]
+    [HttpGet("/api/lab-supervisor")]
     public virtual async Task<ActionResult<IEnumerable<UserDto>>> GetLabSupervisors()
     {
         var response = await Mediator.Send(new GetManySupervisiorQuery());
         return Result.Create(response);
     }
 
-    [HttpGet("/api/researchers")]
+    [HttpGet("/api/researcher")]
     public virtual async Task<ActionResult<IEnumerable<UserDto>>> GetResearchers()
     {
         var response = await Mediator.Send(new GetManySupervisiorQuery());

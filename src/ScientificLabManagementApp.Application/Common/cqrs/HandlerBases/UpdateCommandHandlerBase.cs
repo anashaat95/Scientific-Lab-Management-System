@@ -9,24 +9,13 @@ public class UpdateCommandHandlerBase<TRequest, TEntity, TDto> : RequestHandlerB
     public override async Task<Response<TDto>> Handle(TRequest request, CancellationToken cancellationToken)
     {
         var entityToUpdate = await _basicService.GetEntityByIdAsync(request.Id);
-        if (entityToUpdate is null) return NotFound<TDto>($"No resource found with the id = {request.Id}");
+        if (entityToUpdate is null)
+            return NotFound<TDto>($"No resource found with the id = {request.Id}");
 
+        if (!_basicService.IsAuthorizedToUpdateOrDeleteResource(entityToUpdate))
+            return Unauthorized<TDto>("You are not authorized to update this resource.");
 
-        if (_currentUserService.UserRoles.Contains(enUserRoles.Admin.ToString()))
-        {
-            return await DoUpdate(request, entityToUpdate);
-        }
-
-
-        if (entityToUpdate is IEntityAddedByUser entityAddedByUser)
-        {
-            var UserId = _currentUserService.UserId;
-
-            if (entityAddedByUser.UserId.Equals(_currentUserService.UserId, StringComparison.OrdinalIgnoreCase))
-                return await DoUpdate(request, entityToUpdate);
-        }
-
-        return Unauthorized<TDto>("You are unauthorized to delete this resource.");
+        return await DoUpdate(request, entityToUpdate);
     }
 
     protected virtual async Task<Response<TDto>> DoUpdate(TRequest updateRequest, TEntity entityToUpdate)

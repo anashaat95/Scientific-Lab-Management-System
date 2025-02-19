@@ -24,6 +24,7 @@ public class UserDto : IEntityHaveId
     public string? scopus_url { get; set; }
     public string? researcher_gate_url { get; set; }
     public string? expertise_area { get; set; }
+    public string? roles { get; set; }
 
     public DateTime created_at { get; set; }
     public DateTime? updated_at { get; set; }

@@ -21,8 +21,10 @@ public class TokenService : ITokenService
         return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configManager["SECURITY_KEY"]));
     }
 
-    public ClaimsPrincipal GetClaimsPrincipalFromAccessToken(string token)
+    public ClaimsPrincipal GetClaimsPrincipalFromAccessToken(string? token)
     {
+        if (string.IsNullOrEmpty(token)) return new ClaimsPrincipal();
+
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = _jwtSettings.ValidateAudience,

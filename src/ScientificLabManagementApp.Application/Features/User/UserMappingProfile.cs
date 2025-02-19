@@ -32,6 +32,7 @@ public class UserMappingProfile : ProfileBase<ApplicationUser, UserDto, UserComm
                 .ForMember(dest => dest.department_name, opt => opt.MapFrom(src => src.DepartmentName))
                 .ForMember(dest => dest.lab_url, opt => opt.MapFrom(src => ApiUrlFactory<Lab>.Create(src.LabId)))
                 .ForMember(dest => dest.lab_name, opt => opt.MapFrom(src => src.LabName))
+                .ForMember(dest => dest.roles, opt => opt.MapFrom(src => src.Roles))
                 .ForMember(dest => dest.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
                 .ForMember(dest => dest.google_scholar_url, opt => opt.MapFrom(src => src.GoogleScholarUrl))
                 .ForMember(dest => dest.academia_url, opt => opt.MapFrom(src => src.AcademiaUrl))

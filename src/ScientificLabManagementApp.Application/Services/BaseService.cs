@@ -5,12 +5,14 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
     where TDto : class, IEntityHaveId
 {
     protected readonly IGenericRepository<TEntity> _repository;
+    protected readonly ICurrentUserService _currentUserService;
     protected readonly IMapper _mapper;
 
-    public BaseService(IGenericRepository<TEntity> repository, IMapper mapper)
+    public BaseService(IGenericRepository<TEntity> repository, IMapper mapper, ICurrentUserService currentUserService)
     {
         _repository = repository;
         _mapper = mapper;
+        _currentUserService = currentUserService;
     }
 
     public virtual async Task<TDto> GetDtoByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes)
@@ -97,5 +99,21 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
     {
         var result = await _repository.FindAllAsync(predicate, includes);
         return result;
+    }
+
+    public virtual bool IsAuthorizedToUpdateOrDeleteResource(TEntity entity)
+    {
+
+        if (_currentUserService.User == null || entity is not IEntityAddedByUser entityAddedByUser)
+            return false;
+
+        var userId = entityAddedByUser.UserId;
+
+        if (!_currentUserService.UserRoles.Contains(enUserRoles.Admin.ToString()) ||
+            !entityAddedByUser.UserId.Equals(_currentUserService.UserId, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        return true;
+
     }
 }

@@ -1,9 +1,20 @@
 using Azure.Core;
 
 namespace ScientificLabManagementApp.Application;
-public class GetManyMaintenanceLogHandler : GetManyQueryHandlerBase<GetManyMaintenanceLogQuery, MaintenanceLog, MaintenanceLogDto> { }
+public class GetManyMaintenanceLogHandler : GetManyQueryHandlerBase<GetManyMaintenanceLogQuery, MaintenanceLog, MaintenanceLogDto> {
 
-public class GetOneMaintenanceLogByIdHandler : GetOneQueryHandlerBase<GetOneMaintenanceLogByIdQuery, MaintenanceLog, MaintenanceLogDto> { }
+    protected override Task<IEnumerable<MaintenanceLogDto>> GetEntityDtos()
+    {
+        return _basicService.GetAllAsync(e => e.Equipment, e => e.Technician);
+    }
+}
+
+public class GetOneMaintenanceLogByIdHandler : GetOneQueryHandlerBase<GetOneMaintenanceLogByIdQuery, MaintenanceLog, MaintenanceLogDto> {
+    protected override Task<MaintenanceLogDto?> GetEntityDto(GetOneMaintenanceLogByIdQuery request)
+    {
+        return _basicService.GetDtoByIdAsync(request.Id, e => e.Equipment, e=>e.Technician);
+    }
+}
 
 public class AddMaintenanceLogHandler : AddCommandHandlerBase<AddMaintenanceLogCommand, MaintenanceLog, MaintenanceLogDto>
 {
