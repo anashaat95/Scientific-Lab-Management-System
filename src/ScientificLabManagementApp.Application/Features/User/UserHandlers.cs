@@ -8,6 +8,14 @@ public class GetManyUserHandler : GetManyQueryHandlerBase<GetManyUserQuery, Appl
     }
 }
 
+public class GetManyUserSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyUserSelectOptionsQuery, MappingApplicationUser>
+{
+    protected override Task<IEnumerable<SelectOptionDto>> GetEntityDtos()
+    {
+        return _applicationUserService.GetAllUsersSelectOptionsByRoleAsync();
+    }
+}
+
 public class GetManyTechnicianHandler : GetManyQueryHandlerBase<GetManyTechnicianQuery, ApplicationUser, UserDto>
 {
     protected override Task<IEnumerable<UserDto>> GetEntityDtos()
@@ -16,7 +24,15 @@ public class GetManyTechnicianHandler : GetManyQueryHandlerBase<GetManyTechnicia
     }
 }
 
-public class GetManyLabSupervisorHandler : GetManyQueryHandlerBase<GetManySupervisiorQuery, ApplicationUser, UserDto>
+public class GetManyTechnicianSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyTechnicianSelectOptionsQuery, MappingApplicationUser>
+{
+    protected override Task<IEnumerable<SelectOptionDto>> GetEntityDtos()
+    {
+        return _applicationUserService.GetAllUsersSelectOptionsByRoleAsync(enUserRoles.Technician.ToString());
+    }
+}
+
+public class GetManyLabSupervisorHandler : GetManyQueryHandlerBase<GetManySupervisorQuery, ApplicationUser, UserDto>
 {
     protected override Task<IEnumerable<UserDto>> GetEntityDtos()
     {
@@ -24,13 +40,30 @@ public class GetManyLabSupervisorHandler : GetManyQueryHandlerBase<GetManySuperv
     }
 }
 
-public class GetManyResearcherHandler : GetManyQueryHandlerBase<GetManySupervisiorQuery, ApplicationUser, UserDto>
+public class GetManyLabSupervisorSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManySupervisorSelectOptionsQuery, MappingApplicationUser>
+{
+    protected override Task<IEnumerable<SelectOptionDto>> GetEntityDtos()
+    {
+        return _applicationUserService.GetAllUsersSelectOptionsByRoleAsync(enUserRoles.LabSupervisor.ToString());
+    }
+}
+
+public class GetManyResearcherHandler : GetManyQueryHandlerBase<GetManySupervisorQuery, ApplicationUser, UserDto>
 {
     protected override Task<IEnumerable<UserDto>> GetEntityDtos()
     {
         return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.Researcher.ToString());
     }
 }
+
+public class GetManyResearcherSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyResearcherSelectOptionsQuery, MappingApplicationUser>
+{
+    protected override Task<IEnumerable<SelectOptionDto>> GetEntityDtos()
+    {
+        return _applicationUserService.GetAllUsersSelectOptionsByRoleAsync(enUserRoles.Researcher.ToString());
+    }
+}
+
 
 public class GetOneUserByIdHandler : GetOneQueryHandlerBase<GetOneUserByIdQuery, ApplicationUser, UserDto>
 {

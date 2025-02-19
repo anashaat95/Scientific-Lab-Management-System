@@ -5,6 +5,7 @@ public class UserMappingProfile : ProfileBase<ApplicationUser, UserDto, UserComm
     public UserMappingProfile()
     {
         ApplyCustomEntityToDtoMapping();
+        ApplyCustomEntityToSelectOptionDtoMapping();
         ApplyCommandToEntityMapping<AddUserCommand, AddUserCommandData>();
         ApplyCommandToEntityMapping<UpdateUserCommand, UpdateUserCommandData>();
     }
@@ -42,6 +43,14 @@ public class UserMappingProfile : ProfileBase<ApplicationUser, UserDto, UserComm
                 .ForMember(dest => dest.created_at, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
                 ;
+    }
+
+    public IMappingExpression<MappingApplicationUserSelectOption, SelectOptionDto> ApplyCustomEntityToSelectOptionDtoMapping()
+    {
+        return CreateMap<MappingApplicationUserSelectOption, SelectOptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
+            ;
     }
 
 

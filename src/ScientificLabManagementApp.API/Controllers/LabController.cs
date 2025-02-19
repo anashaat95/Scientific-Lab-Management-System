@@ -9,4 +9,10 @@ public class LabController :
         AddLabCommand, UpdateLabCommand, DeleteLabCommand>
 
 {
+    [HttpGet("options")]
+    public virtual async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetAllOptions()
+    {
+        var response = await Mediator.Send(new GetManyLabSelectOptionsQuery());
+        return Result.Create(response);
+    }
 }

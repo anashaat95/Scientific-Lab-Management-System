@@ -2,9 +2,10 @@
 
 public interface IApplicationUserService
 {
-    Task<UserDto> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<IEnumerable<UserDto>> GetAllUsersByRoleAsync(string? role = null, params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<UserDto> GetOneByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes);
-    Task<MappingApplicationUser> GetEntityByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes);
+    Task<UserDto> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate);
+    Task<IEnumerable<UserDto>> GetAllUsersByRoleAsync(string? role = null);
+    Task<IEnumerable<SelectOptionDto>> GetAllUsersSelectOptionsByRoleAsync(string? role = null);
+    Task<UserDto> GetOneByIdAsync(string id);
+    Task<MappingApplicationUser> GetEntityByIdAsync(string id);
 
 }

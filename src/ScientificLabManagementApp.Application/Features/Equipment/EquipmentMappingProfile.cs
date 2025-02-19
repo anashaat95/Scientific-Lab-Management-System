@@ -5,6 +5,7 @@ public class EquipmentMappingProfile : ProfileBase<Equipment, EquipmentDto, Equi
     public EquipmentMappingProfile()
     {
         ApplyEntityToDtoMapping();
+        ApplyEntityToSelectOptionDtoMapping();
         ApplyCommandToEntityMapping<AddEquipmentCommand, AddEquipmentCommandData>();
         ApplyCommandToEntityMapping<UpdateEquipmentCommand, UpdateEquipmentCommandData>();
     }
@@ -29,7 +30,13 @@ public class EquipmentMappingProfile : ProfileBase<Equipment, EquipmentDto, Equi
                 .ForMember(dest => dest.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
                 ;
     }
-
+    public override IMappingExpression<Equipment, SelectOptionDto> ApplyEntityToSelectOptionDtoMapping()
+    {
+        return CreateMap<Equipment, SelectOptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            ;
+    }
     public override IMappingExpression<TSource, Equipment> ApplyCommandToEntityMapping<TSource, TData>()
     {
         return CreateMap<TSource, Equipment>()

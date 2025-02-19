@@ -1,6 +1,6 @@
 namespace ScientificLabManagementApp.Application;
 public class GetManyCountryHandler : GetManyQueryHandlerBase<GetManyCountryQuery, Country, CountryDto> { }
-
+public class GetManyCountrySelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyCountrySelectOptionsQuery, Country> { }
 public class GetOneCountryByIdHandler : GetOneQueryHandlerBase<GetOneCountryByIdQuery, Country, CountryDto> { }
 
 public class AddCountryHandler : AddCommandHandlerBase<AddCountryCommand, Country, CountryDto> { }

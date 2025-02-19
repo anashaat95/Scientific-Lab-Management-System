@@ -30,6 +30,19 @@ public class ApplicationUserRepository : IApplicationUserRepository
         GROUP BY UR.UserId
     ) AS R ON R.UserId = U.Id ";
 
+    protected static string RawSqlStatementForSelectOptions =
+    @"SELECT 
+        U.Id, U.FirstName, U.LastName, R.Roles
+    FROM AspNetUsers AS U
+    LEFT JOIN (
+        SELECT 
+            UR.UserId, 
+            STRING_AGG(R.Name, ',') AS Roles 
+        FROM AspNetUserRoles UR
+        LEFT JOIN AspNetRoles R ON UR.RoleId = R.Id
+        GROUP BY UR.UserId
+    ) AS R ON R.UserId = U.Id ";
+
     public ApplicationUserRepository(IGenericRepository<MappingApplicationUser> repository, ApplicationDbContext context, IMapper mapper, RoleManager<ApplicationRole> roleManager)
     {
         _repository = repository;
@@ -38,13 +51,13 @@ public class ApplicationUserRepository : IApplicationUserRepository
         _roleManager = roleManager;
     }
 
-    public async Task<MappingApplicationUser> GetOneByIdAsync(string id, params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<MappingApplicationUser> GetOneByIdAsync(string id)
     {
-        var result = await FindOneAsync(e => e.Id == id, includes);
+        var result = await FindOneAsync(e => e.Id == id);
         return result;
     }
 
-    public async Task<IEnumerable<MappingApplicationUser>> GetAllUsersByRoleAsync(string? role = null, params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<IEnumerable<MappingApplicationUser>> GetAllUsersByRoleAsync(string? role = null)
     {
         var roleStatement = role != null ? " WHERE R.Roles LIKE @roleName" : "";
 
@@ -55,7 +68,18 @@ public class ApplicationUserRepository : IApplicationUserRepository
         return result;
     }
 
-    public async Task<MappingApplicationUser> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<IEnumerable<MappingApplicationUserSelectOption>> GetAllUsersSelectOptionsByRoleAsync(string? role = null)
+    {
+        var roleStatement = role != null ? " WHERE R.Roles LIKE @roleName" : "";
+
+        var result = await _context.Database
+                          .SqlQueryRaw<MappingApplicationUserSelectOption>(RawSqlStatementForSelectOptions + roleStatement, new SqlParameter("@roleName", $"%{role}%"))
+                          .AsNoTracking()
+                          .ToListAsync();
+        return result;
+    }
+
+    public async Task<MappingApplicationUser> FindOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate)
     {
         var filtered = await _context.Database
                           .SqlQueryRaw<MappingApplicationUser>(RawSqlStatement)
@@ -64,7 +88,7 @@ public class ApplicationUserRepository : IApplicationUserRepository
                           .FirstOrDefaultAsync();
         return filtered;
     }
-    public async Task<IEnumerable<MappingApplicationUser>> FindAsync(Expression<Func<MappingApplicationUser, bool>> predicate, params Expression<Func<MappingApplicationUser, object>>[] includes)
+    public async Task<IEnumerable<MappingApplicationUser>> FindAsync(Expression<Func<MappingApplicationUser, bool>> predicate)
     {
         var filtered = await _context.Database
                           .SqlQueryRaw<MappingApplicationUser>(RawSqlStatement)
@@ -74,4 +98,5 @@ public class ApplicationUserRepository : IApplicationUserRepository
 
         return filtered;
     }
+
 }

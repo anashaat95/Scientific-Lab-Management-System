@@ -4,7 +4,8 @@ public class LabMappingProfile : ProfileBase<Lab, LabDto, LabCommandData>
 {
     public LabMappingProfile()
     {
-        ApplyEntityToDtoMapping(); 
+        ApplyEntityToDtoMapping();
+        ApplyEntityToSelectOptionDtoMapping();
         ApplyCommandToEntityMapping<AddLabCommand, AddLabCommandData>();
         ApplyCommandToEntityMapping<UpdateLabCommand, UpdateLabCommandData>();
     }
@@ -26,6 +27,13 @@ public class LabMappingProfile : ProfileBase<Lab, LabDto, LabCommandData>
                 ;
     }
 
+    public override IMappingExpression<Lab, SelectOptionDto> ApplyEntityToSelectOptionDtoMapping()
+    {
+        return CreateMap<Lab, SelectOptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            ;
+    }
     public override IMappingExpression<TSource, Lab> ApplyCommandToEntityMapping<TSource, TData>()
     {
         return CreateMap<TSource, Lab>()

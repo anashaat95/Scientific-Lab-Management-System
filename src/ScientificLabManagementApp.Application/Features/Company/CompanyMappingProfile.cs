@@ -28,7 +28,7 @@ public class CompanyMappingProfile : ProfileBase<Company, CompanyDto, CompanyCom
             ;
     }
 
-    public IMappingExpression<Company, SelectOptionDto> ApplyEntityToSelectOptionDtoMapping()
+    public override IMappingExpression<Company, SelectOptionDto> ApplyEntityToSelectOptionDtoMapping()
     {
         return CreateMap<Company, SelectOptionDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

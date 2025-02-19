@@ -1,6 +1,6 @@
 namespace ScientificLabManagementApp.Application;
 public class GetManyDepartmentHandler : GetManyQueryHandlerBase<GetManyDepartmentQuery, Department, DepartmentDto> { }
-
+public class GetManyDepartmentSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyDepartmentSelectOptionsQuery, Department> { }
 public class GetOneDepartmentByIdHandler : GetOneQueryHandlerBase<GetOneDepartmentByIdQuery, Department, DepartmentDto> { }
 
 public class AddDepartmentHandler : AddCommandHandlerBase<AddDepartmentCommand, Department, DepartmentDto> { }

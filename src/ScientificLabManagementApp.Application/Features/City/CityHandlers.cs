@@ -1,6 +1,6 @@
 ﻿namespace ScientificLabManagementApp.Application;
 public class GetManyCityHandler : GetManyQueryHandlerBase<GetManyCityQuery, City, CityDto> { }
-
+public class GetManyCitySelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyCitySelectOptionsQuery, City> { }
 public class GetOneCityByIdHandler : GetOneQueryHandlerBase<GetOneCityByIdQuery, City, CityDto> { }
 
 public class AddCityHandler : AddCommandHandlerBase<AddCityCommand, City, CityDto> { }

@@ -7,6 +7,7 @@ public class GetManyEquipmentHandler : GetManyQueryHandlerBase<GetManyEquipmentQ
         return _basicService.GetAllAsync(e => e.Company);
     }
 }
+public class GetManyEquipmentSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyEquipmentSelectOptionsQuery, Equipment> { }
 public class GetOneEquipmentByIdHandler : GetOneQueryHandlerBase<GetOneEquipmentByIdQuery, Equipment, EquipmentDto>
 {
     protected override Task<EquipmentDto?> GetEntityDto(GetOneEquipmentByIdQuery request)

@@ -1,6 +1,8 @@
 namespace ScientificLabManagementApp.Application;
 public class GetManyLabHandler : GetManyQueryHandlerBase<GetManyLabQuery, Lab, LabDto> { }
 
+public class GetManyLabSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyLabSelectOptionsQuery, Lab> { }
+
 public class GetOneLabByIdHandler : GetOneQueryHandlerBase<GetOneLabByIdQuery, Lab, LabDto> { }
 
 public class AddLabHandler : AddCommandHandlerBase<AddLabCommand, Lab, LabDto>

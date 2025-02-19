@@ -5,6 +5,7 @@ public class DepartmentMappingProfile : ProfileBase<Department, DepartmentDto, D
     public DepartmentMappingProfile()
     {
         ApplyEntityToDtoMapping();
+        ApplyEntityToSelectOptionDtoMapping();
         ApplyCommandToEntityMapping<AddDepartmentCommand, AddDepartmentCommandData>();
         ApplyCommandToEntityMapping<UpdateDepartmentCommand, UpdateDepartmentCommandData>();
     }
@@ -19,6 +20,14 @@ public class DepartmentMappingProfile : ProfileBase<Department, DepartmentDto, D
                 .ForMember(x => x.created_at, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(x => x.updated_at, opt => opt.MapFrom(src => src.UpdatedAt))
                 ;
+    }
+
+    public override IMappingExpression<Department, SelectOptionDto> ApplyEntityToSelectOptionDtoMapping()
+    {
+        return CreateMap<Department, SelectOptionDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            ;
     }
     public override IMappingExpression<TSource, Department> ApplyCommandToEntityMapping<TSource, TData>()
     {

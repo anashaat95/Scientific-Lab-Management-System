@@ -9,4 +9,10 @@ public class DepartmentController :
         AddDepartmentCommand, UpdateDepartmentCommand, DeleteDepartmentCommand>
 
 {
+    [HttpGet("options")]
+    public virtual async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetAllOptions()
+    {
+        var response = await Mediator.Send(new GetManyDepartmentSelectOptionsQuery());
+        return Result.Create(response);
+    }
 }

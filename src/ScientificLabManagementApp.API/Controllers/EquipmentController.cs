@@ -9,4 +9,11 @@ public class EquipmentController :
         AddEquipmentCommand, UpdateEquipmentCommand, DeleteEquipmentCommand>
 
 {
+
+    [HttpGet("options")]
+    public virtual async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetAllOptions()
+    {
+        var response = await Mediator.Send(new GetManyEquipmentSelectOptionsQuery());
+        return Result.Create(response);
+    }
 }
