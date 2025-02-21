@@ -1,9 +1,22 @@
+
 namespace ScientificLabManagementApp.Application;
-public class GetManyLabHandler : GetManyQueryHandlerBase<GetManyLabQuery, Lab, LabDto> { }
+public class GetManyLabHandler : GetManyQueryHandlerBase<GetManyLabQuery, Lab, LabDto>
+{
+    protected override Task<IEnumerable<LabDto>> GetEntityDtos()
+    {
+        return _basicService.GetAllAsync(e => e.Supervisior, e => e.Department);
+    }
+
+}
 
 public class GetManyLabSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyLabSelectOptionsQuery, Lab> { }
 
-public class GetOneLabByIdHandler : GetOneQueryHandlerBase<GetOneLabByIdQuery, Lab, LabDto> { }
+public class GetOneLabByIdHandler : GetOneQueryHandlerBase<GetOneLabByIdQuery, Lab, LabDto> {
+    protected override Task<LabDto?> GetEntityDto(GetOneLabByIdQuery request)
+    {
+        return _basicService.GetDtoByIdAsync(request.Id, e => e.Supervisior, e => e.Department);
+    }
+}
 
 public class AddLabHandler : AddCommandHandlerBase<AddLabCommand, Lab, LabDto>
 {

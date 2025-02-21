@@ -6,7 +6,7 @@ public interface IGenericRepository<TEntity>
     Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
     Task<TEntity> FindOneAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes);
     Task<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes);
-    Task<bool> ExistsAsync(string id);
+    Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate);
     Task<TEntity> AddAsync(TEntity entity);
     Task<TEntity> UpdateAsync(TEntity entity);
     Task<string> UpdateRangeAsync(IEnumerable<TEntity> entities);

@@ -19,3 +19,4 @@ public class GetOneQueryHandlerBase<TRequest, TEntity, TDto> : RequestHandlerBas
     }
 }
 
+

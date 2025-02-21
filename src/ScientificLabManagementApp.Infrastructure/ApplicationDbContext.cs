@@ -6,7 +6,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     {
     }
 
-
+    public DbSet<MappingApplicationUser> Users { get; set; }
     public DbSet<Lab> Labs { get; set; }
     public DbSet<Department> Departments { get; set; }
     public DbSet<Company> Companies { get; set; }

@@ -35,6 +35,16 @@ public class ApplicationUserService : IApplicationUserService
         return FindOneAsync(e => e.Id == id);
     }
 
+    public Task<UserDto> GetOneByEmailAsync(string email)
+    {
+        return FindOneAsync(e => e.NormalizedEmail == email.Trim().ToUpper());
+    }
+
+    public Task<bool> ExistOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate)
+    {
+        return _userRepository.ExistOneAsync(predicate);
+    }
+
     public Task<MappingApplicationUser> GetEntityByIdAsync(string id)
     {
         return _userRepository.GetOneByIdAsync(id);

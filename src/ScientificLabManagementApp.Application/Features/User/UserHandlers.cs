@@ -74,6 +74,42 @@ public class GetOneUserByIdHandler : GetOneQueryHandlerBase<GetOneUserByIdQuery,
 }
 
 
+public class GetOneUserByEmailHandler : ResponseBuilder, IRequestHandler<GetOneUserByEmailQuery, Response<UserDto>>
+{
+    protected readonly IApplicationUserService _applicationUserService;
+
+    #region Constructor
+    public GetOneUserByEmailHandler(IApplicationUserService applicationUserService)
+    {
+        _applicationUserService = applicationUserService;
+    }
+    #endregion
+    public async Task<Response<UserDto>> Handle(GetOneUserByEmailQuery request, CancellationToken cancellationToken)
+    {
+        var entityDto = await _applicationUserService.GetOneByEmailAsync(request.Email);
+        return entityDto is not null ? Ok200(entityDto) : NotFound<UserDto>($"No resource found with Id = {request.Email}");
+    }
+}
+
+public class ExistOneUserByEmailHandler : ResponseBuilder, IRequestHandler<ExistOneUserByEmailQuery, Response<bool>>
+{
+    protected readonly IBaseService<ApplicationUser, UserDto> _baseService;
+
+    #region Constructor
+    public ExistOneUserByEmailHandler(IBaseService<ApplicationUser, UserDto> baseService)
+    {
+        _baseService = baseService;
+    }
+    #endregion
+
+    public async Task<Response<bool>> Handle(ExistOneUserByEmailQuery request, CancellationToken cancellationToken)
+    {
+        var found = await _baseService.ExistsAsync(e => e.NormalizedEmail == request.Email);
+        return found ? Ok200<bool>(found) : NotFound<bool>();
+    }
+}
+
+
 public class AddUserHandler : AddCommandHandlerBase<AddUserCommand, ApplicationUser, UserDto>
 {
 

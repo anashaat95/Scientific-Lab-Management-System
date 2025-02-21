@@ -50,9 +50,9 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
         return result;
     }
 
-    public async Task<bool> ExistsAsync(string id)
+    public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return await _context.Set<TEntity>().AnyAsync(e => e.Id == id);
+        return await _context.Set<TEntity>().AnyAsync(predicate);
     }
 
     public virtual async Task<TEntity> AddAsync(TEntity entity)

@@ -99,4 +99,8 @@ public class ApplicationUserRepository : IApplicationUserRepository
         return filtered;
     }
 
+    public async Task<bool> ExistOneAsync(Expression<Func<MappingApplicationUser, bool>> predicate)
+    {
+        return await _context.Users.AnyAsync(predicate);
+    }
 }

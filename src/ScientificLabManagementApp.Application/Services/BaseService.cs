@@ -67,9 +67,10 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
         await _repository.SaveChangesAsync();
     }
 
-    public virtual async Task<bool> ExistsAsync(string id)
+
+    public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return await _repository.ExistsAsync(id);
+        return await _repository.ExistsAsync(predicate);
     }
 
     public virtual async Task<bool> RelatedExistsAsync<RelatedEntity>(string id) where RelatedEntity : class, IEntityBase

@@ -9,3 +9,5 @@ public class GetManySupervisorSelectOptionsQuery : GetManySelectOptionsQueryBase
 public class GetManyResearcherQuery : GetManyQueryBases<UserDto>{}
 public class GetManyResearcherSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto> { }
 public class GetOneUserByIdQuery : GetOneQueryBase<UserDto>{}
+public class GetOneUserByEmailQuery : GetOneQueryByEmailBase<UserDto>{}
+public class ExistOneUserByEmailQuery : ExistOneQueryByEmailBase{}

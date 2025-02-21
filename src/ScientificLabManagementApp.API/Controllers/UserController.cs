@@ -56,4 +56,20 @@ public class UserController :
         var response = await Mediator.Send(new GetManyResearcherSelectOptionsQuery());
         return Result.Create(response);
     }
+
+    // GET api/<Controller>/email
+    [HttpGet("query")]
+    public virtual async Task<ActionResult<UserDto>> GetByEmail(GetOneUserByEmailQuery command)
+    {
+        var response = await Mediator.Send(command);
+        return Result.Create(response);
+    }
+
+    // GET api/<Controller>/email
+    [HttpGet("exist")]
+    public virtual async Task<ActionResult<bool>> ExistByEmail(ExistOneUserByEmailQuery command)
+    {
+        var response = await Mediator.Send(command);
+        return Result.Create(response);
+    }
 }

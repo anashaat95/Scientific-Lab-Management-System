@@ -12,8 +12,23 @@ public class GetOneQueryBase<TDto> : RoleAuthorizeRequest, IRequest<Response<TDt
     [Required]
     public required string Id { get; set; }
 
-
     public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
+}
+
+public class GetOneQueryByEmailBase<TDto> : RoleAuthorizeRequest, IRequest<Response<TDto>>
+    where TDto : class
+{
+    [FromQuery]
+    [Required]
+    public required string Email { get; set; }
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
+}
+
+public class ExistOneQueryByEmailBase: IRequest<Response<bool>>
+{
+    [FromQuery]
+    [Required]
+    public required string Email { get; set; }
 }
 
 public class GetManyQueryBases<TDto> : RoleAuthorizeRequest, IRequest<Response<IEnumerable<TDto>>>
