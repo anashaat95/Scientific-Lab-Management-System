@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.WebUtilities;
-using Newtonsoft.Json.Linq;
 
 namespace ScientificLabManagementApp.Application;
 
@@ -45,13 +44,18 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
         await _emailService.SendEmailAsync(_emailCreator.To, _emailCreator.Title, _emailCreator.Body);
     }
 
-    public async Task<LoginDto> CreateLoginDto(ApplicationUser user)
+    public async Task<LoginDto> CreateLoginDto(ApplicationUser user, bool rememberMe = false)
     {
+        var accessTokenExpiration = rememberMe ? 
+            DateTime.UtcNow.AddDays(_tokenService.AccessTokenExpirationInDaysIfRememberMe) : 
+            DateTime.UtcNow.AddMinutes(_tokenService.AccessTokenExpirationInMinutes);
+
         var userRoles = await _userManager.GetRolesAsync(user);
+
         var accessToken = new TokenDto
         {
             Token = _tokenService.GenerateAccessToken(user, userRoles),
-            ExpiresIn = DateTime.UtcNow.AddMinutes(_tokenService.AccessTokenExpirationInMinutes)
+            ExpiresIn = accessTokenExpiration
         };
 
         var refreshToken = new RefreshToken
@@ -61,15 +65,11 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
             UserId = user.Id
         };
 
-        var dbRefreshToken = await _refreshTokenService.AddAsync(refreshToken);
+        await _refreshTokenService.AddAsync(refreshToken);
 
         return new LoginDto
         {
-            AccessToken = new TokenDto
-            {
-                Token = _tokenService.GenerateAccessToken(user, userRoles),
-                ExpiresIn = DateTime.UtcNow.AddMinutes(_tokenService.AccessTokenExpirationInMinutes)
-            },
+            AccessToken = accessToken,
             RefreshToken = new TokenDto
             {
                 Token = refreshToken.Token,
@@ -97,7 +97,7 @@ public class LoginHandler : AuthHandler<LoginCommand, LoginDto>
             return Ok200<LoginDto>("The entered email is not confirmed. Please check your email for confirmation.");
         }
 
-        return Ok200(await CreateLoginDto(user));
+        return Ok200(await CreateLoginDto(user, request.rememberMe));
     }
     #endregion
 }
@@ -302,7 +302,6 @@ public class RefreshTokenHandler : AuthHandler<RefreshTokenCommand, LoginDto>
 {
     public override async Task<Response<LoginDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        Console.WriteLine(request.RefreshToken);
         var refreshToken = await _refreshTokenService.FindOneAsync(entity => entity.Token == request.RefreshToken && !entity.IsRevoked);
 
         if (refreshToken == null || refreshToken.IsExpired || refreshToken.IsRevoked)

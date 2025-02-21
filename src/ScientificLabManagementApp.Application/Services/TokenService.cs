@@ -6,6 +6,7 @@ public class TokenService : ITokenService
     private readonly IConfiguration _configManager;
     private readonly JwtSettings _jwtSettings;
     public int AccessTokenExpirationInMinutes { get; }
+    public int AccessTokenExpirationInDaysIfRememberMe { get; }
     public int RefreshTokenExpirationInDays { get; }
 
     public TokenService(IConfiguration configManager, IOptions<JwtSettings> jwtSettings)
@@ -13,6 +14,7 @@ public class TokenService : ITokenService
         _configManager = configManager;
         _jwtSettings = jwtSettings.Value;
         AccessTokenExpirationInMinutes = _jwtSettings.AccessTokenExpiresInMinutes;
+        AccessTokenExpirationInDaysIfRememberMe = _jwtSettings.AccessTokenExpirationInDaysIfRememberMe;
         RefreshTokenExpirationInDays = _jwtSettings.RefreshTokenExpiresInDays;
     }
 
@@ -63,7 +65,7 @@ public class TokenService : ITokenService
         return claimsPrincipal;
     }
 
-    public string GenerateAccessToken(ApplicationUser user, IEnumerable<string> userRoles)
+    public string GenerateAccessToken(ApplicationUser user, IEnumerable<string> userRoles, bool rememberMe = false)
     {
         var creds = new SigningCredentials(GetKey(), SecurityAlgorithms.HmacSha256);
 
@@ -79,11 +81,14 @@ public class TokenService : ITokenService
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
+        var expires = rememberMe ? 
+            DateTime.UtcNow.AddDays(AccessTokenExpirationInDaysIfRememberMe) : 
+            DateTime.UtcNow.AddMinutes(AccessTokenExpirationInMinutes);
+
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(AccessTokenExpirationInMinutes),
+            claims, expires,
             signingCredentials: creds
         );
 

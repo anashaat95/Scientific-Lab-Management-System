@@ -9,5 +9,6 @@ public class JwtSettings
     public bool ValidateLifeTime { get; set; }
     public bool ValidateIssuerSigningKey { get; set; }
     public int AccessTokenExpiresInMinutes { get; set; }
+    public int AccessTokenExpirationInDaysIfRememberMe { get; set; }
     public int RefreshTokenExpiresInDays { get; set; }
 }

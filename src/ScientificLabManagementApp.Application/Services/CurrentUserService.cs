@@ -26,7 +26,6 @@ public class CurrentUserService : ICurrentUserService
 
     public ClaimsPrincipal User 
     {
-
         get => _tokenService.GetClaimsPrincipalFromAccessToken(ExtractJwtToken());
     }
 
