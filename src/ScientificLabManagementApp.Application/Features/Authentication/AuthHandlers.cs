@@ -47,21 +47,21 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
     public async Task<LoginDto> CreateLoginDto(ApplicationUser user, bool rememberMe = false)
     {
         var accessTokenExpiration = rememberMe ? 
-            DateTime.UtcNow.AddDays(_tokenService.AccessTokenExpirationInDaysIfRememberMe) : 
-            DateTime.UtcNow.AddMinutes(_tokenService.AccessTokenExpirationInMinutes);
+            DateTime.Now.AddDays(_tokenService.AccessTokenExpirationInDaysIfRememberMe) : 
+            DateTime.Now.AddMinutes(_tokenService.AccessTokenExpirationInMinutes);
 
         var userRoles = await _userManager.GetRolesAsync(user);
 
         var accessToken = new TokenDto
         {
-            Token = _tokenService.GenerateAccessToken(user, userRoles),
+            Token = _tokenService.GenerateAccessToken(user, userRoles, rememberMe),
             ExpiresIn = accessTokenExpiration
         };
 
         var refreshToken = new RefreshToken
         {
             Token = _tokenService.GenerateRefreshToken(),
-            ExpiresIn = DateTime.UtcNow.AddDays(_tokenService.RefreshTokenExpirationInDays),
+            ExpiresIn = DateTime.Now.AddDays(_tokenService.RefreshTokenExpirationInDays),
             UserId = user.Id
         };
 

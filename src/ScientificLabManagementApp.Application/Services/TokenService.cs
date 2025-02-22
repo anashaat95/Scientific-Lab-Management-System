@@ -34,6 +34,7 @@ public class TokenService : ITokenService
             ValidateIssuerSigningKey = _jwtSettings.ValidateIssuerSigningKey,
             IssuerSigningKey = GetKey(),
             ValidateLifetime = _jwtSettings.ValidateLifeTime,
+            RequireExpirationTime = true,
             ValidIssuers = new[] { _jwtSettings.Issuer },
             ValidAudience = _jwtSettings.Audience,
             ClockSkew = TimeSpan.Zero
@@ -54,7 +55,6 @@ public class TokenService : ITokenService
         catch (SecurityTokenValidationException ex)
         {
             throw new SecurityTokenValidationException($"Token validation failed: {ex.Message}");
-            // Handle general validation errors
         }
 
         var jwtSecurityToken = securityToken as JwtSecurityToken;
@@ -82,13 +82,14 @@ public class TokenService : ITokenService
         }
 
         var expires = rememberMe ? 
-            DateTime.UtcNow.AddDays(AccessTokenExpirationInDaysIfRememberMe) : 
-            DateTime.UtcNow.AddMinutes(AccessTokenExpirationInMinutes);
+            DateTime.Now.AddDays(AccessTokenExpirationInDaysIfRememberMe) : 
+            DateTime.Now.AddMinutes(AccessTokenExpirationInMinutes);
 
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
-            claims, expires,
+            claims: claims, 
+            expires: expires,
             signingCredentials: creds
         );
 
