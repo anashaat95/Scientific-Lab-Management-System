@@ -115,7 +115,7 @@ public class SignupHandler : AuthHandler<SignupCommand, string>
             return BadRequest<string>($"Failed to add the user. Errors: {creationResult.ConvertErrorsToString()}");
 
 
-        var roleAssignmentResult = await _userManager.AddToRoleAsync(newUser, enUserRoles.User.ToString());
+        var roleAssignmentResult = await _userManager.AddToRoleAsync(newUser, enUserRoles.Researcher.ToString());
 
         if (!roleAssignmentResult.Succeeded)
             return BadRequest<string>($"User created but failed to assign role. Errors: {roleAssignmentResult.ConvertErrorsToString()}");

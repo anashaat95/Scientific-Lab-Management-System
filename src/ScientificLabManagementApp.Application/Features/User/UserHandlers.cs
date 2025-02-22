@@ -122,7 +122,7 @@ public class AddUserHandler : AddCommandHandlerBase<AddUserCommand, ApplicationU
             return BadRequest<UserDto>($"Failed to add the user. Errors: {creationResult.ConvertErrorsToString()}");
         }
 
-        var roleAssignmentResult = await _userManager.AddToRoleAsync(entityToAdd, enUserRoles.User.ToString());
+        var roleAssignmentResult = await _userManager.AddToRoleAsync(entityToAdd, enUserRoles.Researcher.ToString());
         if (!roleAssignmentResult.Succeeded)
         {
             return BadRequest<UserDto>($"User created but failed to assign role. Errors: {roleAssignmentResult.ConvertErrorsToString()}");
