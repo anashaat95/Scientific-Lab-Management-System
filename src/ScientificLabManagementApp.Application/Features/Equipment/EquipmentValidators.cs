@@ -1,4 +1,3 @@
-using ScientificLabManagementApp.Domain;
 
 namespace ScientificLabManagementApp.Application;
 public class EquipmentValidator<TCommand, TData> : ValidatorBase<TCommand, Equipment, EquipmentDto>

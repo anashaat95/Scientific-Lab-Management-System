@@ -7,12 +7,30 @@ public class GetManyEquipmentHandler : GetManyQueryHandlerBase<GetManyEquipmentQ
         return _basicService.GetAllAsync(e => e.Company);
     }
 }
+
+
+
 public class GetManyEquipmentSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyEquipmentSelectOptionsQuery, Equipment> { }
 public class GetOneEquipmentByIdHandler : GetOneQueryHandlerBase<GetOneEquipmentByIdQuery, Equipment, EquipmentDto>
 {
     protected override Task<EquipmentDto?> GetEntityDto(GetOneEquipmentByIdQuery request)
     {
         return _basicService.GetDtoByIdAsync(request.Id, e => e.Company);
+    }
+}
+
+public class GetBookingsForEquipmentByEquipmentIdHandler : GetOneQueryHandlerBase<GetBookingsForEquipmentByEquipmentIdQuery, Equipment, EquipmentWithBookingsDto>
+{
+    private readonly IEquipmentService _equipmentService;
+
+    public GetBookingsForEquipmentByEquipmentIdHandler(IEquipmentService equipmentService)
+    {
+        _equipmentService = equipmentService;
+    }
+
+    protected override Task<EquipmentWithBookingsDto?> GetEntityDto(GetBookingsForEquipmentByEquipmentIdQuery request)
+    {
+        return _equipmentService.GetEquipmentWithBookingsDtoByIdAsync(request.Id, e => e.Company, e => e.Bookings);
     }
 }
 public class AddEquipmentHandler : AddCommandHandlerBase<AddEquipmentCommand, Equipment, EquipmentDto> { }
@@ -44,7 +62,7 @@ public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCo
 
             // Find and cancel related booking entities
             await _equipmentService.CancelAllBookingsRelatedToEquipment(updatedEntity.Id);
-            
+
             var resultDto = _mapper.Map<EquipmentDto>(updatedEntity);
 
             await _unitOfWork.SaveChangesAsync();

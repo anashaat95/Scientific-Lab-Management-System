@@ -16,4 +16,12 @@ public class EquipmentController :
         var response = await Mediator.Send(new GetManyEquipmentSelectOptionsQuery());
         return Result.Create(response);
     }
+
+    // GET api/<Controller>/5
+    [HttpGet("{Id}/bookings")]
+    public virtual async Task<ActionResult<EquipmentWithBookingsDto>> Get(GetBookingsForEquipmentByEquipmentIdQuery command)
+    {
+        var response = await Mediator.Send(command);
+        return Result.Create(response);
+    }
 }

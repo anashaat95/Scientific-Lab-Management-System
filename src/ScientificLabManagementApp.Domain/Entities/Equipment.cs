@@ -16,8 +16,8 @@ public class Equipment : EntityBase
     public string? ImageUrl { get; set; }
 
     // Relationships
-    public virtual ICollection<Booking>? Bookings { get; set; }
-    public virtual ICollection<MaintenanceLog>? MaintenanceLogs { get; set; }
+    public virtual List<Booking> Bookings { get; set; } = new ();
+    public virtual List<MaintenanceLog> MaintenanceLogs { get; set; } = new ();
 
     // Organizational Context
     public string CompanyId { get; set; }

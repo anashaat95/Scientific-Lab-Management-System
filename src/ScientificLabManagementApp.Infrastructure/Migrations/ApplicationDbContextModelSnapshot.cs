@@ -321,7 +321,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
             modelBuilder.Entity("ScientificLabManagementApp.Domain.City", b =>
@@ -343,7 +343,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
                 });
 
             modelBuilder.Entity("ScientificLabManagementApp.Domain.Company", b =>
@@ -386,7 +386,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("ScientificLabManagementApp.Domain.Country", b =>
@@ -440,7 +440,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("ScientificLabManagementApp.Domain.Equipment", b =>
@@ -547,7 +547,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasIndex("SupervisiorId");
 
-                    b.ToTable("Labs");
+                    b.ToTable("Labs", (string)null);
                 });
 
             modelBuilder.Entity("ScientificLabManagementApp.Domain.MaintenanceLog", b =>
@@ -584,7 +584,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasIndex("TechnicianId");
 
-                    b.ToTable("MaintenanceLogs");
+                    b.ToTable("MaintenanceLogs", (string)null);
                 });
 
             modelBuilder.Entity("ScientificLabManagementApp.Domain.MappingApplicationUser", b =>
@@ -694,7 +694,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ScientificLabManagementApp.Domain.RefreshToken", b =>

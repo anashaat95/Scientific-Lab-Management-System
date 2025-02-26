@@ -2,11 +2,24 @@
 
 public class EquipmentService : IEquipmentService
 {
-    protected readonly IUnitOfWork  _unitOfWork;
+    protected readonly IUnitOfWork _unitOfWork;
+    protected readonly IMapper _mapper;
 
-    public EquipmentService(IUnitOfWork unitOfWork)
+    public EquipmentService(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _unitOfWork = unitOfWork;
+        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(IUnitOfWork)); ;
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); ;
+    }
+
+    public virtual async Task<EquipmentWithBookingsDto> GetEquipmentWithBookingsDtoByIdAsync(string id, params Expression<Func<Equipment, object>>[] includes)
+    {
+        var result = await _unitOfWork.EquipmentRepository
+            .GetQueryableEntityAsync(e => e.Id == id)
+            .Include(e => e.Company)
+            .Include(e => e.Bookings)
+            .ThenInclude(e=>e.User)
+            .FirstOrDefaultAsync();
+        return _mapper.Map<EquipmentWithBookingsDto>(result);
     }
 
     public async Task<Response<IEntityHaveId>> UpdateEquipmentIfBookingConfirmed(Equipment equipment)
