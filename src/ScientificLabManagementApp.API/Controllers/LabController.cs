@@ -15,4 +15,11 @@ public class LabController :
         var response = await Mediator.Send(new GetManyLabSelectOptionsQuery());
         return Result.Create(response);
     }
+
+    [HttpGet("query/{Name}")]
+    public virtual async Task<ActionResult<LabDto>> Get(GetOneLabByNameQuery command)
+    {
+        var response = await Mediator.Send(command);
+        return Result.Create(response);
+    }
 }

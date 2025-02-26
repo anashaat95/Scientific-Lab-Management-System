@@ -9,5 +9,16 @@ public class GetManySupervisorSelectOptionsQuery : GetManySelectOptionsQueryBase
 public class GetManyResearcherQuery : GetManyQueryBases<UserDto>{}
 public class GetManyResearcherSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto> { }
 public class GetOneUserByIdQuery : GetOneQueryBase<UserDto>{}
+
+public class GetOneUserByFieldQueryBase: RoleAuthorizeRequest, IRequest<Response<UserDto>>
+{
+
+    [FromRoute]
+    [Required]
+    public required string Field { get; set; }
+
+    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
+}
+
 public class GetOneUserByEmailQuery : GetOneQueryByEmailBase<UserDto>{}
 public class ExistOneUserByEmailQuery : ExistOneQueryByEmailBase{}

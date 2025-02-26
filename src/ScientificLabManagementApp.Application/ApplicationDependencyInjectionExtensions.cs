@@ -19,6 +19,7 @@ public static class ApplicationDependencyInjectionExtensions
 
 
         services.AddScoped<IEquipmentService, EquipmentService>();
+        services.AddScoped<ILabService, LabService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IEmailService, EmailService>();
         services.Configure<SmtpSettings>(configManager.GetSection(nameof(SmtpSettings)));

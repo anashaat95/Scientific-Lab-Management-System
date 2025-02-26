@@ -11,15 +11,16 @@ public static class InfrastructureDependencyInjectionExtensions
             options.UseSqlServer(configurations["LabManagementSystemConnectionString"]);
         });
 
+
         services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddUserManager<UserManager<ApplicationUser>>()
             .AddRoleManager<RoleManager<ApplicationRole>>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-        services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
-        services.AddTransient<IUnitOfWork, UnitOfWork>();
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

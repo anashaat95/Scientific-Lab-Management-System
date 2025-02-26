@@ -11,12 +11,30 @@ public class GetManyLabHandler : GetManyQueryHandlerBase<GetManyLabQuery, Lab, L
 
 public class GetManyLabSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyLabSelectOptionsQuery, Lab> { }
 
-public class GetOneLabByIdHandler : GetOneQueryHandlerBase<GetOneLabByIdQuery, Lab, LabDto> {
+public class GetOneLabByIdHandler : GetOneQueryHandlerBase<GetOneLabByIdQuery, Lab, LabDto>
+{
     protected override Task<LabDto?> GetEntityDto(GetOneLabByIdQuery request)
     {
         return _basicService.GetDtoByIdAsync(request.Id, e => e.Supervisior, e => e.Department);
     }
 }
+
+
+public class GetOneLabByNameHandler : RequestHandlerBase<GetOneLabByNameQuery, Lab, LabDto>
+{
+    private readonly ILabService _labService;
+    public GetOneLabByNameHandler(ILabService labService)
+    {
+        this._labService = labService;
+    }
+
+    public override async Task<Response<LabDto>> Handle(GetOneLabByNameQuery request, CancellationToken cancellationToken)
+    {
+        var entityDto = await _labService.GetOneDtoByNameAsync(request.Name);
+        return entityDto is not null ? Ok200(entityDto) : NotFound<LabDto>($"No resource found with Name = {request.Name}");
+    }
+}
+
 
 public class AddLabHandler : AddCommandHandlerBase<AddLabCommand, Lab, LabDto>
 {

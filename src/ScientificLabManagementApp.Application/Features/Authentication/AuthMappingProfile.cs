@@ -39,8 +39,9 @@ public class AuthMappingProfile : Profile
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.new_email));
 
         CreateMap<UpdateEmailCommand, ApplicationUser>()
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.new_email))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.user_id));
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.new_email));
+
+
         CreateMap<ChangePasswordCommand, ApplicationUser>();
 
     }

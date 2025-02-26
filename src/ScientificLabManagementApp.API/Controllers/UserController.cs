@@ -8,6 +8,14 @@ public class UserController :
         UserCommandData, AddUserCommandData, UpdateUserCommandData,
         AddUserCommand, UpdateUserCommand, DeleteUserCommand>
 {
+    // GET api/<Controller>/5
+    [HttpGet("field/{Field}")]
+    public virtual async Task<ActionResult<UserDto>> GetByField(GetOneUserByFieldQueryBase command)
+    {
+        var response = await Mediator.Send(command);
+        return Result.Create(response);
+    }
+
     [HttpGet("options")]
     public virtual async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetAllUsersOptions()
     {

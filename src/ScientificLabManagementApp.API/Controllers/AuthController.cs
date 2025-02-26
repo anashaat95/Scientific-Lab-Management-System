@@ -34,7 +34,7 @@ public class AuthController : ApiControllerBase
         return Result.Create(response);
     }
 
-    [HttpGet("confirm-email")]
+    [HttpPost("confirm-email")]
     public async Task<ActionResult<LoginDto>> VerifyEmail([FromQuery] ConfirmEmailQuery command)
     {
         var response = await Mediator.Send(command);

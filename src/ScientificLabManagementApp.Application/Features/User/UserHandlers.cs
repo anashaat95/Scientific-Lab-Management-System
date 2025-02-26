@@ -73,6 +73,20 @@ public class GetOneUserByIdHandler : GetOneQueryHandlerBase<GetOneUserByIdQuery,
     }
 }
 
+public class GetOneUserByUsernameHandler : RequestHandlerBase<GetOneUserByFieldQueryBase, MappingApplicationUser, UserDto>
+{
+    public override async Task<Response<UserDto>> Handle(GetOneUserByFieldQueryBase request, CancellationToken cancellationToken)
+    {
+        var entityDto = await GetEntityDto(request);
+        return entityDto is not null ? Ok200(entityDto) : NotFound<UserDto>($"No resource found with this field = {request.Field}");
+    }
+
+    protected virtual Task<UserDto?> GetEntityDto(GetOneUserByFieldQueryBase request)
+    {
+        return _applicationUserService.FindOneAsync(u => u.UserName == request.Field);
+    }
+}
+
 
 public class GetOneUserByEmailHandler : ResponseBuilder, IRequestHandler<GetOneUserByEmailQuery, Response<UserDto>>
 {

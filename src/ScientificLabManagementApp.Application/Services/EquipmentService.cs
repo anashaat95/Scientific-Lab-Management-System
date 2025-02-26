@@ -11,19 +11,7 @@ public class EquipmentService : IEquipmentService
 
     public async Task<Response<IEntityHaveId>> UpdateEquipmentIfBookingConfirmed(Equipment equipment)
     {
-        //if (equipment.ReservedQuantity > equipment.TotalQuantity || equipment.Status == enEquipmentStatus.FullyBooked)
-        //{
-        //    return Response<IEntityHaveId>.Fail("Booking can not be added because this equipment is fully booked", HttpStatusCode.BadRequest);
-        //}
-
-        // Increase Reserved Quantity
         equipment.ReservedQuantity += 1;
-
-        // Check if Fully Booked
-        if (equipment.ReservedQuantity == equipment.TotalQuantity)
-        {
-            equipment.Status = enEquipmentStatus.FullyBooked;
-        }
 
         await _unitOfWork.EquipmentRepository.UpdateAsync(equipment);
         await _unitOfWork.SaveChangesAsync();

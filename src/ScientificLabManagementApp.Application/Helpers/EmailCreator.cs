@@ -28,12 +28,13 @@ public class EmailCreator
     private string GetConfirmationUrl(ApplicationUser user, string token, eUrlType urlType = eUrlType.EmailConfirmation)
     {
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
         switch (urlType)
         {
             case eUrlType.EmailConfirmation:
                 return $"{_configManager["FrontendUrl"]}/confirm-email?user_id={user.Id}&token={encodedToken}";
             case eUrlType.UpdateEmailConfirmation:
-                return $"{_configManager["FrontendUrl"]}/confirm-update-email?user_id={user.Id}&token={encodedToken}&new_email={user.Email}";
+                return $"{_configManager["FrontendUrl"]}/confirm-updated-email?user_id={user.Id}&token={encodedToken}&new_email={user.Email}";
             case eUrlType.PasswordReset:
                 return $"{_configManager["FrontendUrl"]}/reset-password?user_id={user.Id}&token={encodedToken}";
             default:

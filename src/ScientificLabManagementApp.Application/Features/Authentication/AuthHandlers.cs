@@ -209,9 +209,13 @@ public class UpdateEmailHandler : AuthHandler<UpdateEmailCommand, string>
         var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.token)); 
         var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
         _mapper.Map(request, user);
-
         if (!result.Succeeded)
             return BadRequest<string>("Invalid or expired token.");
+
+        result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+            return BadRequest<string>("Failed to update to the new email");
 
         return Ok200("Email confirmed successfully!");
     }

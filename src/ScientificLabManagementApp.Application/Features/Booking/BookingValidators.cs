@@ -51,9 +51,6 @@ public class AddBookingValidator : BookingValidator<AddBookingCommand, AddBookin
         if (equipmentEntity.Status == enEquipmentStatus.InMaintenance)
             throw new FluentValidation.ValidationException("Equipment cannot be booked because it is currently in maintenance.");
 
-        if (equipmentEntity.Status == enEquipmentStatus.FullyBooked)
-            throw new FluentValidation.ValidationException("Equipment cannot be booked because it is currently fully booked.");
-
         if (equipmentEntity.Status == enEquipmentStatus.Decommissioned)
             throw new FluentValidation.ValidationException("Equipment cannot be booked because it is decommissioned.");
 
