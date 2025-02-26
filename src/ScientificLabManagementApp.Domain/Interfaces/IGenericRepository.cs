@@ -1,7 +1,10 @@
-﻿namespace ScientificLabManagementApp.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace ScientificLabManagementApp.Domain;
 public interface IGenericRepository<TEntity>
     where TEntity : class, IEntityBase
 {
+    DbSet<TEntity> GetEntitySet();
     Task<TEntity> GetOneByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes);
     Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
     Task<TEntity> FindOneAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes);

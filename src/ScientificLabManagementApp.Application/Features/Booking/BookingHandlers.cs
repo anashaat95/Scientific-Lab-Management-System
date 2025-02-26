@@ -72,8 +72,6 @@ public class UpdateBookingHandler : UpdateCommandHandlerBase<UpdateBookingComman
     protected override async Task<Response<BookingDto>> DoUpdate(UpdateBookingCommand updateRequest, Booking entityToUpdate)
     {
 
-        if (entityToUpdate.Status == updateRequest.Data.Status) return Updated(_mapper.Map<BookingDto>(entityToUpdate));
-
         using var transaction = _unitOfWork;
         await transaction.BeginTransactionAsync();
 

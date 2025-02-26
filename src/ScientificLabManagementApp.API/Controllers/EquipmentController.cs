@@ -9,9 +9,15 @@ public class EquipmentController :
         AddEquipmentCommand, UpdateEquipmentCommand, DeleteEquipmentCommand>
 
 {
+    [HttpGet("bookings")]
+    public async Task<ActionResult<IEnumerable<EquipmentWithBookingsDto>>> getAllWithBookings()
+    {
+        var response = await Mediator.Send(new GetManyEquipmentWithBookingsQuery());
+        return Result.Create(response);
+    }
 
     [HttpGet("options")]
-    public virtual async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetAllOptions()
+    public async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetAllOptions()
     {
         var response = await Mediator.Send(new GetManyEquipmentSelectOptionsQuery());
         return Result.Create(response);
@@ -19,7 +25,7 @@ public class EquipmentController :
 
     // GET api/<Controller>/5
     [HttpGet("{Id}/bookings")]
-    public virtual async Task<ActionResult<EquipmentWithBookingsDto>> Get(GetBookingsForEquipmentByEquipmentIdQuery command)
+    public virtual async Task<ActionResult<EquipmentWithBookingsDto>> GetOneWithBookings(GetOneEquipmentWithBookingsByIdQuery command)
     {
         var response = await Mediator.Send(command);
         return Result.Create(response);

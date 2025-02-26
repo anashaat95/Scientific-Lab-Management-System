@@ -18,6 +18,11 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
         return result;
     }
 
+    public DbSet<TEntity> GetEntitySet()
+    {
+        return _context.Set<TEntity>();
+    }
+
     public async Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
     {
         var result = await _context.Set<TEntity>()

@@ -8,6 +8,21 @@ public class GetManyEquipmentHandler : GetManyQueryHandlerBase<GetManyEquipmentQ
     }
 }
 
+public class GetManyEquipmentWithBookingsHandler : GetManyQueryHandlerBase<GetManyEquipmentWithBookingsQuery, Equipment, EquipmentWithBookingsDto>
+{
+    private readonly IEquipmentService _equipmentService;
+
+    public GetManyEquipmentWithBookingsHandler(IEquipmentService equipmentService)
+    {
+        _equipmentService = equipmentService;
+    }
+    protected override Task<IEnumerable<EquipmentWithBookingsDto>> GetEntityDtos()
+    {
+        return _equipmentService.GetAllEquipmentsWithBookingsDtoByIdAsync();
+    }
+}
+
+
 
 
 public class GetManyEquipmentSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyEquipmentSelectOptionsQuery, Equipment> { }
@@ -19,7 +34,7 @@ public class GetOneEquipmentByIdHandler : GetOneQueryHandlerBase<GetOneEquipment
     }
 }
 
-public class GetBookingsForEquipmentByEquipmentIdHandler : GetOneQueryHandlerBase<GetBookingsForEquipmentByEquipmentIdQuery, Equipment, EquipmentWithBookingsDto>
+public class GetBookingsForEquipmentByEquipmentIdHandler : GetOneQueryHandlerBase<GetOneEquipmentWithBookingsByIdQuery, Equipment, EquipmentWithBookingsDto>
 {
     private readonly IEquipmentService _equipmentService;
 
@@ -28,9 +43,9 @@ public class GetBookingsForEquipmentByEquipmentIdHandler : GetOneQueryHandlerBas
         _equipmentService = equipmentService;
     }
 
-    protected override Task<EquipmentWithBookingsDto?> GetEntityDto(GetBookingsForEquipmentByEquipmentIdQuery request)
+    protected override Task<EquipmentWithBookingsDto?> GetEntityDto(GetOneEquipmentWithBookingsByIdQuery request)
     {
-        return _equipmentService.GetEquipmentWithBookingsDtoByIdAsync(request.Id, e => e.Company, e => e.Bookings);
+        return _equipmentService.GetEquipmentWithBookingsDtoByIdAsync(request.Id);
     }
 }
 public class AddEquipmentHandler : AddCommandHandlerBase<AddEquipmentCommand, Equipment, EquipmentDto> { }

@@ -6,5 +6,7 @@ public interface IEquipmentService
     Task<Response<IEntityHaveId>> UpdateEquipmentBasedOnMaintenaceStatus(Equipment equipment, enMaintenanceStatus maintenanceStatus);
     Task<Response<IEntityHaveId>> UpdateEquipmentIfMaintenaceLogDeleted(Equipment equipment);
     Task<Response<IEntityHaveId>> CancelAllBookingsRelatedToEquipment(string equipmentId);
-    Task<EquipmentWithBookingsDto> GetEquipmentWithBookingsDtoByIdAsync(string id, params Expression<Func<Equipment, object>>[] includes);
+    Task<IEnumerable<EquipmentWithBookingsDto>> GetAllEquipmentsWithBookingsDtoByIdAsync();
+    Task<EquipmentWithBookingsDto> GetEquipmentWithBookingsDtoByIdAsync(string id);
+
 }

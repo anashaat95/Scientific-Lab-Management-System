@@ -11,15 +11,28 @@ public class EquipmentService : IEquipmentService
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); ;
     }
 
-    public virtual async Task<EquipmentWithBookingsDto> GetEquipmentWithBookingsDtoByIdAsync(string id, params Expression<Func<Equipment, object>>[] includes)
+    public virtual async Task<IEnumerable<EquipmentWithBookingsDto>> GetAllEquipmentsWithBookingsDtoByIdAsync()
+    {
+        var result = await _unitOfWork.EquipmentRepository.GetEntitySet()
+                                        .Include(e => e.Company)
+                                        .Include(e => e.Bookings)
+                                        .ThenInclude(e => e.User)
+                                        .ProjectTo<EquipmentWithBookingsDto>(_mapper.ConfigurationProvider)
+                                        .ToListAsync();
+        return result;
+    }
+
+
+    public virtual async Task<EquipmentWithBookingsDto> GetEquipmentWithBookingsDtoByIdAsync(string id)
     {
         var result = await _unitOfWork.EquipmentRepository
             .GetQueryableEntityAsync(e => e.Id == id)
             .Include(e => e.Company)
             .Include(e => e.Bookings)
-            .ThenInclude(e=>e.User)
+            .ThenInclude(e => e.User)
+            .ProjectTo<EquipmentWithBookingsDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
-        return _mapper.Map<EquipmentWithBookingsDto>(result);
+        return result;
     }
 
     public async Task<Response<IEntityHaveId>> UpdateEquipmentIfBookingConfirmed(Equipment equipment)
