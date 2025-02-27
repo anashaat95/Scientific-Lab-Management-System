@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace ScientificLabManagementApp.Application;
 
 public abstract class UserCommandData
@@ -7,7 +9,7 @@ public abstract class UserCommandData
     public string last_name { get; set; }
     public string Email { get; set; }
     public string? phone_number { get; set; }
-    public string? image_url { get; set; }
+    public IFormFile? image { get; set; }
     public string company_id { get; set; }
     public string department_id { get; set; }
     public string lab_id { get; set; }
@@ -30,16 +32,19 @@ public class UpdateUserCommandData : UserCommandData
 
 public class AddUserCommand : AddCommandBase<UserDto, AddUserCommandData>
 {
-
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
+    [FromForm]
+    public override AddUserCommandData Data { get => base.Data; set => base.Data = value; }
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AdminLevel;
 }
 
 public class UpdateUserCommand : UpdateCommandBase<UserDto, UpdateUserCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
+    [FromForm]
+    public override UpdateUserCommandData Data { get => base.Data; set => base.Data = value; }
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AdminLevel;
 }
 
 public class DeleteUserCommand : DeleteCommandBase<UserDto>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AdminLevel;
 }

@@ -11,15 +11,15 @@ public class UpdateCityCommandData : CityCommandData { }
 
 public class AddCityCommand : AddCommandBase<CityDto, AddCityCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
 
 public class UpdateCityCommand : UpdateCommandBase<CityDto, UpdateCityCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
 
 public class DeleteCityCommand : DeleteCommandBase<CityDto>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }

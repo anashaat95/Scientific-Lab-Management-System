@@ -9,5 +9,5 @@ public class GetOneLabByNameQuery : RoleAuthorizeRequest, IRequest<Response<LabD
     [FromRoute]
     [Required]
     public required string Name { get; set; }
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AnyUserLevel;
 }

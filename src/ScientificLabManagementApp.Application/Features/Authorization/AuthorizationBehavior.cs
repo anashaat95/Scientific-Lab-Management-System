@@ -18,14 +18,14 @@ public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRe
         //    return await next();
         //}
 
-        if (request is IRoleAuthorizRequest authorizeRequest)
+        if (request is IRoleAuthorizeRequest authorizeRequest)
         {
             var user = _currentUserService.User;
             var userRoles = _currentUserService.UserRoles;
 
-            if (!authorizeRequest.AllowedRoles.Any(role => userRoles.Contains(role)))
+            if (!authorizeRequest.AllowedRoles().Any(role => userRoles.Contains(role)))
             {
-                throw new UnauthorizedAccessException($"Access denied. Allowed roles: {string.Join(", ", authorizeRequest.AllowedRoles)}");
+                throw new UnauthorizedAccessException($"Access denied. Allowed roles: {string.Join(", ", authorizeRequest.AllowedRoles())}");
             }
         }
 

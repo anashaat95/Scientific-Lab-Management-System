@@ -117,8 +117,7 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
 
         var userId = entityAddedByUser.UserId;
 
-        if (!_currentUserService.UserRoles.Contains(enUserRoles.Admin.ToString()) ||
-            !entityAddedByUser.UserId.Equals(_currentUserService.UserId, StringComparison.OrdinalIgnoreCase))
+        if (entityAddedByUser.UserId != _currentUserService.UserId)
             return false;
 
         return true;

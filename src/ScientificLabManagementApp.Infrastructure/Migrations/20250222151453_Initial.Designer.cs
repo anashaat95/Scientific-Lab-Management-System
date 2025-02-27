@@ -211,7 +211,7 @@ namespace ScientificLabManagementApp.Infrastructure.Migrations
                     b.Property<string>("GoogleScholarUrl")
                         .HasColumnType("nvarchar(4000)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ExpertiseArea")
                         .HasColumnType("nvarchar(4000)");
 
                     b.Property<string>("LabId")

@@ -17,7 +17,7 @@ public class GetOneUserByFieldQueryBase: RoleAuthorizeRequest, IRequest<Response
     [Required]
     public required string Field { get; set; }
 
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AnyUserLevel;
 }
 
 public class GetOneUserByEmailQuery : GetOneQueryByEmailBase<UserDto>{}

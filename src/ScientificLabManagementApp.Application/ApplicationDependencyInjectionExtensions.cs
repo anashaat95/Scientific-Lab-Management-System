@@ -26,6 +26,7 @@ public static class ApplicationDependencyInjectionExtensions
         services.AddScoped<IEmailService, EmailService>();
         services.Configure<SmtpSettings>(configManager.GetSection(nameof(SmtpSettings)));
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<ICloudinaryService, CloudinaryService>();
 
         services.AddSingleton<IUrlService, UrlService>();
         services.AddSingleton<EmailCreator>();

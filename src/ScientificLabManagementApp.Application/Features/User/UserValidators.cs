@@ -30,7 +30,6 @@ public class UserValidator<TCommand, TData> : ValidatorBase<TCommand, Applicatio
             .MustAsync(async (x, ct) => await _basicService.RelatedExistsAsync<Lab>(x))
             .WithMessage("No lab found with the provided lab_id");
 
-        RuleFor(x => x.Data.image_url).ValidateOptionalUrl();
 
         RuleFor(x => x.Data.google_scholar_url).ValidateOptionalUrl();
         RuleFor(x => x.Data.google_scholar_url).ValidateKeywordInUrl("scholar.google.com");

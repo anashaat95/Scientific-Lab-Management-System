@@ -130,6 +130,9 @@ public class AddUserHandler : AddCommandHandlerBase<AddUserCommand, ApplicationU
     public override async Task<Response<UserDto>> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         var entityToAdd = _mapper.Map<ApplicationUser>(request);
+
+        entityToAdd.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(request.Data.image);
+
         var creationResult = await _userManager.CreateAsync(entityToAdd, request.Data.Password);
         if (!creationResult.Succeeded)
         {
@@ -155,6 +158,9 @@ public class UpdateUserHandler : UpdateCommandHandlerBase<UpdateUserCommand, App
         if (entityToUpdate is null) return NotFound<UserDto>($"No resource found with the id = {request.Id}");
 
         var mappedUserEntity = _mapper.Map(request, entityToUpdate);
+
+        mappedUserEntity.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(request.Data.image);
+
         var updateResult = await _userManager.UpdateAsync(mappedUserEntity);
 
         if (!updateResult.Succeeded)

@@ -12,16 +12,16 @@ public class UpdateDepartmentCommandData : DepartmentCommandData { }
 
 public class AddDepartmentCommand : AddCommandBase<DepartmentDto, AddDepartmentCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
 
 public class UpdateDepartmentCommand : UpdateCommandBase<DepartmentDto, UpdateDepartmentCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
 
 public class DeleteDepartmentCommand : DeleteCommandBase<DepartmentDto>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
 

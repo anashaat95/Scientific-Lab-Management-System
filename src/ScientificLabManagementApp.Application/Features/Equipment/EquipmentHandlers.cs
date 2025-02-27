@@ -1,4 +1,7 @@
 
+using Azure.Core;
+using MediatR;
+
 namespace ScientificLabManagementApp.Application;
 public class GetManyEquipmentHandler : GetManyQueryHandlerBase<GetManyEquipmentQuery, Equipment, EquipmentDto>
 {
@@ -48,7 +51,16 @@ public class GetBookingsForEquipmentByEquipmentIdHandler : GetOneQueryHandlerBas
         return _equipmentService.GetEquipmentWithBookingsDtoByIdAsync(request.Id);
     }
 }
-public class AddEquipmentHandler : AddCommandHandlerBase<AddEquipmentCommand, Equipment, EquipmentDto> { }
+public class AddEquipmentHandler : AddCommandHandlerBase<AddEquipmentCommand, Equipment, EquipmentDto>
+{
+    public override async Task<Response<EquipmentDto>> Handle(AddEquipmentCommand request, CancellationToken cancellationToken)
+    {
+        var entityToAdd = _mapper.Map<Equipment>(request);
+        entityToAdd.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(request.Data.image);
+        var resultDto = await _basicService.AddAsync(entityToAdd);
+        return Created(resultDto);
+    }
+}
 
 public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCommand, Equipment, EquipmentDto>
 {
@@ -62,10 +74,6 @@ public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCo
 
     protected async override Task<Response<EquipmentDto>> DoUpdate(UpdateEquipmentCommand updateRequest, Equipment equipmentToUpdate)
     {
-        //if (updateRequest.Data.Status == enEquipmentStatus.FullyBooked || updateRequest.Data.Status == enEquipmentStatus.InMaintenance
-        //    || equipmentToUpdate.Status == updateRequest.Data.Status)
-        //    return Updated(_mapper.Map<EquipmentDto>(equipmentToUpdate));
-
         using var transaction = _unitOfWork;
         await transaction.BeginTransactionAsync();
         try
@@ -73,6 +81,9 @@ public class UpdateEquipmentHandler : UpdateCommandHandlerBase<UpdateEquipmentCo
 
             var updatedEntity = _mapper.Map(updateRequest, equipmentToUpdate);
             updatedEntity.ReservedQuantity = 0;
+
+            updatedEntity.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(updateRequest.Data.image);
+
             await _unitOfWork.EquipmentRepository.UpdateAsync(updatedEntity);
 
             // Find and cancel related booking entities

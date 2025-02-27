@@ -11,7 +11,6 @@ public static class InfrastructureDependencyInjectionExtensions
             options.UseSqlServer(configurations["LabManagementSystemConnectionString"]);
         });
 
-
         services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddUserManager<UserManager<ApplicationUser>>()
             .AddRoleManager<RoleManager<ApplicationRole>>()

@@ -27,11 +27,11 @@ public class EquipmentValidator<TCommand, TData> : ValidatorBase<TCommand, Equip
     public override void ApplyCustomValidationRules()
     {
         base.ApplyCustomValidationRules();
-        RuleFor(x => x.Data.image_url).ValidateOptionalUrl();
+
 
         RuleFor(x => x.Data.company_id)
             .MustAsync(async (id, ct) => await _basicService.RelatedExistsAsync<Company>(id))
-            .WithMessage("No company found with the provided {{PropertName}}.");
+            .WithMessage("No company found with the provided company id.");
     }
 }
 public class AddEquipmentValidator : EquipmentValidator<AddEquipmentCommand, AddEquipmentCommandData> { }

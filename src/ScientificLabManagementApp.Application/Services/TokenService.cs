@@ -69,11 +69,16 @@ public class TokenService : ITokenService
     {
         var creds = new SigningCredentials(GetKey(), SecurityAlgorithms.HmacSha256);
 
+        Console.WriteLine(user);
+
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.NameId, user.Id),
         };
 
         foreach (var role in userRoles)
@@ -81,14 +86,14 @@ public class TokenService : ITokenService
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        var expires = rememberMe ? 
-            DateTime.Now.AddDays(AccessTokenExpirationInDaysIfRememberMe) : 
+        var expires = rememberMe ?
+            DateTime.Now.AddDays(AccessTokenExpirationInDaysIfRememberMe) :
             DateTime.Now.AddMinutes(AccessTokenExpirationInMinutes);
 
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
-            claims: claims, 
+            claims: claims,
             expires: expires,
             signingCredentials: creds
         );

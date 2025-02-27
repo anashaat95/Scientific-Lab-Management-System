@@ -16,15 +16,15 @@ public class UpdateLabCommandData : LabCommandData { }
 
 public class AddLabCommand : AddCommandBase<LabDto, AddLabCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
 
 public class UpdateLabCommand : UpdateCommandBase<LabDto, UpdateLabCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
 
 public class DeleteLabCommand : DeleteCommandBase<LabDto>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }

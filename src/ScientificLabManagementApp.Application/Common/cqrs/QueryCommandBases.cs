@@ -1,8 +1,12 @@
 ﻿namespace ScientificLabManagementApp.Application;
 
-public class RoleAuthorizeRequest : IRoleAuthorizRequest
+
+public class RoleAuthorizeRequest : IRoleAuthorizeRequest
 {
-    public virtual IEnumerable<string> AllowedRoles => AllowedRolesFactory.AdminLevel;
+    public virtual IEnumerable<string> AllowedRoles()
+    {
+        return AllowedRolesFactory.AdminLevel;
+    }
 }
 
 public class GetOneQueryBase<TDto> : RoleAuthorizeRequest, IRequest<Response<TDto>>, IEntityHaveId
@@ -12,7 +16,7 @@ public class GetOneQueryBase<TDto> : RoleAuthorizeRequest, IRequest<Response<TDt
     [Required]
     public required string Id { get; set; }
 
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AnyUserLevel;
 }
 
 public class GetOneQueryByEmailBase<TDto> : RoleAuthorizeRequest, IRequest<Response<TDto>>
@@ -21,10 +25,10 @@ public class GetOneQueryByEmailBase<TDto> : RoleAuthorizeRequest, IRequest<Respo
     [FromQuery]
     [Required]
     public required string Email { get; set; }
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AnyUserLevel;
 }
 
-public class ExistOneQueryByEmailBase: IRequest<Response<bool>>
+public class ExistOneQueryByEmailBase : IRequest<Response<bool>>
 {
     [FromQuery]
     [Required]
@@ -34,7 +38,7 @@ public class ExistOneQueryByEmailBase: IRequest<Response<bool>>
 public class GetManyQueryBases<TDto> : RoleAuthorizeRequest, IRequest<Response<IEnumerable<TDto>>>
     where TDto : class
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.AnyUserLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AnyUserLevel;
 }
 
 public class GetManySelectOptionsQueryBases<TDto> : IRequest<Response<IEnumerable<TDto>>>
@@ -47,7 +51,7 @@ public abstract class AddUpdateCommandBase<TDto, TCommandData> : RoleAuthorizeRe
     where TCommandData : class
 {
     [FromBody]
-    public TCommandData Data { get; set; }
+    public virtual TCommandData Data { get; set; }
 }
 
 public class AddCommandBase<TDto, TCommandData> : AddUpdateCommandBase<TDto, TCommandData>

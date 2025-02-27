@@ -73,7 +73,6 @@ public class EquipmentMappingProfile : ProfileBase<Equipment, EquipmentDto, Equi
                 .ForMember(dest => dest.Specifications, opt => opt.MapFrom(src => src.Data.Specifications))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Data.Description))
                 .ForMember(dest => dest.CanBeLeftOverNight, opt => opt.MapFrom(src => src.Data.CanBeLeftOverNight))
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Data.image_url))
                 .ForMember(dest => dest.CompanyId, opt => opt.MapFrom(src => src.Data.company_id))
                 ;
     }

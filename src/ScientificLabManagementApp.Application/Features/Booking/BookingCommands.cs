@@ -22,17 +22,17 @@ public class UpdateBookingCommandData : BookingCommandData
 
 public class AddBookingCommand : AddCommandBase<BookingDto, AddBookingCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.ResearcherLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.ResearcherLevel;
 }
 
 public class UpdateBookingCommand : UpdateCommandBase<BookingDto, UpdateBookingCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.ResearcherLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.ResearcherLevel;
 }
 
 public class DeleteBookingCommand : DeleteCommandBase<BookingDto>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.ResearcherLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.ResearcherLevel;
 }
 
 

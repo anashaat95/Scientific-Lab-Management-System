@@ -13,15 +13,15 @@ public class UpdateMaintenanceLogCommandData : MaintenanceLogCommandData { }
 
 public class AddMaintenanceLogCommand : AddCommandBase<MaintenanceLogDto, AddMaintenanceLogCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.TechnicianLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.TechnicianLevel;
 }
 
 public class UpdateMaintenanceLogCommand : UpdateCommandBase<MaintenanceLogDto, UpdateMaintenanceLogCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.TechnicianLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.TechnicianLevel;
 }
 
 public class DeleteMaintenanceLogCommand : DeleteCommandBase<MaintenanceLogDto>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.TechnicianLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.TechnicianLevel;
 }

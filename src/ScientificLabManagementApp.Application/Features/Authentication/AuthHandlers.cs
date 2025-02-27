@@ -14,6 +14,7 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
     protected readonly EmailCreator _emailCreator;
     protected readonly IMapper _mapper;
     protected readonly ICurrentUserService _currentUserService;
+    protected readonly ICloudinaryService _cloudinaryService;
 
     #endregion
 
@@ -29,6 +30,7 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
         _mapper = serviceProvider!.GetRequiredService<IMapper>();
         _emailCreator = serviceProvider!.GetRequiredService<EmailCreator>();
         _currentUserService = serviceProvider!.GetRequiredService<ICurrentUserService>();
+        _cloudinaryService = serviceProvider!.GetRequiredService<ICloudinaryService>();
     }
     #endregion
 
@@ -46,8 +48,8 @@ public abstract class AuthHandler<TRequest, TDto> : ResponseBuilder, IRequestHan
 
     public async Task<LoginDto> CreateLoginDto(ApplicationUser user, bool rememberMe = false)
     {
-        var accessTokenExpiration = rememberMe ? 
-            DateTime.Now.AddDays(_tokenService.AccessTokenExpirationInDaysIfRememberMe) : 
+        var accessTokenExpiration = rememberMe ?
+            DateTime.Now.AddDays(_tokenService.AccessTokenExpirationInDaysIfRememberMe) :
             DateTime.Now.AddMinutes(_tokenService.AccessTokenExpirationInMinutes);
 
         var userRoles = await _userManager.GetRolesAsync(user);
@@ -109,6 +111,8 @@ public class SignupHandler : AuthHandler<SignupCommand, string>
         var newUser = _mapper.Map<ApplicationUser>(request);
         newUser.EmailConfirmed = false;
 
+        newUser.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(request.image);
+
         var creationResult = await _userManager.CreateAsync(newUser, request.Password);
 
         if (!creationResult.Succeeded)
@@ -157,7 +161,20 @@ public class UpdateDataHandler<TCommand> : AuthHandler<TCommand, string>
         return Ok200<string>(_successMessage);
     }
 }
-public class UpdateProfileHandler : UpdateDataHandler<UpdateProfileCommand> { }
+public class UpdateProfileHandler : UpdateDataHandler<UpdateProfileCommand>
+{
+    protected override async Task<Response<string>> ProcessUserUpdateOrEmailConfirmation(ApplicationUser user, UpdateProfileCommand request)
+    {
+        user.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(request.image);
+
+        var updateResult = await _userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+            return BadRequest<string>($"Failed to update the user. Errors: {updateResult.ConvertErrorsToString()}");
+
+        return Ok200<string>(_successMessage);
+    }
+}
 
 public class UpdateUsernameHandler : UpdateDataHandler<UpdateUsernameCommand>
 {
@@ -206,7 +223,7 @@ public class UpdateEmailHandler : AuthHandler<UpdateEmailCommand, string>
             return NotFound<string>("User is not found!");
 
 
-        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.token)); 
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.token));
         var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
         _mapper.Map(request, user);
         if (!result.Succeeded)

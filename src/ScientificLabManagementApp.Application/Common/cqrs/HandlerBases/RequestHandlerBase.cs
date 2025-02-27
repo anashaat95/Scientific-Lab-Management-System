@@ -15,6 +15,7 @@ public abstract class RequestHandlerBase<TRequest, TEntity, TDto>
     protected readonly ICurrentUserService _currentUserService;
     protected readonly IApplicationUserService _applicationUserService;
     protected readonly IUnitOfWork _unitOfWork;
+    protected readonly ICloudinaryService _cloudinaryService;
     #endregion
 
 
@@ -31,6 +32,7 @@ public abstract class RequestHandlerBase<TRequest, TEntity, TDto>
         _currentUserService = serviceProvider!.GetRequiredService<ICurrentUserService>();
         _applicationUserService = serviceProvider!.GetRequiredService<IApplicationUserService>();
         _unitOfWork = serviceProvider!.GetRequiredService<IUnitOfWork>();
+        _cloudinaryService = serviceProvider!.GetRequiredService<ICloudinaryService>();
     }
     #endregion
 

@@ -77,7 +77,6 @@ public class SignupValidator : AuthValidatorBase<SignupCommand>
             .MustAsync(async (x, ct) => await _userService.RelatedExistsAsync<Lab>(x))
             .WithMessage("No lab found with the provided lab_id");
 
-        RuleFor(x => x.image_url).ValidateOptionalUrl();
         RuleFor(x => x.google_scholar_url).ValidateOptionalUrl();
         RuleFor(x => x.academia_url).ValidateOptionalUrl();
         RuleFor(x => x.scopus_url).ValidateOptionalUrl();
@@ -121,7 +120,6 @@ public class UpdateProfileValidator : AuthValidatorBase<UpdateProfileCommand>
 
     public override void ApplyCustomValidationRules()
     {
-        RuleFor(x => x.image_url).ValidateOptionalUrl();
         RuleFor(x => x.google_scholar_url).ValidateOptionalUrl();
         RuleFor(x => x.academia_url).ValidateOptionalUrl();
         RuleFor(x => x.scopus_url).ValidateOptionalUrl();

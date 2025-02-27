@@ -15,7 +15,7 @@ public class SignupCommand : IRequest<Response<string>>
     public string last_name { get; set; }
     public string Email { get; set; }
     public string? phone_number { get; set; }
-    public string? image_url { get; set; }
+    public IFormFile? image { get; set; }
     public string company_id { get; set; }
     public string department_id { get; set; }
     public string lab_id { get; set; }
@@ -33,7 +33,7 @@ public class UpdateProfileCommand : IRequest<Response<string>>
     public string first_name { get; set; }
     public string last_name { get; set; }
     public string? phone_number { get; set; }
-    public string? image_url { get; set; }
+    public IFormFile? image { get; set; }
     public string? google_scholar_url { get; set; }
     public string? academia_url { get; set; }
     public string? scopus_url { get; set; }

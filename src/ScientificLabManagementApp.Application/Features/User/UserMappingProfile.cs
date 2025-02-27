@@ -62,7 +62,6 @@ public class UserMappingProfile : ProfileBase<ApplicationUser, UserDto, UserComm
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Data.last_name))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Data.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Data.phone_number))
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Data.image_url))
                 .ForMember(dest => dest.CompanyId, opt => opt.MapFrom(src => src.Data.company_id))
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.Data.department_id))
                 .ForMember(dest => dest.LabId, opt => opt.MapFrom(src => src.Data.lab_id))

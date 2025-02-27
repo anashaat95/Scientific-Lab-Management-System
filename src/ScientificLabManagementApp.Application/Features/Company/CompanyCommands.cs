@@ -16,15 +16,15 @@ public class UpdateCompanyCommandData : CompanyCommandData { }
 
 public class AddCompanyCommand : AddCommandBase<CompanyDto, AddCompanyCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
 
 public class UpdateCompanyCommand : UpdateCommandBase<CompanyDto, UpdateCompanyCommandData>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
 
 public class DeleteCompanyCommand : DeleteCommandBase<CompanyDto>
 {
-    public override IEnumerable<string> AllowedRoles => AllowedRolesFactory.LabSupervisorLevel;
+    public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.LabSupervisorLevel;
 }
