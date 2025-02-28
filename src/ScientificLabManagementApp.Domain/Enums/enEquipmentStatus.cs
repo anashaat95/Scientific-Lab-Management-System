@@ -3,7 +3,6 @@
 public enum enEquipmentStatus
 {
     Available,
-    NotWorking,
     Decommissioned,
     InMaintenance
 }
