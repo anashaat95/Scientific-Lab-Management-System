@@ -1,12 +1,12 @@
-﻿using Azure.Core;
-using CloudinaryDotNet;
+﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using ScientificLabManagementApp.Application;
 
 namespace ScientificLabManagementApp;
 
 public class CloudinaryService : ICloudinaryService
-{private readonly Cloudinary _cloudinary;
+{
+    private readonly Cloudinary _cloudinary;
     public CloudinaryService(IConfiguration configManager)
     {
         var account = new Account(configManager["ClOUDINARY_NAME"], configManager["ClOUDINARY_API_KEY"], configManager["ClOUDINARY_API_SECRET"]);
@@ -26,15 +26,11 @@ public class CloudinaryService : ICloudinaryService
         return uploadResult.SecureUrl.AbsoluteUri;
     }
 
-    public async Task<string?> GetUrlOfUploadedImage(IFormFile? image)
+    public async Task<string> GetUrlOfUploadedImage(IFormFile image)
     {
-        if (image != null)
-        {
-            var stream = image.OpenReadStream();
-            string extension = Path.GetExtension(image.FileName);
-            string newFileName = $"{Path.GetFileNameWithoutExtension(image.FileName)}_{DateTime.Now.ToFileTime()}.{extension}";
-            return await UploadImageAsync(stream, newFileName);
-        }
-        return null;
+        var stream = image.OpenReadStream();
+        string extension = Path.GetExtension(image.FileName);
+        string newFileName = $"{Path.GetFileNameWithoutExtension(image.FileName)}_{DateTime.Now.ToFileTime()}.{extension}";
+        return await UploadImageAsync(stream, newFileName);
     }
 }

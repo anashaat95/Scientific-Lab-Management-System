@@ -111,7 +111,7 @@ public class SignupHandler : AuthHandler<SignupCommand, string>
         var newUser = _mapper.Map<ApplicationUser>(request);
         newUser.EmailConfirmed = false;
 
-        newUser.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(request.image);
+        if (request.image != null) newUser.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(request.image);
 
         var creationResult = await _userManager.CreateAsync(newUser, request.Password);
 
@@ -165,7 +165,7 @@ public class UpdateProfileHandler : UpdateDataHandler<UpdateProfileCommand>
 {
     protected override async Task<Response<string>> ProcessUserUpdateOrEmailConfirmation(ApplicationUser user, UpdateProfileCommand request)
     {
-        user.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(request.image);
+        if (request.image != null)  user.ImageUrl = await _cloudinaryService.GetUrlOfUploadedImage(request.image);
 
         var updateResult = await _userManager.UpdateAsync(user);
 

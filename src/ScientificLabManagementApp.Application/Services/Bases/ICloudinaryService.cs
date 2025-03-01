@@ -2,6 +2,6 @@
 
 public interface ICloudinaryService
 {
-    Task<string?> GetUrlOfUploadedImage(IFormFile? image);
+    Task<string> GetUrlOfUploadedImage(IFormFile image);
 }
 
