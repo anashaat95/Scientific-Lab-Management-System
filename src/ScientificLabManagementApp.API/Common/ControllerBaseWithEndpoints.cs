@@ -13,6 +13,7 @@ public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQu
     where TDto : class 
 {
     [HttpGet]
+    [HttpHead]
     public virtual async Task<ActionResult<IEnumerable<TDto>>> GetAll()
     {
         var response = await Mediator.Send(Activator.CreateInstance<TGetManyQuery>());
@@ -50,5 +51,12 @@ public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQu
     {
         var response = await Mediator.Send(command);
         return Result.Create(response);
+    }
+
+    [HttpOptions()]
+    public virtual async Task<IActionResult> GetOptions()
+    {
+        Response.Headers.Append("Allow", "GET,POST,PUT,DELETE,OPTIONS");
+        return Result.Ok();
     }
 }
