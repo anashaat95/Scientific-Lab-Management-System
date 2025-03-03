@@ -4,9 +4,11 @@ using Azure.Core;
 namespace ScientificLabManagementApp.Application;
 public class GetManyUserHandler : GetManyQueryHandlerBase<GetManyUserQuery, ApplicationUser, UserDto>
 {
-    protected override Task<PagedList<UserDto>> GetEntityDtos(GetManyUserQuery request)
+    public override async Task<Response<IEnumerable<UserDto>>> Handle(GetManyUserQuery request, CancellationToken cancellationToken)
     {
-        return _applicationUserService.GetAllUsersByRoleAsync();
+        var parameters = _mapper.Map<AllResourceParameters>(request);
+        var result = await _applicationUserService.GetAllUsersByRoleAsync(null, parameters);
+        return FetchedMultiple(result.Items, result.Meta);
     }
 }
 public class GetManyUserSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyUserSelectOptionsQuery, MappingApplicationUser>
@@ -19,9 +21,11 @@ public class GetManyUserSelectOptionsHandler : GetManySelectOptionsQueryHandler<
 
 public class GetManyTechnicianHandler : GetManyQueryHandlerBase<GetManyTechnicianQuery, ApplicationUser, UserDto>
 {
-    protected override Task<PagedList<UserDto>> GetEntityDtos(GetManyTechnicianQuery request)
+    public override async Task<Response<IEnumerable<UserDto>>> Handle(GetManyTechnicianQuery request, CancellationToken cancellationToken)
     {
-        return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.Technician.ToString());
+        var parameters = _mapper.Map<AllResourceParameters>(request);
+        var result = await _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.Technician.ToString(), parameters);
+        return FetchedMultiple(result.Items, result.Meta);
     }
 }
 
@@ -33,11 +37,13 @@ public class GetManyTechnicianSelectOptionsHandler : GetManySelectOptionsQueryHa
     }
 }
 
-public class GetManyLabSupervisorHandler : GetManyQueryHandlerBase<GetManySupervisorQuery, ApplicationUser, UserDto>
+public class GetManyLabSupervisorHandler : GetManyQueryHandlerBase<GetManyLabSupervisorQuery, ApplicationUser, UserDto>
 {
-    protected override Task<PagedList<UserDto>> GetEntityDtos(GetManySupervisorQuery request)
+    public override async Task<Response<IEnumerable<UserDto>>> Handle(GetManyLabSupervisorQuery request, CancellationToken cancellationToken)
     {
-        return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.LabSupervisor.ToString());
+        var parameters = _mapper.Map<AllResourceParameters>(request);
+        var result = await _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.LabSupervisor.ToString(), parameters);
+        return FetchedMultiple(result.Items, result.Meta);
     }
 }
 
@@ -49,11 +55,13 @@ public class GetManyLabSupervisorSelectOptionsHandler : GetManySelectOptionsQuer
     }
 }
 
-public class GetManyResearcherHandler : GetManyQueryHandlerBase<GetManySupervisorQuery, ApplicationUser, UserDto>
+public class GetManyResearcherHandler : GetManyQueryHandlerBase<GetManyResearcherQuery, ApplicationUser, UserDto>
 {
-    protected override Task<PagedList<UserDto>> GetEntityDtos(GetManySupervisorQuery request)
+    public override async Task<Response<IEnumerable<UserDto>>> Handle(GetManyResearcherQuery request, CancellationToken cancellationToken)
     {
-        return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.Researcher.ToString());
+        var parameters = _mapper.Map<AllResourceParameters>(request);
+        var result = await _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.Researcher.ToString(), parameters);
+        return FetchedMultiple(result.Items, result.Meta);
     }
 }
 

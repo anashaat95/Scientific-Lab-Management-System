@@ -1,4 +1,6 @@
-﻿namespace ScientificLabManagementApp.API;
+﻿using ScientificLabManagementApp.Domain;
+
+namespace ScientificLabManagementApp.API;
 
 public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQuery, TCommandData, TAddCommandData, TUpdateCommandData, TAddCommand, TUpdateCommand, TDeleteCommand> : ApiControllerBase
     
@@ -12,6 +14,12 @@ public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQu
     where TUpdateCommandData : class, TCommandData
     where TDto : class 
 {
+    public enum ResourceUriType
+    {
+        PreviousPage,
+        NextPage
+    }
+
     [HttpGet]
     [HttpHead]
     public virtual async Task<ActionResult<IEnumerable<TDto>>> GetAll([FromQuery]TGetManyQuery query)

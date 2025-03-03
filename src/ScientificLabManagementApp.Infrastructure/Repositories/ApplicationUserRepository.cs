@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ScientificLabManagementApp.Infrastructure;
 
@@ -57,15 +58,17 @@ public class ApplicationUserRepository : IApplicationUserRepository
         return result;
     }
 
-    public async Task<IEnumerable<MappingApplicationUser>> GetAllUsersByRoleAsync(string? role = null)
+    public async Task<PagedList<MappingApplicationUser>> GetAllUsersByRoleAsync(string? role, AllResourceParameters parameters)
     {
         var roleStatement = role != null ? " WHERE R.Roles LIKE @roleName" : "";
 
-        var result = await _context.Database
-                          .SqlQueryRaw<MappingApplicationUser>(RawSqlStatement+ roleStatement, new SqlParameter("@roleName", $"%{role}%"))
-                          .AsNoTracking()
-                          .ToListAsync();
-        return result;
+        var query =  _context.Database
+                          .SqlQueryRaw<MappingApplicationUser>(RawSqlStatement + roleStatement, new SqlParameter("@roleName", $"%{role}%"))
+                          .AsNoTracking().AsQueryable();
+
+        query = _repository.ApplyFilteringSortingAndPagination(query, parameters);
+
+        return await PagedList<MappingApplicationUser>.CreateAsync(query, parameters.PageNumber, parameters.PageSize);
     }
 
     public async Task<IEnumerable<MappingApplicationUserSelectOption>> GetAllUsersSelectOptionsByRoleAsync(string? role = null)

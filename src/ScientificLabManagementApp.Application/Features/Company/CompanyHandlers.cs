@@ -5,7 +5,7 @@ using System.Globalization;
 namespace ScientificLabManagementApp.Application;
 public class GetManyCompanyHandler : GetManyQueryHandlerBase<GetManyCompanyQuery, Company, CompanyDto>
 {
-    protected override Task<PagedList<CompanyDto>> GetEntityDtos(GetManyCompanyQuery request)
+    protected override Task<PaginationResult<Company, CompanyDto>> GetEntityDtos(GetManyCompanyQuery request)
     {
         var parameters = _mapper.Map<AllResourceParameters>(request);
         return _basicService.GetAllAsync(parameters, e => e.City, e => e.Country);

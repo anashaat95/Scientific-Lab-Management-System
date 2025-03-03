@@ -3,7 +3,7 @@ using Azure.Core;
 namespace ScientificLabManagementApp.Application;
 public class GetManyMaintenanceLogHandler : GetManyQueryHandlerBase<GetManyMaintenanceLogQuery, MaintenanceLog, MaintenanceLogDto> {
 
-    protected override Task<PagedList<MaintenanceLogDto>> GetEntityDtos(GetManyMaintenanceLogQuery request)
+    protected override Task<PaginationResult<MaintenanceLog, MaintenanceLogDto>> GetEntityDtos(GetManyMaintenanceLogQuery request)
     {
         var parameters = _mapper.Map<AllResourceParameters>(request);
         return _basicService.GetAllAsync(parameters, e => e.Equipment, e => e.Technician);

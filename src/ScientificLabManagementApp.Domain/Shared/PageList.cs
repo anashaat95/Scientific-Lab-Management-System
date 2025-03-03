@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections;
 
 namespace ScientificLabManagementApp.Domain;
 
@@ -13,11 +12,11 @@ public class PagedList<TEntity> : List<TEntity>
     public bool HasPrevious => (CurrentPage > 1);
     public bool HasNext => CurrentPage < TotalPages;
 
-    public PagedList(List<TEntity> items, int pageNumber,int pageSize, int count)
+    protected PagedList(List<TEntity> items, int pageNumber,int pageSize, int count)
     {
         TotalCount = count;
         TotalPages = (int)Math.Ceiling((double)count / pageSize);
-        CurrentPage = pageNumber;
+        CurrentPage = pageNumber ;
         PageSize = pageSize;
         AddRange(items);
     }

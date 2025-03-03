@@ -27,11 +27,10 @@ public class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
     }
 
 
-    public virtual async Task<PagedList<TDto>> GetAllAsync(AllResourceParameters parameters, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<PaginationResult<TEntity, TDto>> GetAllAsync(AllResourceParameters parameters, params Expression<Func<TEntity, object>>[] includes)
     {
-        var originalResult = await _repository.GetAllAsync(parameters, includes);
-        var mappedResult = _mapper.Map<PagedList<TDto>>(originalResult);
-        return new PagedList<TDto>(mappedResult, originalResult.CurrentPage, originalResult.PageSize, originalResult.TotalCount);
+        var result = await _repository.GetAllAsync(parameters, includes);
+        return new PaginationResult<TEntity, TDto>(result, parameters);
     }
 
     public virtual async Task<IEnumerable<TDto>> GetSelectOptionsAsync(Expression<Func<TEntity, bool>> predicate = null)

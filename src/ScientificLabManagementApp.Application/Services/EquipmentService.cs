@@ -13,7 +13,7 @@ public class EquipmentService : IEquipmentService
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); ;
     }
 
-    public virtual async Task<PagedList<EquipmentWithBookingsDto>> GetAllEquipmentsWithBookingsDtoByIdAsync(AllResourceParameters parameters)
+    public virtual async Task<PaginationResult<Equipment, EquipmentWithBookingsDto>> GetAllEquipmentsWithBookingsDtoByIdAsync(AllResourceParameters parameters)
     {
         var query = _unitOfWork.EquipmentRepository.GetEntitySet()
                                         .Include(e => e.Company)
@@ -24,7 +24,7 @@ public class EquipmentService : IEquipmentService
 
         var result = await PagedList<Equipment>.CreateAsync(query, parameters.PageNumber, parameters.PageSize);
 
-        return _mapper.Map<PagedList<EquipmentWithBookingsDto>>(result);
+        return _mapper.Map<PaginationResult<Equipment, EquipmentWithBookingsDto>>(result);
     }
 
 

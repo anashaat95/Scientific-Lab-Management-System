@@ -4,7 +4,7 @@ public class GetManyUserQuery : GetManyQueryBase<UserDto>{}
 public class GetManyUserSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto> { }
 public class GetManyTechnicianQuery : GetManyQueryBase<UserDto>{}
 public class GetManyTechnicianSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto>{}
-public class GetManySupervisorQuery : GetManyQueryBase<UserDto>{}
+public class GetManyLabSupervisorQuery : GetManyQueryBase<UserDto>{}
 public class GetManySupervisorSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto> { }
 public class GetManyResearcherQuery : GetManyQueryBase<UserDto>{}
 public class GetManyResearcherSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto> { }

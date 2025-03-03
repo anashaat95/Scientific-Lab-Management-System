@@ -8,6 +8,7 @@ public class UserMappingProfile : ProfileBase<ApplicationUser, UserDto, UserComm
         ApplyCustomEntityToSelectOptionDtoMapping();
         ApplyCommandToEntityMapping<AddUserCommand, AddUserCommandData>();
         ApplyCommandToEntityMapping<UpdateUserCommand, UpdateUserCommandData>();
+
     }
 
     public override IMappingExpression<ApplicationUser, UserDto> ApplyEntityToDtoMapping()

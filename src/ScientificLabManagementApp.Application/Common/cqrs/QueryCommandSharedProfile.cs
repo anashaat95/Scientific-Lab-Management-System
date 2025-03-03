@@ -14,6 +14,9 @@ public class QueryCommandSharedProfile : Profile
         ApplyQueryToParametersMapping<GetManyMaintenanceLogQuery, MaintenanceLogDto>();
         ApplyQueryToParametersMapping<GetManyRoleQuery, RoleDto>();
         ApplyQueryToParametersMapping<GetManyUserQuery, UserDto>();
+        ApplyQueryToParametersMapping<GetManyLabSupervisorQuery, UserDto>();
+        ApplyQueryToParametersMapping<GetManyResearcherQuery, UserDto>();
+        ApplyQueryToParametersMapping<GetManyTechnicianQuery, UserDto>();
     }
     public void ApplyQueryToParametersMapping<TQuery, TDto>()
         where TQuery : GetManyQueryBase<TDto>

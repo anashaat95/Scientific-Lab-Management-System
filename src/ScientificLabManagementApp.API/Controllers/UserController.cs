@@ -42,7 +42,7 @@ public class UserController :
     [HttpGet("/api/lab-supervisor")]
     public virtual async Task<ActionResult<IEnumerable<UserDto>>> GetLabSupervisors()
     {
-        var response = await Mediator.Send(new GetManySupervisorQuery());
+        var response = await Mediator.Send(new GetManyLabSupervisorQuery());
         return Result.Create(response);
     }
 
@@ -56,7 +56,7 @@ public class UserController :
     [HttpGet("/api/researcher")]
     public virtual async Task<ActionResult<IEnumerable<UserDto>>> GetResearchers()
     {
-        var response = await Mediator.Send(new GetManySupervisorQuery());
+        var response = await Mediator.Send(new GetManyResearcherQuery());
         return Result.Create(response);
     }
 

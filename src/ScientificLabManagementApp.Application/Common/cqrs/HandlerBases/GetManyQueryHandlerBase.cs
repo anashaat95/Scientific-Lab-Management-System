@@ -24,16 +24,10 @@ public class GetManyQueryHandlerBase<TRequest, TEntity, TDto> : ResponseBuilder,
     public virtual async Task<Response<IEnumerable<TDto>>> Handle(TRequest request, CancellationToken cancellationToken)
     {
         var result = await GetEntityDtos(request);
-        return FetchedMultiple(result,
-            new
-            {
-                result.CurrentPage, result.TotalPages, result.HasPrevious,
-                result.HasNext, result.PageSize, result.TotalCount,
-            }
-        );
+        return FetchedMultiple(result.Items, result.Meta);
     }
 
-    protected virtual Task<PagedList<TDto>> GetEntityDtos(TRequest request)
+    protected virtual Task<PaginationResult<TEntity, TDto>> GetEntityDtos(TRequest request)
     {
         var parameters = _mapper.Map<AllResourceParameters>(request);
 

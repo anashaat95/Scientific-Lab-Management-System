@@ -3,7 +3,7 @@ using Azure.Core;
 namespace ScientificLabManagementApp.Application;
 public class GetManyBookingHandler : GetManyQueryHandlerBase<GetManyBookingQuery, Booking, BookingDto>
 {
-    protected override Task<PagedList<BookingDto>> GetEntityDtos(GetManyBookingQuery request)
+    protected override Task<PaginationResult<Booking, BookingDto>> GetEntityDtos(GetManyBookingQuery request)
     {
         var parameters = _mapper.Map<AllResourceParameters>(request);
 
