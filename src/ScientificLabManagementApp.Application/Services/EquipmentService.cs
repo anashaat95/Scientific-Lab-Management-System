@@ -1,4 +1,6 @@
-﻿namespace ScientificLabManagementApp.Application;
+﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
+namespace ScientificLabManagementApp.Application;
 
 public class EquipmentService : IEquipmentService
 {
@@ -11,15 +13,18 @@ public class EquipmentService : IEquipmentService
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); ;
     }
 
-    public virtual async Task<IEnumerable<EquipmentWithBookingsDto>> GetAllEquipmentsWithBookingsDtoByIdAsync()
+    public virtual async Task<PagedList<EquipmentWithBookingsDto>> GetAllEquipmentsWithBookingsDtoByIdAsync(AllResourceParameters parameters)
     {
-        var result = await _unitOfWork.EquipmentRepository.GetEntitySet()
+        var query = _unitOfWork.EquipmentRepository.GetEntitySet()
                                         .Include(e => e.Company)
                                         .Include(e => e.Bookings)
                                         .ThenInclude(e => e.User)
-                                        .ProjectTo<EquipmentWithBookingsDto>(_mapper.ConfigurationProvider)
-                                        .ToListAsync();
-        return result;
+                                        .AsQueryable();
+        query = _unitOfWork.EquipmentRepository.ApplyFilteringSortingAndPagination(query, parameters);
+
+        var result = await PagedList<Equipment>.CreateAsync(query, parameters.PageNumber, parameters.PageSize);
+
+        return _mapper.Map<PagedList<EquipmentWithBookingsDto>>(result);
     }
 
 

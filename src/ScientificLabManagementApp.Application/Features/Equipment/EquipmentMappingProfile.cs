@@ -1,4 +1,3 @@
-
 namespace ScientificLabManagementApp.Application;
 public class EquipmentMappingProfile : ProfileBase<Equipment, EquipmentDto, EquipmentCommandData>
 {

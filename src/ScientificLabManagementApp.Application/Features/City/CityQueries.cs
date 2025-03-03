@@ -1,5 +1,5 @@
 ﻿namespace ScientificLabManagementApp.Application;
-public class GetManyCityQuery : GetManyQueryBases<CityDto>
+public class GetManyCityQuery : GetManyQueryBase<CityDto>
 {
 }
 public class GetManyCitySelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto> { }

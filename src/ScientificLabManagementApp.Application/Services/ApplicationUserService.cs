@@ -18,10 +18,10 @@ public class ApplicationUserService : IApplicationUserService
         return _mapper.Map<UserDto>(result);
     }
 
-    public async Task<IEnumerable<UserDto>> GetAllUsersByRoleAsync(string? role = null)
+    public async Task<PagedList<UserDto>> GetAllUsersByRoleAsync(string? role = null)
     {
         var result = await _userRepository.GetAllUsersByRoleAsync(role);
-        return _mapper.Map<IEnumerable<UserDto>>(result);
+        return _mapper.Map<PagedList<UserDto>>(result);
     }
 
     public async Task<IEnumerable<SelectOptionDto>> GetAllUsersSelectOptionsByRoleAsync(string? role = null)

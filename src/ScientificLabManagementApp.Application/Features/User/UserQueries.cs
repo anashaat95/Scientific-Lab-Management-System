@@ -1,12 +1,12 @@
 namespace ScientificLabManagementApp.Application;
 
-public class GetManyUserQuery : GetManyQueryBases<UserDto>{}
+public class GetManyUserQuery : GetManyQueryBase<UserDto>{}
 public class GetManyUserSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto> { }
-public class GetManyTechnicianQuery : GetManyQueryBases<UserDto>{}
+public class GetManyTechnicianQuery : GetManyQueryBase<UserDto>{}
 public class GetManyTechnicianSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto>{}
-public class GetManySupervisorQuery : GetManyQueryBases<UserDto>{}
+public class GetManySupervisorQuery : GetManyQueryBase<UserDto>{}
 public class GetManySupervisorSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto> { }
-public class GetManyResearcherQuery : GetManyQueryBases<UserDto>{}
+public class GetManyResearcherQuery : GetManyQueryBase<UserDto>{}
 public class GetManyResearcherSelectOptionsQuery : GetManySelectOptionsQueryBases<SelectOptionDto> { }
 public class GetOneUserByIdQuery : GetOneQueryBase<UserDto>{}
 

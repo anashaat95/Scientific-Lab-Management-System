@@ -1,4 +1,3 @@
-
 namespace ScientificLabManagementApp.Application;
 public class LabMappingProfile : ProfileBase<Lab, LabDto, LabCommandData>
 {

@@ -1,4 +1,3 @@
-
 namespace ScientificLabManagementApp.Application;
 public class CountryMappingProfile : ProfileBase<Country, CountryDto, CountryCommandData>
 {

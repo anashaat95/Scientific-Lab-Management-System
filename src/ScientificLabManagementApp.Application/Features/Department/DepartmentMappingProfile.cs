@@ -1,4 +1,3 @@
-
 namespace ScientificLabManagementApp.Application;
 public class DepartmentMappingProfile : ProfileBase<Department, DepartmentDto, DepartmentCommandData>
 {

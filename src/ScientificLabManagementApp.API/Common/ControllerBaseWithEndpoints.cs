@@ -3,7 +3,7 @@
 public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQuery, TCommandData, TAddCommandData, TUpdateCommandData, TAddCommand, TUpdateCommand, TDeleteCommand> : ApiControllerBase
     
     where TGetOneQuery : GetOneQueryBase<TDto>
-    where TGetManyQuery : GetManyQueryBases<TDto>
+    where TGetManyQuery : GetManyQueryBase<TDto>
     where TAddCommand : AddCommandBase<TDto, TAddCommandData>
     where TUpdateCommand : UpdateCommandBase<TDto, TUpdateCommandData>
     where TDeleteCommand : DeleteCommandBase<TDto>
@@ -14,17 +14,17 @@ public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQu
 {
     [HttpGet]
     [HttpHead]
-    public virtual async Task<ActionResult<IEnumerable<TDto>>> GetAll()
+    public virtual async Task<ActionResult<IEnumerable<TDto>>> GetAll([FromQuery]TGetManyQuery query)
     {
-        var response = await Mediator.Send(Activator.CreateInstance<TGetManyQuery>());
+        var response = await Mediator.Send(query);
         return Result.Create(response);
     }
 
     // GET api/<Controller>/5
     [HttpGet("{Id}")]
-    public virtual async Task<ActionResult<TDto>> Get(TGetOneQuery command)
+    public virtual async Task<ActionResult<TDto>> Get(TGetOneQuery query)
     {
-        var response = await Mediator.Send(command);
+        var response = await Mediator.Send(query);
         return Result.Create(response);
     }
 
@@ -54,9 +54,9 @@ public abstract class ControllerBaseWithEndpoints<TDto, TGetOneQuery, TGetManyQu
     }
 
     [HttpOptions()]
-    public virtual async Task<IActionResult> GetOptions()
+    public virtual IActionResult GetOptions()
     {
-        Response.Headers.Append("Allow", "GET,POST,PUT,DELETE,OPTIONS");
-        return Result.Ok();
+        Response.Headers["Allow"] = "GET,POST,PUT,DELETE,OPTIONS";
+        return Ok();
     }
 }

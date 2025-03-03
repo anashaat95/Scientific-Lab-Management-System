@@ -19,4 +19,5 @@ public class UrlService : IUrlService
 
         return $"{request.Scheme}://{request.Host.Value}{request.PathBase.Value}";
     }
+
 }

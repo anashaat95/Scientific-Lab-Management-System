@@ -1,9 +1,14 @@
 
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Globalization;
+
 namespace ScientificLabManagementApp.Application;
-public class GetManyCompanyHandler : GetManyQueryHandlerBase<GetManyCompanyQuery, Company, CompanyDto> {
-    protected override Task<IEnumerable<CompanyDto>> GetEntityDtos()
+public class GetManyCompanyHandler : GetManyQueryHandlerBase<GetManyCompanyQuery, Company, CompanyDto>
+{
+    protected override Task<PagedList<CompanyDto>> GetEntityDtos(GetManyCompanyQuery request)
     {
-        return _basicService.GetAllAsync(e => e.City, e => e.Country);
+        var parameters = _mapper.Map<AllResourceParameters>(request);
+        return _basicService.GetAllAsync(parameters, e => e.City, e => e.Country);
     }
 }
 public class GetManyCompanySelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyCompanySelectOptionsQuery, Company> { }

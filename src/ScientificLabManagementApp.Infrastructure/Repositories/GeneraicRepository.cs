@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ScientificLabManagementApp.Infrastructure;
+﻿namespace ScientificLabManagementApp.Infrastructure;
 
 public class GenericRepository<TEntity> : IGenericRepository<TEntity>
     where TEntity : class, IEntityBase
@@ -14,7 +12,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
 
     public virtual async Task<TEntity> GetOneByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes)
     {
-        var result = await FindOneAsync(e=>e.Id == id, includes);
+        var result = await FindOneAsync(e => e.Id == id, includes);
         return result;
     }
 
@@ -23,12 +21,13 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
         return _context.Set<TEntity>();
     }
 
-    public async Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
+    public async Task<PagedList<TEntity>> GetAllAsync(AllResourceParameters parameters, params Expression<Func<TEntity, object>>[] includes)
     {
-        var result = await _context.Set<TEntity>()
-                           .ApplyIncludes(includes)
-                           .ToListAsync();
-        return result;
+        IQueryable<TEntity> query = _context.Set<TEntity>().ApplyIncludes(includes).AsQueryable();
+
+        query = ApplyFilteringSortingAndPagination(query, parameters);
+
+        return await PagedList<TEntity>.CreateAsync(query, parameters.PageNumber, parameters.PageSize);
     }
 
     public IQueryable<TEntity> GetQueryableEntityAsync(Expression<Func<TEntity, bool>> predicate)
@@ -102,5 +101,46 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
                                      .Where(predicate)
                                      .FirstOrDefaultAsync();
         return filtered;
+    }
+
+    private IQueryable<TEntity> ApplyFilter(IQueryable<TEntity> query, string Filter)
+    {
+        var filterParts = Filter.Split(":");
+        if (filterParts.Length != 2) return query;
+
+        var propertyName = filterParts[0];
+        var filterValue = filterParts[1];
+
+        var Parameter = Expression.Parameter(typeof(TEntity), "x");
+        var property = Expression.Property(Parameter, propertyName);
+        var constant = Expression.Constant(filterValue);
+        var equals = Expression.Equal(property, constant);
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, Parameter);
+
+        return query.Where(lambda);
+    }
+
+    private IQueryable<TEntity> ApplySort(IQueryable<TEntity> query, string SortBy, bool Descending)
+    {
+        var Parameter = Expression.Parameter(typeof(TEntity), "x");
+        var property = Expression.Property(Parameter, SortBy);
+        var lambda = Expression.Lambda(property, Parameter);
+
+        var methodName = Descending ? "OrderByDescending" : "OrderBy";
+        var orderByMethod = typeof(Queryable).GetMethods()
+            .First(m => m.Name == methodName && m.GetParameters().Length == 2)
+            .MakeGenericMethod(typeof(TEntity), property.Type);
+
+        return (IQueryable<TEntity>)orderByMethod.Invoke(null, new object[] { query, lambda });
+    }
+
+    public IQueryable<TEntity> ApplyFilteringSortingAndPagination(IQueryable<TEntity> query, AllResourceParameters parameters)
+    {
+
+        if (!String.IsNullOrEmpty(parameters.Filter)) query = ApplyFilter(query, parameters.Filter);
+
+        if (!String.IsNullOrEmpty(parameters.SortBy)) query = ApplySort(query, parameters.SortBy, parameters.Descending);
+
+        return query;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ScientificLabManagementApp.Application;
+﻿using Azure.Core;
+
+namespace ScientificLabManagementApp.Application;
 
 public interface IBaseService<TEntity, TDto>
     where TEntity : class, IEntityBase
@@ -6,7 +8,7 @@ public interface IBaseService<TEntity, TDto>
 {
     Task<TDto> GetDtoByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes);
     Task<TEntity> GetEntityByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes);
-    Task<IEnumerable<TDto>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
+    Task<PagedList<TDto>> GetAllAsync(AllResourceParameters parameters, params Expression<Func<TEntity, object>>[] includes);
     Task<TDto> AddAsync(TEntity entityToAdd);
     Task<TDto> UpdateAsync(TEntity entityToUpdate);
     Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate);

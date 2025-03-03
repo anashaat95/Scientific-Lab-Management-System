@@ -1,13 +1,14 @@
 
+using Azure.Core;
+
 namespace ScientificLabManagementApp.Application;
 public class GetManyUserHandler : GetManyQueryHandlerBase<GetManyUserQuery, ApplicationUser, UserDto>
 {
-    protected override Task<IEnumerable<UserDto>> GetEntityDtos()
+    protected override Task<PagedList<UserDto>> GetEntityDtos(GetManyUserQuery request)
     {
         return _applicationUserService.GetAllUsersByRoleAsync();
     }
 }
-
 public class GetManyUserSelectOptionsHandler : GetManySelectOptionsQueryHandler<GetManyUserSelectOptionsQuery, MappingApplicationUser>
 {
     protected override Task<IEnumerable<SelectOptionDto>> GetEntityDtos()
@@ -18,7 +19,7 @@ public class GetManyUserSelectOptionsHandler : GetManySelectOptionsQueryHandler<
 
 public class GetManyTechnicianHandler : GetManyQueryHandlerBase<GetManyTechnicianQuery, ApplicationUser, UserDto>
 {
-    protected override Task<IEnumerable<UserDto>> GetEntityDtos()
+    protected override Task<PagedList<UserDto>> GetEntityDtos(GetManyTechnicianQuery request)
     {
         return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.Technician.ToString());
     }
@@ -34,7 +35,7 @@ public class GetManyTechnicianSelectOptionsHandler : GetManySelectOptionsQueryHa
 
 public class GetManyLabSupervisorHandler : GetManyQueryHandlerBase<GetManySupervisorQuery, ApplicationUser, UserDto>
 {
-    protected override Task<IEnumerable<UserDto>> GetEntityDtos()
+    protected override Task<PagedList<UserDto>> GetEntityDtos(GetManySupervisorQuery request)
     {
         return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.LabSupervisor.ToString());
     }
@@ -50,7 +51,7 @@ public class GetManyLabSupervisorSelectOptionsHandler : GetManySelectOptionsQuer
 
 public class GetManyResearcherHandler : GetManyQueryHandlerBase<GetManySupervisorQuery, ApplicationUser, UserDto>
 {
-    protected override Task<IEnumerable<UserDto>> GetEntityDtos()
+    protected override Task<PagedList<UserDto>> GetEntityDtos(GetManySupervisorQuery request)
     {
         return _applicationUserService.GetAllUsersByRoleAsync(enUserRoles.Researcher.ToString());
     }

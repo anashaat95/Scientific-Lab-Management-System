@@ -1,5 +1,4 @@
-﻿
-namespace ScientificLabManagementApp.Application;
+﻿namespace ScientificLabManagementApp.Application;
 
 public class CityMappingProfile : ProfileBase<City, CityDto, CityCommandData>
 {

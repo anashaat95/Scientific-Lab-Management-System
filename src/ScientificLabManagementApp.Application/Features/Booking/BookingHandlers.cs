@@ -3,9 +3,11 @@ using Azure.Core;
 namespace ScientificLabManagementApp.Application;
 public class GetManyBookingHandler : GetManyQueryHandlerBase<GetManyBookingQuery, Booking, BookingDto>
 {
-    protected override Task<IEnumerable<BookingDto>> GetEntityDtos()
+    protected override Task<PagedList<BookingDto>> GetEntityDtos(GetManyBookingQuery request)
     {
-        return _basicService.GetAllAsync(e => e.Equipment, e => e.User);
+        var parameters = _mapper.Map<AllResourceParameters>(request);
+
+        return _basicService.GetAllAsync(parameters, e => e.Equipment, e => e.User);
     }
 }
 

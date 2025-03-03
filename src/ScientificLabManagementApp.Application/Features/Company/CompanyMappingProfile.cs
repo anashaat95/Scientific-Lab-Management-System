@@ -1,4 +1,3 @@
-
 namespace ScientificLabManagementApp.Application;
 public class CompanyMappingProfile : ProfileBase<Company, CompanyDto, CompanyCommandData>
 {

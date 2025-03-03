@@ -35,10 +35,17 @@ public class ExistOneQueryByEmailBase : IRequest<Response<bool>>
     public required string Email { get; set; }
 }
 
-public class GetManyQueryBases<TDto> : RoleAuthorizeRequest, IRequest<Response<IEnumerable<TDto>>>
+public class GetManyQueryBase<TDto> : RoleAuthorizeRequest, IRequest<Response<IEnumerable<TDto>>>
     where TDto : class
 {
     public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AnyUserLevel;
+
+    public string? Filter { get; set; } = null;
+    public string? SortBy { get; set; } = null;
+    public string? SearchQuery { get; set; } = null;
+    public bool Descending { get; set; } = false;
+    public int PageSize { get; set; } = 10;
+    public int PageNumber { get; set; } = 1;
 }
 
 public class GetManySelectOptionsQueryBases<TDto> : IRequest<Response<IEnumerable<TDto>>>

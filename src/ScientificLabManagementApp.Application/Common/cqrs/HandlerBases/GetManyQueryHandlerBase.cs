@@ -1,7 +1,7 @@
 ﻿namespace ScientificLabManagementApp.Application;
 
 public class GetManyQueryHandlerBase<TRequest, TEntity, TDto> : ResponseBuilder, IRequestHandler<TRequest, Response<IEnumerable<TDto>>>
-    where TRequest : IRequest<Response<IEnumerable<TDto>>>
+    where TRequest : GetManyQueryBase<TDto>
     where TEntity : class, IEntityBase
     where TDto : class, IEntityHaveId
 {
@@ -23,12 +23,20 @@ public class GetManyQueryHandlerBase<TRequest, TEntity, TDto> : ResponseBuilder,
 
     public virtual async Task<Response<IEnumerable<TDto>>> Handle(TRequest request, CancellationToken cancellationToken)
     {
-        var entities = await GetEntityDtos();
-        return FetchedMultiple(entities);
+        var result = await GetEntityDtos(request);
+        return FetchedMultiple(result,
+            new
+            {
+                result.CurrentPage, result.TotalPages, result.HasPrevious,
+                result.HasNext, result.PageSize, result.TotalCount,
+            }
+        );
     }
 
-    protected virtual Task<IEnumerable<TDto>> GetEntityDtos()
+    protected virtual Task<PagedList<TDto>> GetEntityDtos(TRequest request)
     {
-        return _basicService.GetAllAsync();
+        var parameters = _mapper.Map<AllResourceParameters>(request);
+
+        return _basicService.GetAllAsync(parameters);
     }
 }

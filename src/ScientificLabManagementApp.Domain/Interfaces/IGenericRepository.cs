@@ -6,7 +6,7 @@ public interface IGenericRepository<TEntity>
 {
     DbSet<TEntity> GetEntitySet();
     Task<TEntity> GetOneByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes);
-    Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
+    Task<PagedList<TEntity>> GetAllAsync(AllResourceParameters parameters, params Expression<Func<TEntity, object>>[] includes);
     Task<TEntity> FindOneAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes);
     Task<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes);
     Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate);
@@ -20,4 +20,5 @@ public interface IGenericRepository<TEntity>
     Task<RelatedEntity> FindRelatedEntityByIdAsync<RelatedEntity>(Expression<Func<RelatedEntity, bool>> predicate, params Expression<Func<RelatedEntity, object>>[] includes) where RelatedEntity : class, IEntityBase;
 
     IQueryable<TEntity> GetQueryableEntityAsync(Expression<Func<TEntity, bool>> predicate);
+    IQueryable<TEntity> ApplyFilteringSortingAndPagination(IQueryable<TEntity> query, AllResourceParameters parameters);
 }

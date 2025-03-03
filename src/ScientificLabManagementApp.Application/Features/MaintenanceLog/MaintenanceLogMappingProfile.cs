@@ -1,4 +1,3 @@
-
 namespace ScientificLabManagementApp.Application;
 public class MaintenanceLogMappingProfile : ProfileBase<MaintenanceLog, MaintenanceLogDto, MaintenanceLogCommandData>
 {

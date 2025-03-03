@@ -5,9 +5,10 @@ using MediatR;
 namespace ScientificLabManagementApp.Application;
 public class GetManyEquipmentHandler : GetManyQueryHandlerBase<GetManyEquipmentQuery, Equipment, EquipmentDto>
 {
-    protected override Task<IEnumerable<EquipmentDto>> GetEntityDtos()
+    protected override Task<PagedList<EquipmentDto>> GetEntityDtos(GetManyEquipmentQuery request)
     {
-        return _basicService.GetAllAsync(e => e.Company);
+        var parameters = _mapper.Map<AllResourceParameters>(request);
+        return _basicService.GetAllAsync(parameters, e => e.Company);
     }
 }
 
@@ -19,9 +20,11 @@ public class GetManyEquipmentWithBookingsHandler : GetManyQueryHandlerBase<GetMa
     {
         _equipmentService = equipmentService;
     }
-    protected override Task<IEnumerable<EquipmentWithBookingsDto>> GetEntityDtos()
+
+    protected override Task<PagedList<EquipmentWithBookingsDto>> GetEntityDtos(GetManyEquipmentWithBookingsQuery request)
     {
-        return _equipmentService.GetAllEquipmentsWithBookingsDtoByIdAsync();
+        var parameters = _mapper.Map<AllResourceParameters>(request);
+        return _equipmentService.GetAllEquipmentsWithBookingsDtoByIdAsync(parameters);
     }
 }
 
