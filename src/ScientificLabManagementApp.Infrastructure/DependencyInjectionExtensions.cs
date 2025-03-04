@@ -21,6 +21,8 @@ public static class InfrastructureDependencyInjectionExtensions
         services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+        services.AddTransient(typeof(IPropertyMappingService<,>), typeof(PropertyMappingService<,>));
+
         return services;
     }
 }

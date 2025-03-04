@@ -18,7 +18,7 @@ public static class ApiUrlFactory<TEntity> where TEntity : IEntityBase
     public static string? CreatePreviousOrNextPageLink(AllResourceParameters parameters, eUriResourceType type)
     {
         var entityName = typeof(TEntity).Name;
-        var url = $"api/{entityName}?";
+        var url = $"/api/{entityName}?";
 
         if (parameters.Filter != null)
             url += $"filter={parameters.Filter}&";
@@ -26,11 +26,8 @@ public static class ApiUrlFactory<TEntity> where TEntity : IEntityBase
         if (parameters.SearchQuery != null)
             url += $"searchQuery={parameters.SearchQuery}&";
 
-        if (parameters.SortBy != null)
-            url += $"sortBy={parameters.SortBy}&";
-
-        if (parameters.Descending)
-            url += $"Descending={parameters.Descending}&";
+        if (parameters.OrderBy != null)
+            url += $"orderBy={parameters.OrderBy}&";
 
         switch (type)
         {

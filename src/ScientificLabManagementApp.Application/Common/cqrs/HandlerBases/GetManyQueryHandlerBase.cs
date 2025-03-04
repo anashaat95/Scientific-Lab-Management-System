@@ -23,8 +23,15 @@ public class GetManyQueryHandlerBase<TRequest, TEntity, TDto> : ResponseBuilder,
 
     public virtual async Task<Response<IEnumerable<TDto>>> Handle(TRequest request, CancellationToken cancellationToken)
     {
-        var result = await GetEntityDtos(request);
-        return FetchedMultiple(result.Items, result.Meta);
+        try
+        {
+            var result = await GetEntityDtos(request);
+            return FetchedMultiple(result.Items, result.Meta);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest<IEnumerable<TDto>>(ex.Message);
+        }
     }
 
     protected virtual Task<PaginationResult<TEntity, TDto>> GetEntityDtos(TRequest request)

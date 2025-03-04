@@ -41,9 +41,9 @@ public class GetManyQueryBase<TDto> : RoleAuthorizeRequest, IRequest<Response<IE
     public override IEnumerable<string> AllowedRoles() => AllowedRolesFactory.AnyUserLevel;
 
     public string? Filter { get; set; } = null;
-    public string? SortBy { get; set; } = null;
+    public string? OrderBy { get; set; } = "CreatedAt";
     public string? SearchQuery { get; set; } = null;
-    public bool Descending { get; set; } = false;
+    public bool Descending { get; set; } = true;
     public int PageSize { get; set; } = 10;
     public int PageNumber { get; set; } = 1;
 }

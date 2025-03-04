@@ -3,8 +3,7 @@ public class AllResourceParameters
 {
     const int MaxPageSize = 20;
     public string? Filter { get; set; } = null;
-    public string? SortBy { get; set; } = null;
-    public bool Descending { get; set; } = false;
+    public string OrderBy { get; set; } = "CreatedAt";
     public string? SearchQuery { get; set; } = null;
 
     public int PageNumber { get; set; } = 1;

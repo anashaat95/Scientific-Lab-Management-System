@@ -25,8 +25,7 @@ public class QueryCommandSharedProfile : Profile
          CreateMap<TQuery, AllResourceParameters>()
             .ForMember(dest => dest.Filter, opt => opt.MapFrom(src => src.Filter))
             .ForMember(dest => dest.SearchQuery, opt => opt.MapFrom(src => src.SearchQuery))
-            .ForMember(dest => dest.SortBy, opt => opt.MapFrom(src => src.SortBy))
-            .ForMember(dest => dest.Descending, opt => opt.MapFrom(src => src.Descending))
+            .ForMember(dest => dest.OrderBy, opt => opt.MapFrom(src => src.OrderBy))
             .ForMember(dest => dest.PageNumber, opt => opt.MapFrom(src => src.PageNumber))
             .ForMember(dest => dest.PageSize, opt => opt.MapFrom(src => src.PageSize))
             ;

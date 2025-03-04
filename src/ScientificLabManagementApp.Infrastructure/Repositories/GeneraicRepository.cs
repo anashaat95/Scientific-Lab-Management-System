@@ -4,10 +4,12 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
     where TEntity : class, IEntityBase
 {
     protected readonly ApplicationDbContext _context;
+    protected readonly IPropertyMappingService<TEntity, TEntity> _propertyMappingService;
 
-    public GenericRepository(ApplicationDbContext context)
+    public GenericRepository(ApplicationDbContext context, IPropertyMappingService<TEntity, TEntity> propertyMappingService)
     {
         _context = context;
+        _propertyMappingService = propertyMappingService;
     }
 
     public virtual async Task<TEntity> GetOneByIdAsync(string id, params Expression<Func<TEntity, object>>[] includes)
@@ -25,7 +27,14 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
     {
         IQueryable<TEntity> query = _context.Set<TEntity>().ApplyIncludes(includes).AsQueryable();
 
-        query = ApplyFilteringSortingAndPagination(query, parameters);
+        query = query.ApplyFilter(parameters.Filter);
+
+        if (!_propertyMappingService.ValidateMappingExistsFor(parameters.OrderBy))
+            throw new ArgumentException($"Key mapping for {parameters.OrderBy} is missing");
+
+        query = query
+                     .ApplySort<TEntity, TEntity>(parameters.OrderBy, _propertyMappingService.GetPropertyMapping());
+
 
         return await PagedList<TEntity>.CreateAsync(query, parameters.PageNumber, parameters.PageSize);
     }
@@ -120,26 +129,10 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity>
         return query.Where(lambda);
     }
 
-    private IQueryable<TEntity> ApplySort(IQueryable<TEntity> query, string SortBy, bool Descending)
-    {
-        var Parameter = Expression.Parameter(typeof(TEntity), "x");
-        var property = Expression.Property(Parameter, SortBy);
-        var lambda = Expression.Lambda(property, Parameter);
-
-        var methodName = Descending ? "OrderByDescending" : "OrderBy";
-        var orderByMethod = typeof(Queryable).GetMethods()
-            .First(m => m.Name == methodName && m.GetParameters().Length == 2)
-            .MakeGenericMethod(typeof(TEntity), property.Type);
-
-        return (IQueryable<TEntity>)orderByMethod.Invoke(null, new object[] { query, lambda });
-    }
-
     public IQueryable<TEntity> ApplyFilteringSortingAndPagination(IQueryable<TEntity> query, AllResourceParameters parameters)
     {
 
         if (!String.IsNullOrEmpty(parameters.Filter)) query = ApplyFilter(query, parameters.Filter);
-
-        if (!String.IsNullOrEmpty(parameters.SortBy)) query = ApplySort(query, parameters.SortBy, parameters.Descending);
 
         return query;
     }
